@@ -1,8 +1,8 @@
 // src/components/layout/Header.tsx
-import { useState } from "react";
-import Link from "next/link";
-import { Disclosure } from "@headlessui/react";
-import { MenuIcon, XIcon } from "@heroicons/react/outline";
+import { useState } from 'react';
+import Link from 'next/link';
+import { Disclosure } from '@headlessui/react';
+import { MenuIcon, XIcon } from '@heroicons/react/outline';
 
 export default function Header() {
   return (
@@ -21,20 +21,20 @@ export default function Header() {
                 </Link>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:items-center">
-                <Link
-                  href="#features"
+                <Link 
+                  href="#features" 
                   className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900"
                 >
                   Features
                 </Link>
-                <Link
-                  href="#how-it-works"
+                <Link 
+                  href="#how-it-works" 
                   className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900"
                 >
                   How It Works
                 </Link>
-                <Link
-                  href="#faq"
+                <Link 
+                  href="#faq" 
                   className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900"
                 >
                   FAQ
