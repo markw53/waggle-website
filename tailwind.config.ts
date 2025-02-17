@@ -1,4 +1,3 @@
-// tailwind.config.js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -14,15 +13,19 @@ module.exports = {
           dark: "#9B9B4F"
         },
         secondary: "#666666",
-        background: "#f5f5f5",
+        background: "var(--background)",
         text: {
-          DEFAULT: "#333333",
-          secondary: "#666666"
-        }
+          DEFAULT: "var(--text)",
+          secondary: "var(--text-secondary)"
+        },
+        error: "var(--error)",
+        success: "var(--success)",
+        warning: "var(--warning)"
       },
       animation: {
         fadeIn: "fadeIn 0.5s ease-in-out",
-        slideUp: "slideUp 0.5s ease-in-out"
+        slideUp: "slideUp 0.5s ease-in-out",
+        spin: "spin 1s linear infinite"
       },
       keyframes: {
         fadeIn: {

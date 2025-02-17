@@ -1,8 +1,9 @@
 // src/app/layout.tsx
 import { Inter } from "next/font/google";
-import Header from "../src/components/Layout/Header";
-import Footer from "../src/components/Layout/Footer";
-import "../src/styles/globals.css";
+import Header from "../components/client/Header";
+import Footer from "../components/Footer";
+import "../styles/globals.css";
+import "../styles/animations.css";
 
 const inter = Inter({ subsets: ["latin"] });
 

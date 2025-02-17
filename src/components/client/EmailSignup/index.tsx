@@ -1,6 +1,8 @@
 // src/components/sections/Hero.tsx
+'use client';
+
 import { motion } from "framer-motion";
-import Image from 'next/image';
+import Image from "next/image";
 
 export default function Hero() {
   return (
@@ -36,13 +38,13 @@ export default function Hero() {
           </main>
         </div>
       </div>
-        <Image
-          className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full"
-          src="/images/hero.png"
-          alt="Dog companions"
-          layout="fill"
-          objectFit="cover"
-        />
-      </div>
-    );
+      <Image
+        className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full"
+        src="/images/hero.png"
+        alt="Dog companions"
+        layout="fill"
+        objectFit="cover"
+      />
+    </div>
+  );
 }
