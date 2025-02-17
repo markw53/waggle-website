@@ -1,5 +1,5 @@
 // src/pages/index.tsx
-import FAQ from "../../components/sections/FAQ";
+import FAQ from "../../components/client/FAQ/FAQ";
 import Layout from "../../components/Layout/Layout";
 
 export default function Home() {

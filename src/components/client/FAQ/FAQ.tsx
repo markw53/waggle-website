@@ -1,4 +1,6 @@
 // src/components/sections/FAQ.tsx
+"use client";
+
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Disclosure, Transition } from "@headlessui/react";
