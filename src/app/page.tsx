@@ -1,9 +1,9 @@
 // src/app/page.tsx
 import { Suspense } from "react";
-import { FAQ } from "../components/client/FAQ";
-import { EmailSignup } from "../components/client/EmailSignup";
-import { Header } from "../components/client/Header";
-import { LoadingSpinner } from "../components/client/LoadingSpinner";
+import { FAQ } from "../components/client/FAQ/FAQ";
+import { EmailSignup } from "../components/client/EmailSignup/EmailSignup";
+import { Header } from "../components/client/Header/Header";
+import { LoadingSpinner } from "../components/client/LoadingSpinner/LoadingSpinner";
 
 export default function Home() {
   return (

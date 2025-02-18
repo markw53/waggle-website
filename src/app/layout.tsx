@@ -1,6 +1,6 @@
 // src/app/layout.tsx
 import { Inter } from "next/font/google";
-import Header from "../components/client/Header";
+import Header from "../components/client/Header/Header";
 import Footer from "../components/Footer";
 import "../styles/globals.css";
 import "../styles/animations.css";
