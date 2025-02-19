@@ -126,9 +126,9 @@ export default function FAQ() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.2, delay: index * 0.1 }}
                 >
-                  <Disclosure>
+                  <Disclosure as="div"> {/* Change this line */}
                     {({ open }) => (
-                      <>
+                      <div> {/* Add this wrapper div */}
                         <Disclosure.Button className="py-4 w-full flex justify-between items-center text-left">
                           <span className="text-lg font-medium text-gray-900">
                             {faq.question}
@@ -139,43 +139,20 @@ export default function FAQ() {
                             } w-5 h-5 text-primary transition-transform duration-200`}
                           />
                         </Disclosure.Button>
-                        <Transition
-                          show={open}
-                          enter="transition duration-100 ease-out"
-                          enterFrom="transform scale-95 opacity-0"
-                          enterTo="transform scale-100 opacity-100"
-                          leave="transition duration-75 ease-out"
-                          leaveFrom="transform scale-100 opacity-100"
-                          leaveTo="transform scale-95 opacity-0"
-                        >
-                          <Disclosure.Panel className="pb-4 pr-12">
-                            <p className="text-base text-gray-500">
-                              {faq.answer}
-                            </p>
-                          </Disclosure.Panel>
-                        </Transition>
-                      </>
+                        <Disclosure.Panel className="pb-4 pr-12">
+                          <p className="text-base text-gray-500">
+                            {faq.answer}
+                          </p>
+                        </Disclosure.Panel>
+                      </div>
                     )}
                   </Disclosure>
                 </motion.div>
               ))
             ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="py-8 text-center"
-              >
-                <p className="text-gray-500">No matching questions found.</p>
-                <button
-                  onClick={() => {
-                    setSearchTerm("");
-                    setActiveCategory("all");
-                  }}
-                  className="mt-4 text-primary hover:text-primary-dark"
-                >
-                  Clear filters
-                </button>
-              </motion.div>
+              <div className="py-4 text-center text-gray-500">
+                No questions found.
+              </div>
             )}
           </AnimatePresence>
         </div>

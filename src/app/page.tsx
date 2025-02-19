@@ -1,6 +1,6 @@
 // src/app/page.tsx
 import { Suspense } from "react";
-import { Hero } from "../components/client";
+import Hero from "../components/client/Hero";
 import Header from "../components/client/Header/Header";
 import FAQ from "../components/client/FAQ/FAQ";
 import EmailSignup from "../components/client/EmailSignup/EmailSignup";
