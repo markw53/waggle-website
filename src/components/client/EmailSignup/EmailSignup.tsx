@@ -1,50 +1,132 @@
-// src/components/sections/Hero.tsx
-'use client';
+// src/components/client/EmailSignup/index.tsx
+"use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
+import { toast } from "react-hot-toast";
 
-export default function Hero() {
+export default function EmailSignup() {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!email) {
+      toast.error("Please enter your email address");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      // Add your API call here to save the email
+      const response = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email })
+      });
+
+      if (!response.ok) {
+        throw new Error("Subscription failed");
+      }
+
+      toast.success("Thanks for subscribing!");
+      setEmail("");
+    } catch (error) {
+      console.error("Subscription error:", error);
+      toast.error("Failed to subscribe. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="relative bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto">
-        <div className="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
-          <main className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
-            <div className="sm:text-center lg:text-left">
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl"
-              >
-                <span className="block">Find the Perfect Match</span>
-                <span className="block text-indigo-600">for Your Dog</span>
-              </motion.h1>
-              <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
-                Coming soon to iOS and Android. Join the waitlist to be notified
-                when we launch!
-              </p>
-              <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
-                <div className="rounded-md shadow">
-                  <a
-                    href="#signup"
-                    className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10"
-                  >
-                    Join Waitlist
-                  </a>
-                </div>
+    <section className="bg-white py-16 sm:py-24">
+      <div className="relative sm:py-16">
+        <div className="mx-auto max-w-md px-4 sm:max-w-3xl sm:px-6 lg:max-w-7xl lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="relative rounded-2xl px-6 py-10 bg-primary overflow-hidden shadow-xl sm:px-12 sm:py-20"
+          >
+            <div className="relative">
+              <div className="sm:text-center">
+                <h2 className="text-3xl font-extrabold text-white tracking-tight sm:text-4xl">
+                  Get notified when we launch!
+                </h2>
+                <p className="mt-6 mx-auto max-w-2xl text-lg text-white/90">
+                  Be among the first to know when Waggle launches in your area.
+                  Join our waitlist for exclusive early access and updates.
+                </p>
               </div>
+              <form
+                onSubmit={handleSubmit}
+                className="mt-12 sm:mx-auto sm:max-w-lg sm:flex"
+              >
+                <div className="min-w-0 flex-1">
+                  <label htmlFor="email" className="sr-only">
+                    Email address
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="block w-full border border-transparent rounded-md px-5 py-3 text-base text-gray-900 placeholder-gray-500 shadow-sm focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary"
+                    placeholder="Enter your email"
+                  />
+                </div>
+                <div className="mt-4 sm:mt-0 sm:ml-3">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="block w-full rounded-md border border-transparent px-5 py-3 bg-white text-base font-medium text-primary shadow hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary sm:px-10 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                  >
+                    {loading ? (
+                      <div className="flex items-center justify-center">
+                        <svg
+                          className="animate-spin h-5 w-5 text-primary"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          />
+                        </svg>
+                      </div>
+                    ) : (
+                      "Notify me"
+                    )}
+                  </button>
+                </div>
+              </form>
+
+              <p className="mt-6 text-sm text-center text-white/80">
+                We care about your data. Read our{" "}
+                <a href="/privacy" className="font-medium text-white underline">
+                  Privacy Policy
+                </a>
+              </p>
             </div>
-          </main>
+          </motion.div>
         </div>
       </div>
-      <Image
-        className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full"
-        src="/images/hero.png"
-        alt="Dog companions"
-        layout="fill"
-        objectFit="cover"
-      />
-    </div>
+    </section>
   );
 }

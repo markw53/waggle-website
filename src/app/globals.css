@@ -19,3 +19,51 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@layer components {
+  .nav-link {
+    @apply px-3 py-2 rounded-md text-sm font-medium
+           text-gray-700 hover:text-gray-900 hover:bg-gray-100
+           transition-colors duration-200;
+  }
+
+  .nav-link-mobile {
+    @apply block px-3 py-2 rounded-md text-base font-medium
+           text-gray-700 hover:text-gray-900 hover:bg-gray-100
+           transition-colors duration-200;
+  }
+
+  .nav-button {
+    @apply inline-flex items-center justify-center p-2
+           rounded-md text-gray-700 hover:text-gray-900
+           hover:bg-gray-100 focus:outline-none
+           focus:ring-2 focus:ring-inset focus:ring-primary
+           transition-colors duration-200;
+  }
+}
+
+@layer components {
+  .nav-item {
+    @apply relative px-3 py-2 rounded-md text-sm font-medium
+           transition-colors duration-200;
+  }
+
+  .nav-item-scrolled {
+    @apply text-gray-700 hover:text-gray-900;
+  }
+
+  .nav-item-transparent {
+    @apply text-white hover:text-gray-200;
+  }
+
+  .dropdown-menu {
+    @apply absolute left-0 w-48 mt-2 origin-top-left bg-white
+           rounded-md shadow-lg ring-1 ring-black ring-opacity-5
+           focus:outline-none;
+  }
+
+  .dropdown-item {
+    @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100
+           transition-colors duration-150;
+  }
+}

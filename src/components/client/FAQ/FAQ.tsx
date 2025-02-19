@@ -1,14 +1,15 @@
-// src/components/sections/FAQ.tsx
+// src/components/client/FAQ/index.tsx
 "use client";
 
-import { SearchBar } from "./SearchBar";
-import { StaticContent } from "./StaticContent";
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Disclosure, Transition } from "@headlessui/react";
-import { ChevronDownIcon, SearchIcon } from "@heroicons/react/outline";
+import {
+  ChevronDownIcon,
+  MagnifyingGlassIcon
+} from "@heroicons/react/24/outline";
 
-// Updated FAQ data with categories
+// FAQ Data
 const faqData = [
   {
     question: "What is Waggle?",
@@ -22,7 +23,6 @@ const faqData = [
       "Our matching algorithm considers various factors including breed, location, health records, and temperament to suggest compatible matches. Users can browse through potential matches and connect with other dog owners through our secure messaging system.",
     category: "features"
   },
-  // ... (previous FAQ items)
   {
     question: "How do you verify health records?",
     answer:
@@ -43,13 +43,14 @@ const categories = {
   features: "Features",
   safety: "Safety",
   pricing: "Pricing"
-};
+} as const;
+
+type Category = keyof typeof categories;
 
 export default function FAQ() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeCategory, setActiveCategory] = useState<Category>("all");
 
-  // Filter FAQs based on search term and category
   const filteredFaqs = useMemo(() => {
     return faqData.filter((faq) => {
       const matchesSearch =
@@ -66,6 +67,7 @@ export default function FAQ() {
   return (
     <section className="bg-white py-16 sm:py-24" id="faq">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
         <div className="lg:text-center mb-12">
           <h2 className="text-base text-primary font-semibold tracking-wide uppercase">
             FAQ
@@ -88,7 +90,7 @@ export default function FAQ() {
               placeholder="Search questions..."
               className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
             />
-            <SearchIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+            <MagnifyingGlassIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           </div>
         </div>
 
@@ -98,7 +100,7 @@ export default function FAQ() {
             {Object.entries(categories).map(([key, label]) => (
               <button
                 key={key}
-                onClick={() => setActiveCategory(key)}
+                onClick={() => setActiveCategory(key as Category)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
                   ${
                     activeCategory === key
