@@ -1,13 +1,13 @@
 // src/pages/index.tsx
 import FAQ from "../../components/client/FAQ/FAQ";
-import Layout from "../../components/Layout/Layout";
+import RootLayout from "@/src/app/layout";
 
 export default function Home() {
   return (
-    <Layout>
+    <RootLayout>
       {/* Other sections */}
       <FAQ />
       {/* Other sections */}
-    </Layout>
+    </RootLayout>
   );
 }
