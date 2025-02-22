@@ -2,7 +2,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 
 export default function Hero() {
   const scrollToSignup = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -14,9 +13,9 @@ export default function Hero() {
   };
 
   return (
-    <div className="relative bg-white overflow-hidden min-h-[600px] lg:min-h-[800px]">
+    <div className="relative bg-gradient-to-br from-primary/10 via-white to-primary/5 overflow-hidden min-h-[600px] lg:min-h-[800px]">
       <div className="max-w-7xl mx-auto">
-        <div className="relative z-10 pb-8 bg-white/80 backdrop-blur-sm sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
+        <div className="relative z-10 pb-8 sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
           <main className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
             <div className="sm:text-center lg:text-left">
               <motion.h1
@@ -56,21 +55,6 @@ export default function Hero() {
             </div>
           </main>
         </div>
-      </div>
-      <div className="absolute inset-0 -z-10">
-        <Image
-          src="https://via.placeholder.com/1920x1080"
-          alt="Dog companions"
-          fill
-          priority
-          className="object-cover w-full h-full"
-          sizes="100vw"
-          quality={90}
-          style={{
-            objectFit: "cover",
-            objectPosition: "center",
-          }}
-        />
       </div>
     </div>
   );

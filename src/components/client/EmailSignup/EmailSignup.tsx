@@ -4,6 +4,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
+import { db } from "@/src/lib/firebase";
+import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
 
 export default function EmailSignup() {
   const [email, setEmail] = useState("");
@@ -19,18 +21,23 @@ export default function EmailSignup() {
 
     try {
       setLoading(true);
-      // Add your API call here to save the email
-      const response = await fetch("/api/subscribe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ email })
-      });
 
-      if (!response.ok) {
-        throw new Error("Subscription failed");
+      // Check if email already exists
+      const subscribersRef = collection(db, "subscribers");
+      const q = query(subscribersRef, where("email", "==", email));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        toast.error("Email already subscribed");
+        setLoading(false);
+        return;
       }
+
+      // Add new subscriber
+      await addDoc(subscribersRef, {
+        email,
+        createdAt: new Date().toISOString(),
+      });
 
       toast.success("Thanks for subscribing!");
       setEmail("");
@@ -43,7 +50,7 @@ export default function EmailSignup() {
   };
 
   return (
-    <section className="bg-white py-16 sm:py-24">
+    <section id="signup" className="bg-white py-16 sm:py-24">
       <div className="relative sm:py-16">
         <div className="mx-auto max-w-md px-4 sm:max-w-3xl sm:px-6 lg:max-w-7xl lg:px-8">
           <motion.div
@@ -53,6 +60,26 @@ export default function EmailSignup() {
             transition={{ duration: 0.5 }}
             className="relative rounded-2xl px-6 py-10 bg-primary overflow-hidden shadow-xl sm:px-12 sm:py-20"
           >
+            <div aria-hidden="true" className="absolute inset-0 -mt-72 sm:-mt-32 md:mt-0">
+              <svg
+                className="absolute inset-0 h-full w-full"
+                preserveAspectRatio="xMidYMid slice"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 1463 360"
+              >
+                <path
+                  className="text-primary-dark text-opacity-40"
+                  fill="currentColor"
+                  d="M-82.673 72l1761.849 472.086-134.327 501.315-1761.85-472.086z"
+                />
+                <path
+                  className="text-primary-dark text-opacity-40"
+                  fill="currentColor"
+                  d="M-217.088 544.086L1544.761 72l134.327 501.316-1761.849 472.086z"
+                />
+              </svg>
+            </div>
             <div className="relative">
               <div className="sm:text-center">
                 <h2 className="text-3xl font-extrabold text-white tracking-tight sm:text-4xl">
