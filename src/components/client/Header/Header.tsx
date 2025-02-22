@@ -3,8 +3,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Disclosure } from "@headlessui/react";
+import { Disclosure, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -32,25 +31,6 @@ const navigation = [
 ];
 
 // Animation variants
-const menuVariants = {
-  closed: {
-    opacity: 0,
-    height: 0,
-    transition: {
-      duration: 0.2,
-      ease: "easeInOut"
-    }
-  },
-  open: {
-    opacity: 1,
-    height: "auto",
-    transition: {
-      duration: 0.2,
-      ease: "easeInOut"
-    }
-  }
-};
-
 const fadeInVariants = {
   initial: {
     opacity: 0,
@@ -99,11 +79,7 @@ export default function Header() {
         <Link
           href={item.href}
           className={`px-3 py-2 rounded-md text-sm font-medium 
-                     ${
-                       isScrolled
-                         ? "text-gray-700 hover:text-gray-900"
-                         : "text-white hover:text-gray-200"
-                     }
+                     ${isScrolled ? "text-gray-700 hover:text-gray-900" : "text-white hover:text-gray-200"}
                      transition-colors duration-200`}
         >
           {item.name}
@@ -188,15 +164,16 @@ export default function Header() {
             </div>
 
             {/* Mobile menu */}
-            <AnimatePresence>
-              <Disclosure.Panel
-                as={motion.div}
-                initial="closed"
-                animate="open"
-                exit="closed"
-                variants={menuVariants}
-                className="sm:hidden"
-              >
+            <Transition
+              show={open}
+              enter="transition duration-100 ease-out"
+              enterFrom="transform scale-95 opacity-0"
+              enterTo="transform scale-100 opacity-100"
+              leave="transition duration-75 ease-out"
+              leaveFrom="transform scale-100 opacity-100"
+              leaveTo="transform scale-95 opacity-0"
+            >
+              <Disclosure.Panel className="sm:hidden">
                 <div className="px-2 pt-2 pb-3 space-y-1">
                   {navigation.map((item) => (
                     <Disclosure.Button
@@ -210,7 +187,7 @@ export default function Header() {
                   ))}
                 </div>
               </Disclosure.Panel>
-            </AnimatePresence>
+            </Transition>
           </motion.div>
         </>
       )}

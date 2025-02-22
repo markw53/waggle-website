@@ -5,6 +5,14 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 export default function Hero() {
+  const scrollToSignup = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const signupSection = document.getElementById('signup');
+    if (signupSection) {
+      signupSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="relative bg-white overflow-hidden min-h-[600px] lg:min-h-[800px]">
       <div className="max-w-7xl mx-auto">
@@ -38,6 +46,7 @@ export default function Hero() {
                 <div className="rounded-md shadow">
                   <a
                     href="#signup"
+                    onClick={scrollToSignup}
                     className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary-dark transition-colors duration-200 md:py-4 md:text-lg md:px-10"
                   >
                     Join Waitlist
@@ -50,13 +59,17 @@ export default function Hero() {
       </div>
       <div className="absolute inset-0 -z-10">
         <Image
-          src="/images/hero.png"
+          src="https://via.placeholder.com/1920x1080"
           alt="Dog companions"
           fill
           priority
-          className="object-cover"
+          className="object-cover w-full h-full"
           sizes="100vw"
           quality={90}
+          style={{
+            objectFit: "cover",
+            objectPosition: "center",
+          }}
         />
       </div>
     </div>
