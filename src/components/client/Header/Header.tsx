@@ -1,62 +1,22 @@
-// src/components/layout/Header.tsx
+// src/components/client/Header/Header.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Disclosure, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
-// Navigation items with optional submenus
+// Navigation items
 const navigation = [
-  {
-    name: "Features",
-    href: "#features",
-    subItems: [
-      { name: "Matching", href: "#matching" },
-      { name: "Messaging", href: "#messaging" },
-      { name: "Health Verification", href: "#health" }
-    ]
-  },
-  {
-    name: "How It Works",
-    href: "#how-it-works",
-    subItems: [
-      { name: "Create Profile", href: "#create-profile" },
-      { name: "Find Matches", href: "#find-matches" },
-      { name: "Meet Up", href: "#meet-up" }
-    ]
-  },
+  { name: "Features", href: "#features" },
+  { name: "How It Works", href: "#how-it-works" },
   { name: "FAQ", href: "#faq" }
 ];
 
-// Animation variants
-const fadeInVariants = {
-  initial: {
-    opacity: 0,
-    y: -10
-  },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.2
-    }
-  },
-  exit: {
-    opacity: 0,
-    y: -10,
-    transition: {
-      duration: 0.2
-    }
-  }
-};
-
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
-  // Handle scroll
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -65,55 +25,6 @@ export default function Header() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // Navigation item with optional dropdown
-  const NavItem = ({ item }: { item: (typeof navigation)[0] }) => {
-    const hasSubItems = item.subItems && item.subItems.length > 0;
-
-    return (
-      <div
-        className="relative"
-        onMouseEnter={() => hasSubItems && setActiveDropdown(item.name)}
-        onMouseLeave={() => setActiveDropdown(null)}
-      >
-        <Link
-          href={item.href}
-          className={`px-3 py-2 rounded-md text-sm font-medium 
-                     ${isScrolled ? "text-gray-700 hover:text-gray-900" : "text-white hover:text-gray-200"}
-                     transition-colors duration-200`}
-        >
-          {item.name}
-        </Link>
-
-        {/* Dropdown Menu */}
-        {hasSubItems && (
-          <AnimatePresence>
-            {activeDropdown === item.name && (
-              <motion.div
-                initial="initial"
-                animate="animate"
-                exit="exit"
-                variants={fadeInVariants}
-                className="absolute left-0 w-48 mt-2 origin-top-left bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-              >
-                <div className="py-1">
-                  {item.subItems.map((subItem) => (
-                    <Link
-                      key={subItem.name}
-                      href={subItem.href}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      {subItem.name}
-                    </Link>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        )}
-      </div>
-    );
-  };
 
   return (
     <Disclosure as="nav">
@@ -129,21 +40,26 @@ export default function Header() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between h-16">
                 <div className="flex">
-                  <Link href="/" className="flex-shrink-0 flex items-center">
-                    <motion.img
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="h-8 w-auto"
-                      src="/images/logo.png"
-                      alt="Waggle"
-                    />
+                  <Link 
+                    href="/" 
+                    className="text-xl font-bold text-primary hover:text-primary-dark transition-colors duration-200"
+                  >
+                    Waggle
                   </Link>
                 </div>
 
                 {/* Desktop Navigation */}
                 <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
                   {navigation.map((item) => (
-                    <NavItem key={item.name} item={item} />
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={`px-3 py-2 rounded-md text-sm font-medium 
+                        ${isScrolled ? "text-gray-700 hover:text-gray-900" : "text-white hover:text-gray-200"}
+                        transition-colors duration-200`}
+                    >
+                      {item.name}
+                    </Link>
                   ))}
                 </div>
 
@@ -174,7 +90,7 @@ export default function Header() {
               leaveTo="transform scale-95 opacity-0"
             >
               <Disclosure.Panel className="sm:hidden">
-                <div className="px-2 pt-2 pb-3 space-y-1">
+                <div className="px-2 pt-2 pb-3 space-y-1 bg-white">
                   {navigation.map((item) => (
                     <Disclosure.Button
                       key={item.name}
