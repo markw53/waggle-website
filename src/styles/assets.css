@@ -1,0 +1,51 @@
+/* src/styles/assets.css */
+:root {
+    --color-primary: 79 70 229;
+    --color-primary-light: 99 102 241;
+    --color-primary-dark: 67 56 202;
+  }
+  
+  @layer components {
+    /* Image styles */
+    .image-placeholder {
+      @apply bg-gray-200 animate-pulse rounded-md;
+    }
+    
+    .avatar-circle {
+      @apply rounded-full object-cover;
+    }
+    
+    .logo-container {
+      @apply relative w-auto h-8 md:h-10;
+    }
+  
+    /* Font styles */
+    .text-heading {
+      @apply font-semibold tracking-tight;
+    }
+  
+    .text-body {
+      @apply font-normal leading-relaxed;
+    }
+  
+    /* Asset loading states */
+    .asset-loading {
+      @apply animate-pulse bg-gray-200;
+    }
+  
+    .asset-error {
+      @apply bg-red-100 border border-red-300 rounded-md;
+    }
+  }
+  
+  /* Critical path CSS */
+  .critical-image {
+    content-visibility: auto;
+  }
+  
+  /* Responsive asset handling */
+  @media (max-width: 640px) {
+    .responsive-asset {
+      @apply w-full h-auto;
+    }
+  }
