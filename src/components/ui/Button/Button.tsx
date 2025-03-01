@@ -1,8 +1,8 @@
 // src/components/ui/Button/Button.tsx
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ASSETS } from '@/config/assets';
-import { LoadingSpinner } from '@/components/shared/loaders/LoadingSpinner';
+import { ASSETS } from '../../../config/assets';
+import { LoadingSpinner } from '../../../components/shared/loaders/LoadingSpinner';
 
 interface ButtonProps {
   children: React.ReactNode;
