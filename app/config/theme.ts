@@ -16,15 +16,13 @@ export const COLORS = {
     warning: "#FFC107",
 };
 
-export type ThemeType = "light" | "dark";
-
 export const themes = {
     light: {
         colors: {
             ...COLORS,
             background: "#f5f5f5",
             surface: "#FFFFFF",
-            text: "#333333",
+            text: COLORS.text.primary,
             border: "#dddddd",
         },
         shadows: {
@@ -49,7 +47,7 @@ export const themes = {
             ...COLORS,
             background: "#121212",
             surface: "#1E1E1E",
-            text: "#FFFFFF",
+            text: COLORS.white,
             border: "#333333",
         },
         shadows: {

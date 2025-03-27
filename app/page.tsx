@@ -1,24 +1,15 @@
 "use client";
-import { useContext } from "react";
+import { useTheme } from "./contexts/ThemeContext"; // ✅ Import useTheme instead of ThemeContext
 import Link from "next/link";
 import Header from "./components/Header";
-import { ThemeContext, ThemeProvider } from "./contexts/ThemeContext";
-import { themes } from "./config/theme";
 
 export default function Home() {
-  const themeContext = useContext(ThemeContext);
-
-  if (!themeContext) {
-    throw new Error("ThemeContext is undefined. Make sure to wrap your component tree with ThemeProvider.");
-  }
-
-  const { theme } = themeContext;
-  const currentTheme = theme === "dark" ? themes.dark.colors : themes.light.colors;
+  const { theme, colors } = useTheme(); // ✅ Use useTheme() to get theme and colors
 
   return (
     <div
       className="min-h-screen flex flex-col"
-      style={{ backgroundColor: currentTheme.background, color: currentTheme.text }}
+      style={{ backgroundColor: colors.background, color: colors.text }}
     >
       <Header />
       <main className="flex flex-col items-center justify-center text-center px-6 py-20">
@@ -33,8 +24,8 @@ export default function Home() {
             href="/find-mate"
             className="px-6 py-3 rounded-lg transition"
             style={{
-              backgroundColor: currentTheme.primary,
-              color: currentTheme.white,
+              backgroundColor: colors.primary,
+              color: colors.white,
             }}
           >
             Find a Mate
@@ -43,8 +34,8 @@ export default function Home() {
             href="/post-dog"
             className="px-6 py-3 rounded-lg transition"
             style={{
-              backgroundColor: currentTheme.secondary,
-              color: currentTheme.white,
+              backgroundColor: colors.secondary,
+              color: colors.white,
             }}
           >
             List Your Dog
