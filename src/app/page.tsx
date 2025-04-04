@@ -1,35 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import app from "./lib/firebase";
 
-export default function Page() {
-  const auth = getAuth(app);
+export default function HomePage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const auth = getAuth(app);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        router.replace("/dashboard"); // Redirect to Dashboard if logged in
+        router.replace("/dashboard");
       } else {
-        router.replace("/login"); // Redirect to Login if not logged in
+        router.replace("/login");
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();
   }, [auth, router]);
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
-  return null; // Page is only used for redirection
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <p>Loading...</p>
+    </div>
+  );
 }

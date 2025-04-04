@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, FormEvent } from "react";
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import app from "../lib/firebase"; // Firebase config
