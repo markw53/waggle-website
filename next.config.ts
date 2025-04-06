@@ -2,7 +2,7 @@
 const nextConfig = {
   experimental: {
     appDir: true, // Ensure you're using the App Router
-    turbo: false, // Disable Turbopack if causing issues
+    turbo: true, // Disable Turbopack if causing issues
   },
 };
 
