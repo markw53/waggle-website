@@ -1,0 +1,12 @@
+.navbar {
+    padding: 1rem 2rem;
+    border-bottom: 2px solid #ccc;
+    background: rgba(255, 255, 255, 0.96);
+  }
+  .navbar-title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #573a20;
+    text-align: left;
+    display: block;
+  }
