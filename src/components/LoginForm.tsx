@@ -1,12 +1,12 @@
 // src/components/LoginForm.jsx
 import { useState } from 'react';
 import { auth } from '../firebase';
+import { Link } from 'react-router-dom';
 import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   GoogleAuthProvider,
-  signInWithPopup,
-  createUserWithEmailAndPassword
+  signInWithPopup
 } from 'firebase/auth';
 
 import './LoginForm.css';
@@ -14,18 +14,13 @@ import './LoginForm.css';
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isRegister, setIsRegister] = useState(false);
+  // Removed isRegister and setIsRegister since registration is not toggled in this form
   const [message, setMessage] = useState<string | null>(null);
 
   const handleAuth = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     try {
-      if (isRegister) {
-        await createUserWithEmailAndPassword(auth, email, password);
-        setMessage('Registration successful! You can now log in.');
-      } else {
-        await signInWithEmailAndPassword(auth, email, password);
-      }
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (err: unknown) {
       if (err instanceof Error) {       
         setMessage(err.message);
@@ -68,7 +63,7 @@ export default function LoginForm() {
   return (
     <div className="login-box">
       <form onSubmit={handleAuth}>
-        <h2>{isRegister ? 'Register for Waggle' : 'Sign In to Waggle'}</h2>
+        <h2>Sign In to Waggle</h2>
         {message && <div className="login-message">{message}</div>}
         <input
           type="email"
@@ -86,18 +81,20 @@ export default function LoginForm() {
           required
         />
         <button type="submit">
-          {isRegister ? 'Register' : 'Login'}
+          Login
         </button>
         <button type="button" className="google-btn" onClick={handleGoogle}>
           Sign in with Google
         </button>
+        <button
+          type="button"
+          className="forgot-btn"
+          onClick={handleForgot}
+        >
+          Forgot password?
+        </button>
         <div className="login-links">
-          <button type="button" onClick={() => setIsRegister(!isRegister)}>
-            {isRegister ? "Already have an account? Sign in" : "Don't have an account? Register"}
-          </button>
-          <button type="button" onClick={handleForgot}>
-            Forgot password?
-          </button>
+          <Link to="/register">Don't have an account? Register</Link>
         </div>
       </form>
     </div>
