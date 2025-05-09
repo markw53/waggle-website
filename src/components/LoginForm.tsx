@@ -1,7 +1,8 @@
-// src/components/LoginForm.jsx
+// src/components/LoginForm.tsx
 import { useState } from 'react';
 import { auth } from '../firebase';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
@@ -14,48 +15,48 @@ import './LoginForm.css';
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // Removed isRegister and setIsRegister since registration is not toggled in this form
-  const [message, setMessage] = useState<string | null>(null);
 
   const handleAuth = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      toast.success('Login successful! Welcome to Waggle.');
     } catch (err: unknown) {
-      if (err instanceof Error) {       
-        setMessage(err.message);
-          } else {
-        setMessage('An unexpected error occurred.');
-        }                    
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error('An unexpected error occurred.');
       }
-    };
+    }
+  };
 
   const handleGoogle = async () => {
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
+      toast.success('Logged in with Google!');
     } catch (err: unknown) {
       if (err instanceof Error) {
-        setMessage(err.message);
+        toast.error(err.message);
       } else {
-        setMessage('An unexpected error occurred.');
+        toast.error('An unexpected error occurred.');
       }
-   }
+    }
   };
 
   const handleForgot = async () => {
     if (!email) {
-      setMessage('Please enter your email to reset your password.');
+      toast.error('Please enter your email to reset your password.');
       return;
     }
     try {
       await sendPasswordResetEmail(auth, email);
-      setMessage('Password reset email sent.');
+      toast.success('Password reset email sent.');
     } catch (err: unknown) {
       if (err instanceof Error) {
-        setMessage(err.message);
+        toast.error(err.message);
       } else {
-        setMessage('An unexpected error occurred.');
+        toast.error('An unexpected error occurred.');
       }
     }
   };
@@ -64,7 +65,6 @@ export default function LoginForm() {
     <div className="login-box">
       <form onSubmit={handleAuth}>
         <h2>Sign In to Waggle</h2>
-        {message && <div className="login-message">{message}</div>}
         <input
           type="email"
           placeholder="Email"
@@ -95,6 +95,7 @@ export default function LoginForm() {
         </button>
         <div className="login-links">
           <Link to="/register">Don't have an account? Register</Link>
+          <Link to="/reset-password">Reset Password</Link>
         </div>
       </form>
     </div>

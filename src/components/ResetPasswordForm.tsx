@@ -2,24 +2,23 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/auth';
+import toast from 'react-hot-toast';
 import './LoginForm.css';
 
 const ResetPasswordForm: React.FC = () => {
   const { resetPassword } = useAuth();
   const [email, setEmail] = useState('');
-  const [message, setMessage] = useState<string | null>(null);
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage(null);
     try {
       await resetPassword(email);
-      setMessage('Password reset email sent! Please check your inbox.');
+      toast.success('Password reset email sent! Please check your inbox.');
     } catch (err: unknown) {
       if (err instanceof Error) {
-        setMessage(err.message || "Failed to send reset email.");
+        toast.error(err.message || "Failed to send reset email.");
       } else {
-        setMessage("Failed to send reset email.");
+        toast.error("Failed to send reset email.");
       }
     }
   };
@@ -28,7 +27,6 @@ const ResetPasswordForm: React.FC = () => {
     <div className="login-box">
       <form onSubmit={handleReset}>
         <h2>Reset Password</h2>
-        {message && <div className="login-message">{message}</div>}
         <input
           type="email"
           placeholder="Enter your email"

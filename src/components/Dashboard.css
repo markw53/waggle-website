@@ -1,0 +1,32 @@
+.dashboard-box {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2rem 2.5rem;
+  background: rgba(255,255,255,0.96);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dashboard-box h2 {
+  color: #573a1c;
+}
+
+.logout-btn {
+  margin-top: 2rem;
+  padding: 0.7rem 2rem;
+  border: none;
+  border-radius: 5px;
+  background: #a83824;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.logout-btn:hover {
+  opacity: 0.8;
+}

@@ -1,10 +1,13 @@
-// src/App.tsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import ResetPasswordForm from './components/ResetPasswordForm';
+import Dashboard from './components/Dashboard';
+import RequireAuth from './routes/RequireAuth';
+import RedirectIfAuth from './routes/RedirectIfAuth';
+import { Toaster } from 'react-hot-toast';
 import './App.css';
 
 const App: React.FC = () => (
@@ -13,12 +16,42 @@ const App: React.FC = () => (
       <Navbar />
       <div className="center-content">
         <Routes>
-          <Route path="/register" element={<RegisterForm />} />
-          <Route path="/reset-password" element={<ResetPasswordForm />} />
-          <Route path="/" element={<LoginForm />} />
+          <Route
+            path="/"
+            element={
+              <RedirectIfAuth>
+                <LoginForm />
+              </RedirectIfAuth>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <RedirectIfAuth>
+                <RegisterForm />
+              </RedirectIfAuth>
+            }
+          />
+          <Route
+            path="/reset-password"
+            element={
+              <RedirectIfAuth>
+                <ResetPasswordForm />
+              </RedirectIfAuth>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <RequireAuth>
+                <Dashboard />
+              </RequireAuth>
+            }
+          />
         </Routes>
       </div>
       <Footer />
+      <Toaster position="top-center" />
     </BrowserRouter>
   </div>
 );
