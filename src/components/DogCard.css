@@ -1,0 +1,27 @@
+.dogcard {
+  border: 1px solid #ccc;
+  padding: 1.1rem;
+  border-radius: 8px;
+  background: #fffdfa;
+  box-shadow: 0 1px 4px #0002;
+  margin-bottom: 1rem;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.dogcard-header {
+  display: flex;
+  align-items: center;
+}
+.dogcard-photo {
+  width: 70px;
+  height: 70px;
+  border-radius: 9px;
+  object-fit: cover;
+  margin-right: 1.2rem;
+  background: #ececec;
+}
+.dogcard-body {
+  padding-left: 80px;
+  font-size: 0.96rem;
+}

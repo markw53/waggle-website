@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import LoginForm from './components/LoginForm';
@@ -7,6 +7,7 @@ import ResetPasswordForm from './components/ResetPasswordForm';
 import Dashboard from './components/Dashboard';
 import RequireAuth from './routes/RequireAuth';
 import RedirectIfAuth from './routes/RedirectIfAuth';
+import DogSearch from './components/DogSearch';
 import { Toaster } from 'react-hot-toast';
 import './App.css';
 
@@ -40,6 +41,16 @@ const App: React.FC = () => (
               </RedirectIfAuth>
             }
           />
+
+          <Route
+            path="/dogs"
+            element={
+              <RequireAuth>
+                <DogSearch />
+              </RequireAuth>
+            }
+          />
+
           <Route
             path="/dashboard"
             element={
@@ -48,6 +59,9 @@ const App: React.FC = () => (
               </RequireAuth>
             }
           />
+
+          {/* Optionally, redirect /dashboard and / to /dogs if logged in */}
+          <Route path="*" element={<Navigate to="/dogs" />} />
         </Routes>
       </div>
       <Footer />
