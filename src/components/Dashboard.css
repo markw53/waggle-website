@@ -14,6 +14,41 @@
   color: #573a1c;
 }
 
+.dashboard-box p {
+  margin: 1.1rem 0 1.5rem 0;
+  font-size: 1.09rem;
+  color: #563708;
+}
+
+.dashboard-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-link {
+  color: #236035;
+  text-decoration: none;
+  font-size: 1.12rem;
+  background: #f3fde7;
+  border-radius: 7px;
+  font-weight: 500;
+  padding: 0.9rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(35,96,53,0.05);
+  transition: background 0.18s, color 0.18s;
+}
+
+.dashboard-link:hover {
+  background: #e1f7ce;
+  color: #91471e;
+}
+
 .logout-btn {
   margin-top: 2rem;
   padding: 0.7rem 2rem;
@@ -24,9 +59,10 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, background 0.2s;
 }
 
 .logout-btn:hover {
   opacity: 0.8;
+  background: #8c2c17;
 }

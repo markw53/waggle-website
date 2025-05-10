@@ -1,0 +1,82 @@
+.add-dog-form-container {
+  background: #fff;
+  max-width: 420px;
+  margin: 2.5rem auto;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  border-radius: 10px;
+  padding: 2.2rem 2rem 2rem 2rem;
+}
+
+.add-dog-form-container h2 {
+  text-align: center;
+  color: #573a1c;
+  margin-bottom: 1.3rem;
+  font-weight: 600;
+}
+
+.add-dog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.add-dog-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 1rem;
+  color: #222;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.add-dog-form label span {
+  color: #ca1620;
+  margin-left: 0.22em;
+}
+
+.add-dog-form input,
+.add-dog-form select,
+.add-dog-form textarea {
+  padding: 0.5rem;
+  border: 1px solid #d8d8d8;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-top: 0.17rem;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.add-dog-form input:focus,
+.add-dog-form select:focus,
+.add-dog-form textarea:focus {
+  border-color: #69b087;
+}
+
+.add-dog-form textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.add-dog-btn {
+  appearance: none;
+  padding: 0.7rem 0;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.65rem;
+  transition: background 0.2s;
+}
+
+.add-dog-btn:disabled {
+  background: #9ec7ca;
+  cursor: wait;
+}
+
+.add-dog-btn:hover:enabled {
+  background: linear-gradient(90deg, #185a9d 0%, #43cea2 100%);
+}

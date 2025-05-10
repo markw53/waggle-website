@@ -9,7 +9,8 @@ import RequireAuth from './routes/RequireAuth';
 import RedirectIfAuth from './routes/RedirectIfAuth';
 import DogSearch from './components/DogSearch';
 import AddMatch from './pages/AddMatch';        // <--- NEW
-import MatchesList from './pages/MatchesList';  // <--- NEW
+import MatchesList from './pages/MatchesList'; 
+import AddDog from './pages/AddDog'; // <--- NEW
 import { Toaster } from 'react-hot-toast';
 import './App.css';
 
@@ -49,6 +50,15 @@ const App: React.FC = () => (
             element={
               <RequireAuth>
                 <DogSearch />
+              </RequireAuth>
+            }
+          />
+
+          <Route
+            path="/add-dog"
+            element={
+              <RequireAuth>
+                <AddDog />
               </RequireAuth>
             }
           />

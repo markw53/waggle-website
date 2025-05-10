@@ -1,6 +1,6 @@
 // src/components/Dashboard.tsx
 import { useAuth } from '../hooks/auth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import './Dashboard.css';
 
@@ -26,12 +26,25 @@ const Dashboard: React.FC = () => {
     <div className="dashboard-box">
       <h2>Welcome to Waggle!</h2>
       <p>
-        You are signed in as <b>{user?.email}</b>
+        Signed in as <b>{user?.email}</b>
       </p>
+      <div className="dashboard-actions">
+        <Link to="/dogs" className="dashboard-link">
+          <span role="img" aria-label="Dogs">🐶</span> View/Search Dogs
+        </Link>
+        <Link to="/add-dog" className="dashboard-link">
+          <span role="img" aria-label="Add Dog">➕🐕</span> Add a Dog
+        </Link>
+        <Link to="/add-match" className="dashboard-link">
+          <span role="img" aria-label="Add Match">🤝</span> Add a Match
+        </Link>
+        <Link to="/matches" className="dashboard-link">
+          <span role="img" aria-label="View Matches">📋</span> View Matches
+        </Link>
+      </div>
       <button onClick={handleLogout} className="logout-btn">
         Log Out
       </button>
-      {/* Add your dashboard features here */}
     </div>
   );
 };
