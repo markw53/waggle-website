@@ -8,6 +8,8 @@ import Dashboard from './components/Dashboard';
 import RequireAuth from './routes/RequireAuth';
 import RedirectIfAuth from './routes/RedirectIfAuth';
 import DogSearch from './components/DogSearch';
+import AddMatch from './pages/AddMatch';        // <--- NEW
+import MatchesList from './pages/MatchesList';  // <--- NEW
 import { Toaster } from 'react-hot-toast';
 import './App.css';
 
@@ -60,7 +62,25 @@ const App: React.FC = () => (
             }
           />
 
-          {/* Optionally, redirect /dashboard and / to /dogs if logged in */}
+          {/* NEW: Add Match */}
+          <Route
+            path="/add-match"
+            element={
+              <RequireAuth>
+                <AddMatch />
+              </RequireAuth>
+            }
+          />
+          {/* NEW: Matches List */}
+          <Route
+            path="/matches"
+            element={
+              <RequireAuth>
+                <MatchesList />
+              </RequireAuth>
+            }
+          />
+
           <Route path="*" element={<Navigate to="/dogs" />} />
         </Routes>
       </div>
