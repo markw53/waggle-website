@@ -123,19 +123,19 @@ const AddDog: React.FC = () => {
             disabled={loading}
           />
         </label>
+        {imageFile && (
+          <div className="add-dog-image-preview-container">
+            <img
+              src={URL.createObjectURL(imageFile)}
+              alt="Preview"
+              className="add-dog-image-preview"
+            />
+          </div>
+        )}
         <button className="add-dog-btn" type="submit" disabled={loading}>
           {loading ? 'Adding...' : 'Add Dog'}
         </button>
       </form>
-      {imageFile && (
-        <div className="add-dog-image-preview">
-          <img
-            src={URL.createObjectURL(imageFile)}
-            alt="Preview"
-            className="add-dog-image"
-          />
-        </div>
-      )}
     </div>
   );
 };

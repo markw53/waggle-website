@@ -80,3 +80,18 @@
 .add-dog-btn:hover:enabled {
   background: linear-gradient(90deg, #185a9d 0%, #43cea2 100%);
 }
+
+.add-dog-image-preview-container {
+  text-align: center;
+  margin-top: 0.7rem;
+}
+
+.add-dog-image-preview {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 1px 5px #aaa;
+  border: 2px solid #f3fde7;
+  display: inline-block;
+}
