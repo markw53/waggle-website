@@ -3,6 +3,7 @@ import { collection, addDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, auth, storage } from '../firebase';
 import { useNavigate } from 'react-router-dom';
+import { Timestamp } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 import './AddDog.css';
 
@@ -38,10 +39,16 @@ const AddDog: React.FC = () => {
       if (imageFile) {
         const storageRef = ref(
           storage,
-          `dog_images/${auth.currentUser?.uid}/${Date.now()}_${imageFile.name}`
+          `dog_images/${auth.currentUser?.uid}/${Timestamp.now()}_${imageFile.name}`
         );
         await uploadBytes(storageRef, imageFile);
         imageUrl = await getDownloadURL(storageRef);
+      }
+
+      if (imageFile && imageFile.size > 5 * 1024 * 1024) {
+        toast.error('Image size exceeds 5MB.'); 
+        setLoading(false);
+        return;
       }
 
       await addDoc(collection(db, 'dogs'), {
@@ -52,7 +59,7 @@ const AddDog: React.FC = () => {
         bio,
         imageUrl: imageUrl || null,
         ownerId: auth.currentUser?.uid,
-        createdAt: new Date()
+        createdAt: Timestamp.now(),
       });
       toast.success('Dog profile added!');
       navigate('/dogs');
