@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, auth, storage } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import { Timestamp } from 'firebase/firestore';
 import toast from 'react-hot-toast';
-import './AddDog.css';
 
 const AddDog: React.FC = () => {
   const [name, setName] = useState('');
@@ -15,6 +13,7 @@ const AddDog: React.FC = () => {
   const [bio, setBio] = useState('');
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const navigate = useNavigate();
 
@@ -24,18 +23,34 @@ const AddDog: React.FC = () => {
     }
   };
 
+  const validateFields = () => {
+    const newErrors: typeof errors = {};
+    if (!name.trim()) newErrors.name = 'Name is required.';
+    if (!breed.trim()) newErrors.breed = 'Breed is required.';
+    if (!age || isNaN(Number(age)) || Number(age) < 0) newErrors.age = 'Valid age is required.';
+    if (!gender) newErrors.gender = 'Please select a gender.';
+    return newErrors;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !breed || !age || !gender) {
-      toast.error('Please fill in all required fields.');
+    const newErrors = validateFields();
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
+
+    if (imageFile && imageFile.size > 5 * 1024 * 1024) {
+      toast.error('Image size exceeds 5MB.');
+      return;
+    }
+
+    setErrors({});
     setLoading(true);
 
     let imageUrl: string | undefined = undefined;
 
     try {
-      // First, upload image if chosen
       if (imageFile) {
         const storageRef = ref(
           storage,
@@ -43,12 +58,6 @@ const AddDog: React.FC = () => {
         );
         await uploadBytes(storageRef, imageFile);
         imageUrl = await getDownloadURL(storageRef);
-      }
-
-      if (imageFile && imageFile.size > 5 * 1024 * 1024) {
-        toast.error('Image size exceeds 5MB.'); 
-        setLoading(false);
-        return;
       }
 
       await addDoc(collection(db, 'dogs'), {
@@ -61,6 +70,7 @@ const AddDog: React.FC = () => {
         ownerId: auth.currentUser?.uid,
         createdAt: Timestamp.now(),
       });
+
       toast.success('Dog profile added!');
       navigate('/dogs');
     } catch {
@@ -70,78 +80,118 @@ const AddDog: React.FC = () => {
   };
 
   return (
-    <div className="add-dog-form-container">
-      <h2>Add a New Dog</h2>
-      <form className="add-dog-form" onSubmit={handleSubmit}>
-        <label>
-          Name<span>*</span>
+    <div className="max-w-4xl mx-auto mt-10 p-6 sm:p-8 bg-white dark:bg-zinc-900 shadow-lg rounded-lg font-sans transition-colors">
+      <h2 className="text-2xl font-semibold text-center text-zinc-800 dark:text-zinc-100 mb-6">Add a New Dog</h2>
+
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {/* Name */}
+        <div>
+          <label className="block font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+            Name<span className="text-red-600">*</span>
+          </label>
           <input
             type="text"
             value={name}
-            maxLength={32}
             onChange={e => setName(e.target.value)}
-            required
+            maxLength={32}
+            className="w-full border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
           />
-        </label>
-        <label>
-          Breed<span>*</span>
+          {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+        </div>
+
+        {/* Breed */}
+        <div>
+          <label className="block font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+            Breed<span className="text-red-600">*</span>
+          </label>
           <input
             type="text"
             value={breed}
-            maxLength={32}
             onChange={e => setBreed(e.target.value)}
-            required
+            maxLength={32}
+            className="w-full border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
           />
-        </label>
-        <label>
-          Age (years)<span>*</span>
+          {errors.breed && <p className="text-red-500 text-sm mt-1">{errors.breed}</p>}
+        </div>
+
+        {/* Age */}
+        <div>
+          <label className="block font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+            Age (years)<span className="text-red-600">*</span>
+          </label>
           <input
             type="number"
             min="0"
             max="25"
             value={age}
             onChange={e => setAge(e.target.value)}
-            required
+            className="w-full border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
           />
-        </label>
-        <label>
-          Gender<span>*</span>
-          <select value={gender} onChange={e => setGender(e.target.value)} required>
+          {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
+        </div>
+
+        {/* Gender */}
+        <div>
+          <label className="block font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+            Gender<span className="text-red-600">*</span>
+          </label>
+          <select
+            value={gender}
+            onChange={e => setGender(e.target.value)}
+            className="w-full border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
+          >
             <option value="">Select gender</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
           </select>
-        </label>
-        <label>
-          Bio/Description
+          {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
+        </div>
+
+        {/* Bio */}
+        <div className="sm:col-span-2">
+          <label className="block font-medium text-zinc-700 dark:text-zinc-300 mb-1">Bio/Description</label>
           <textarea
             value={bio}
             onChange={e => setBio(e.target.value)}
             maxLength={160}
             placeholder="Tell us about your dog..."
+            className="w-full border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 rounded-md px-3 py-2 min-h-[60px] resize-y focus:outline-none focus:ring-2 focus:ring-green-400"
           />
-        </label>
-        <label>
-          Profile Image
+        </div>
+
+        {/* Image Upload */}
+        <div className="sm:col-span-2">
+          <label className="block font-medium text-zinc-700 dark:text-zinc-300 mb-1">Profile Image</label>
           <input
             type="file"
             accept="image/*"
             onChange={handleImageChange}
             disabled={loading}
+            className="w-full text-sm text-zinc-800 dark:text-zinc-100"
           />
-        </label>
+        </div>
+
+        {/* Image Preview */}
         {imageFile && (
-          <div className="add-dog-image-preview-container">
+          <div className="sm:col-span-2 flex justify-center mt-2">
             <img
               src={URL.createObjectURL(imageFile)}
               alt="Preview"
-              className="add-dog-image-preview"
+              className="w-28 h-28 object-cover rounded-full shadow-md border-2 border-green-100 dark:border-green-600"
             />
           </div>
         )}
-        <button className="add-dog-btn" type="submit" disabled={loading}>
-          {loading ? 'Adding...' : 'Add Dog'}
-        </button>
+
+        {/* Submit Button */}
+        <div className="sm:col-span-2 mt-2">
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full sm:w-auto px-6 py-2 rounded-md font-semibold text-white bg-gradient-to-r from-green-400 to-blue-600 hover:from-blue-600 hover:to-green-400 transition disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {loading ? 'Adding...' : 'Add Dog'}
+          </button>
+        </div>
       </form>
     </div>
   );

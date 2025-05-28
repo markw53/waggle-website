@@ -8,92 +8,29 @@ import Dashboard from './components/Dashboard';
 import RequireAuth from './routes/RequireAuth';
 import RedirectIfAuth from './routes/RedirectIfAuth';
 import DogSearch from './components/DogSearch';
-import AddMatch from './pages/AddMatch';        // <--- NEW
-import MatchesList from './pages/MatchesList'; 
-import AddDog from './pages/AddDog'; // <--- NEW
+import AddDog from './pages/AddDog';
+import AddMatch from './pages/AddMatch';
+import MatchesList from './pages/MatchesList';
 import { Toaster } from 'react-hot-toast';
-import './App.css';
+import './app/globals.css'; // ← make sure Tailwind is configured here
 
 const App: React.FC = () => (
-  <div className="main-bg">
+  <div className="min-h-screen w-full bg-cover bg-center bg-fixed bg-[url('/waggle-background.png')] dark:bg-zinc-900 flex flex-col">
     <BrowserRouter>
       <Navbar />
-      <div className="center-content">
+      <main className="flex-1 flex justify-center items-center w-full px-4">
         <Routes>
-          <Route
-            path="/"
-            element={
-              <RedirectIfAuth>
-                <LoginForm />
-              </RedirectIfAuth>
-            }
-          />
-          <Route
-            path="/register"
-            element={
-              <RedirectIfAuth>
-                <RegisterForm />
-              </RedirectIfAuth>
-            }
-          />
-          <Route
-            path="/reset-password"
-            element={
-              <RedirectIfAuth>
-                <ResetPasswordForm />
-              </RedirectIfAuth>
-            }
-          />
-
-          <Route
-            path="/dogs"
-            element={
-              <RequireAuth>
-                <DogSearch />
-              </RequireAuth>
-            }
-          />
-
-          <Route
-            path="/add-dog"
-            element={
-              <RequireAuth>
-                <AddDog />
-              </RequireAuth>
-            }
-          />
-
-          <Route
-            path="/dashboard"
-            element={
-              <RequireAuth>
-                <Dashboard />
-              </RequireAuth>
-            }
-          />
-
-          {/* NEW: Add Match */}
-          <Route
-            path="/add-match"
-            element={
-              <RequireAuth>
-                <AddMatch />
-              </RequireAuth>
-            }
-          />
-          {/* NEW: Matches List */}
-          <Route
-            path="/matches"
-            element={
-              <RequireAuth>
-                <MatchesList />
-              </RequireAuth>
-            }
-          />
-
+          <Route path="/" element={<RedirectIfAuth><LoginForm /></RedirectIfAuth>} />
+          <Route path="/register" element={<RedirectIfAuth><RegisterForm /></RedirectIfAuth>} />
+          <Route path="/reset-password" element={<RedirectIfAuth><ResetPasswordForm /></RedirectIfAuth>} />
+          <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+          <Route path="/dogs" element={<RequireAuth><DogSearch /></RequireAuth>} />
+          <Route path="/add-dog" element={<RequireAuth><AddDog /></RequireAuth>} />
+          <Route path="/add-match" element={<RequireAuth><AddMatch /></RequireAuth>} />
+          <Route path="/matches" element={<RequireAuth><MatchesList /></RequireAuth>} />
           <Route path="*" element={<Navigate to="/dogs" />} />
         </Routes>
-      </div>
+      </main>
       <Footer />
       <Toaster position="top-center" />
     </BrowserRouter>
