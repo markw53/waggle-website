@@ -2,7 +2,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useDogs } from '../hooks/useDogs';
 import DogCard from './DogCard';
-import './DogSearch.css';
+import { debounce } from 'lodash';
 
 const SIZES = ['small', 'medium', 'large'];
 const ENERGIES = ['low', 'medium', 'high'];
@@ -20,103 +20,102 @@ const DogSearch: React.FC = () => {
   const [gender, setGender] = useState('');
   const [age, setAge] = useState('');
 
-  // Optionally fetch on mount or when needed
   useEffect(() => { fetchDogs(); }, [fetchDogs]);
 
-  const breeds = useMemo(
-    () => [...new Set(dogs.map(d => d.breed).filter(Boolean))],
-    [dogs]
-  );
+  const breeds = useMemo(() => {
+    return [...new Set(dogs.map(d => d.breed).filter(Boolean))].sort();
+  }, [dogs]);
 
-  // Composite filter
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+
+  useEffect(() => {
+    const debounced = debounce((val: string) => setDebouncedSearch(val), 300);
+    debounced(search);
+    return () => debounced.cancel();
+  }, [search]);
+
   const filtered = useMemo(() => 
-    dogs.filter(dog => {
-      return (
-        (!search || dog.name.toLowerCase().includes(search.toLowerCase()))
-        && (!breed || dog.breed === breed)
-        && (!size || dog.traits.size === size)
-        && (!energy || dog.traits.energy === energy)
-        && (!friendliness || dog.traits.friendliness === friendliness)
-        && (!gender || dog.gender === gender)
-        && (!age || dog.age === Number(age))
-      );
-    }), [dogs, search, breed, size, energy, friendliness, gender, age]
+    dogs.filter(dog => (
+      (!debouncedSearch || dog.name.toLowerCase().includes(debouncedSearch.toLowerCase())) &&
+      (!breed || dog.breed === breed) &&
+      (!size || dog.traits.size === size) &&
+      (!energy || dog.traits.energy === energy) &&
+      (!friendliness || dog.traits.friendliness === friendliness) &&
+      (!gender || dog.gender === gender) &&
+      (!age || dog.age === Number(age))
+    )), [dogs, debouncedSearch, breed, size, energy, friendliness, gender, age]
   );
 
   return (
-    <div className="dogsearch-box">
-      <h2>Browse and Search Dogs</h2>
-      <form className="dogsearch-form" onSubmit={e => e.preventDefault()}>
+    <div className="bg-orange-50 max-w-2xl mx-auto my-10 p-6 rounded-xl shadow-lg">
+      <h2 className="text-2xl font-bold mb-6 text-center">Browse and Search Dogs</h2>
+
+      <form className="flex flex-wrap justify-center gap-4 mb-6" onSubmit={e => e.preventDefault()}>
         <input
           type="text"
           placeholder="Search by name..."
           value={search}
           onChange={e => setSearch(e.target.value)}
+          className="min-w-[140px] px-3 py-2 border border-orange-300 rounded-md"
         />
-        <label htmlFor="breed-select" className="visually-hidden">Breed</label>
         <select
-          id="breed-select"
           value={breed}
           onChange={e => setBreed(e.target.value)}
-          aria-label="Breed"
+          className="min-w-[140px] px-3 py-2 border border-orange-300 rounded-md"
         >
           <option value="">All Breeds</option>
           {breeds.map(b => <option key={b} value={b}>{b}</option>)}
         </select>
-        <label htmlFor="size-select" className="visually-hidden">Size</label>
         <select
-          id="size-select"
           value={size}
           onChange={e => setSize(e.target.value)}
-          aria-label="Size"
+          className="min-w-[120px] px-3 py-2 border border-orange-300 rounded-md"
         >
           <option value="">Any Size</option>
           {SIZES.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
-        <label htmlFor="energy-select" className="visually-hidden">Energy</label>
         <select
-          id="energy-select"
           value={energy}
           onChange={e => setEnergy(e.target.value)}
-          aria-label="Energy"
+          className="min-w-[120px] px-3 py-2 border border-orange-300 rounded-md"
         >
           <option value="">Any Energy</option>
           {ENERGIES.map(e => <option key={e} value={e}>{e}</option>)}
         </select>
-        <label htmlFor="friendliness-select" className="visually-hidden">Friendliness</label>
         <select
-          id="friendliness-select"
           value={friendliness}
           onChange={e => setFriendliness(e.target.value)}
-          aria-label="Friendliness"
+          className="min-w-[120px] px-3 py-2 border border-orange-300 rounded-md"
         >
           <option value="">Any Friendliness</option>
           {FRIENDLINESS.map(f => <option key={f} value={f}>{f}</option>)}
         </select>
-        <label htmlFor="gender-select" className="visually-hidden">Gender</label>
         <select
-          id="gender-select"
           value={gender}
           onChange={e => setGender(e.target.value)}
-          aria-label="Gender"
+          className="min-w-[120px] px-3 py-2 border border-orange-300 rounded-md"
         >
           <option value="">Any Gender</option>
           {GENDERS.map(g => <option key={g} value={g}>{g}</option>)}
         </select>
-        <input
-          type="number"
-          min={1}
-          max={20}
-          placeholder="Age"
-          value={age}
-          onChange={e => setAge(e.target.value)}
-        />
+        <div className="w-full max-w-xs flex flex-col items-center">
+          <input
+            type="range"
+            min={1}
+            max={20}
+            value={age}
+            onChange={e => setAge(e.target.value)}
+            className="w-full"
+          />
+          {age && <div className="text-sm text-gray-700 mt-1">Age: {age}</div>}
+        </div>
       </form>
-      <div className="dogsearch-results">
+
+      <div className="space-y-4">
         {loading ? (
-          <div>Loading...</div>
+          <div className="text-center text-gray-500">Loading...</div>
         ) : filtered.length === 0 ? (
-          <div className="dogsearch-empty">No dogs match your criteria.</div>
+          <div className="text-center text-orange-700 font-medium">No dogs match your criteria.</div>
         ) : (
           filtered.map(dog => <DogCard key={dog.id} dog={dog} />)
         )}
