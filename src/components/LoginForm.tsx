@@ -14,14 +14,32 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
 
   const handleAuth = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      toast.success('Login successful! Welcome to Waggle.');
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'An unexpected error occurred.');
+  e.preventDefault();
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    toast.success('Login successful! Welcome to Waggle.');
+  } catch (err) {
+    if (err instanceof Error && "code" in err) {
+      console.error("Firebase error:", err); // Log entire error
+      const errorCode = (err as { code: string }).code;
+      switch (errorCode) {
+        case "auth/invalid-email":
+          toast.error("Invalid email address.");
+          break;
+        case "auth/user-not-found":
+          toast.error("No user found with this email.");
+          break;
+        case "auth/wrong-password":
+          toast.error("Incorrect password.");
+          break;
+        default:
+          toast.error("Login failed. " + errorCode);
+      }
+    } else {
+      toast.error("An unexpected error occurred.");
     }
-  };
+  }
+};
 
   const handleGoogle = async () => {
     try {
