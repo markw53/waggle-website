@@ -12,7 +12,6 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from '../components/ui/dropdown-menu';
-// import { Button } from '../components/ui/button';
 import { useAuth } from '../hooks/auth';
 
 export default function Navbar() {
@@ -37,7 +36,7 @@ export default function Navbar() {
   }, [theme]);
 
   return (
-    <nav className="px-6 py-4 border-b border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 flex justify-between items-center shadow-sm">
+    <nav className="px-6 py-4 border-b border-border bg-background text-foreground flex justify-between items-center shadow-sm">
       <span className="text-xl font-bold text-[#573a20] dark:text-amber-200">
         Welcome to Waggle
       </span>
@@ -53,11 +52,17 @@ export default function Navbar() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="cursor-pointer h-9 w-9">
-              <AvatarImage src="https://api.dicebear.com/7.x/fun-emoji/svg?seed=waggle" alt="User" />
+              <AvatarImage
+                src="https://api.dicebear.com/7.x/fun-emoji/svg?seed=waggle"
+                alt="User"
+              />
               <AvatarFallback>U</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent
+            align="end"
+            className="bg-popover text-popover-foreground border border-border shadow-md rounded-md w-56"
+          >
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuItem asChild>
               <Link to="/profile">Profile</Link>
@@ -66,16 +71,10 @@ export default function Navbar() {
             <DropdownMenuSeparator />
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem onClick={() => setTheme('light')}>
-                  Light
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme('dark')}>
-                  Dark
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme('system')}>
-                  System
-                </DropdownMenuItem>
+              <DropdownMenuSubContent className="bg-popover text-popover-foreground border border-border">
+                <DropdownMenuItem onClick={() => setTheme('light')}>Light</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme('dark')}>Dark</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme('system')}>System</DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
           </DropdownMenuContent>
@@ -84,3 +83,5 @@ export default function Navbar() {
     </nav>
   );
 }
+// This code defines a Navbar component for a web application using React and TypeScript.
+// The Navbar includes a welcome message, a link to the dashboard, and a user avatar with a dropdown menu for account options.      
