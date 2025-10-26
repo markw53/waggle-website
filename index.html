@@ -6,13 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Waggle for dogs!</title>
   </head>
-    <body class="no-transition">
+  <body class="no-transition">
     <div id="root"></div>
-      <script>
-        // Remove no-transition class after page loads
-        window.addEventListener('load', () => {
-          document.body.classList.remove('no-transition');
-        });
-      </script>
-    </body>
+    <script type="module" src="/src/main.tsx"></script>  <!-- ✅ ADD THIS LINE! -->
+    <script>
+      // Remove no-transition class after page loads
+      window.addEventListener('load', () => {
+        document.body.classList.remove('no-transition');
+      });
+    </script>
+  </body>
 </html>

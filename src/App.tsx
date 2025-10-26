@@ -1,3 +1,5 @@
+console.log('App is rendering');
+
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -12,7 +14,6 @@ import AddDog from './pages/AddDog';
 import AddMatch from './pages/AddMatch';
 import MatchesList from './pages/MatchesList';
 import { Toaster } from 'react-hot-toast';
-import './app/globals.css'; // ← make sure Tailwind is configured here
 
 const App: React.FC = () => (
   <div className="min-h-screen w-full bg-cover bg-center bg-fixed bg-[url('/waggle-background.png')] dark:bg-zinc-900 flex flex-col">
