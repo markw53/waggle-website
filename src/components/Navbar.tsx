@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import {
   DropdownMenu,
@@ -13,30 +12,14 @@ import {
   DropdownMenuSubContent,
 } from '../components/ui/dropdown-menu';
 import { useAuth } from '../hooks/auth';
+import { useTheme } from '../hooks/useTheme'; // Updated import
 
 export default function Navbar() {
   const { logout } = useAuth();
-  const [theme, setTheme] = useState<'light' | 'dark' | 'system'>(() => {
-    const stored = localStorage.getItem('theme') as 'light' | 'dark' | null;
-    if (stored) return stored;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  });
-
-  useEffect(() => {
-    const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
-    if (theme === 'system') {
-      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      root.classList.add(isDark ? 'dark' : 'light');
-      localStorage.removeItem('theme');
-    } else {
-      root.classList.add(theme);
-      localStorage.setItem('theme', theme);
-    }
-  }, [theme]);
+  const { theme, setTheme } = useTheme();
 
   return (
-    <nav className="px-6 py-4 border-b border-border bg-background text-foreground flex justify-between items-center shadow-sm">
+    <nav className="px-6 py-4 border-b border-border bg-white dark:bg-zinc-900 text-foreground flex justify-between items-center shadow-sm">
       <span className="text-xl font-bold text-[#573a20] dark:text-amber-200">
         Welcome to Waggle
       </span>
@@ -61,20 +44,44 @@ export default function Navbar() {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="bg-popover text-popover-foreground border border-border shadow-md rounded-md w-56"
+            sideOffset={5}
+            className="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700 shadow-md rounded-md w-56 z-50"
           >
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-zinc-200 dark:bg-zinc-700" />
             <DropdownMenuItem asChild>
-              <Link to="/profile">Profile</Link>
+              <Link to="/profile" className="cursor-pointer">Profile</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
-            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={logout} className="cursor-pointer">
+              Logout
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-zinc-200 dark:bg-zinc-700" />
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="bg-popover text-popover-foreground border border-border">
-                <DropdownMenuItem onClick={() => setTheme('light')}>Light</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme('dark')}>Dark</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme('system')}>System</DropdownMenuItem>
+              <DropdownMenuSubTrigger className="cursor-pointer">
+                Theme: {theme.charAt(0).toUpperCase() + theme.slice(1)}
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent 
+                className="bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-700 shadow-md rounded-md z-50"
+                sideOffset={8}
+              >
+                <DropdownMenuItem 
+                  onClick={() => setTheme('light')} 
+                  className="cursor-pointer"
+                >
+                  ☀️ Light
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => setTheme('dark')} 
+                  className="cursor-pointer"
+                >
+                  🌙 Dark
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => setTheme('system')} 
+                  className="cursor-pointer"
+                >
+                  💻 System
+                </DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
           </DropdownMenuContent>
@@ -83,5 +90,3 @@ export default function Navbar() {
     </nav>
   );
 }
-// This code defines a Navbar component for a web application using React and TypeScript.
-// The Navbar includes a welcome message, a link to the dashboard, and a user avatar with a dropdown menu for account options.      
