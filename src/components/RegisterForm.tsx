@@ -31,22 +31,28 @@ const RegisterForm: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 bg-background">
-      <Card className="w-full max-w-md shadow-lg border border-border">        <CardHeader>
-        <CardTitle className="text-center text-2xl">Register for Waggle</CardTitle>
+    <div className="flex items-center justify-center min-h-screen px-4">
+      <Card className="w-full max-w-md shadow-lg border border-zinc-200 dark:border-zinc-700 bg-white/95 dark:bg-zinc-800/95 backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle className="text-center text-2xl text-[#573a1c] dark:text-amber-200">
+            Register for Waggle
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleRegister} className="space-y-6">
             <EmailInput email={email} setEmail={setEmail} />
-            <PasswordInput
-              password={password}
-              setPassword={setPassword}
-            />
-            <Button type="submit" className="w-full">
+            <PasswordInput password={password} setPassword={setPassword} />
+            <Button 
+              type="submit" 
+              className="w-full bg-[#8c5628] dark:bg-amber-700 text-white hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-medium"
+            >
               Register
             </Button>
             <div className="text-center text-sm">
-              <Link to="/" className="text-primary hover:underline">
+              <Link 
+                to="/" 
+                className="text-[#5d4631] dark:text-amber-300 hover:text-[#8c5628] dark:hover:text-amber-200 underline transition-colors"
+              >
                 Already have an account? Login
               </Link>
             </div>
@@ -64,9 +70,14 @@ interface EmailInputProps {
 
 const EmailInput: React.FC<EmailInputProps> = ({ email, setEmail }) => (
   <div className="space-y-2">
-    <Label htmlFor="email">Email</Label>
+    <Label 
+      htmlFor="email"
+      className="text-gray-900 dark:text-gray-100 font-medium"
+    >
+      Email
+    </Label>
     <Input
-      className='text-base' 
+      className="text-base bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 border-zinc-300 dark:border-zinc-600 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-[#8c5628] dark:focus:ring-amber-500 focus:border-transparent" 
       id="email"
       type="email"
       placeholder="you@example.com"
@@ -84,12 +95,18 @@ interface PasswordInputProps {
 
 const PasswordInput: React.FC<PasswordInputProps> = ({ password, setPassword }) => (
   <div className="space-y-2">
-    <Label htmlFor="password">Password</Label>
+    <Label 
+      htmlFor="password"
+      className="text-gray-900 dark:text-gray-100 font-medium"
+    >
+      Password
+    </Label>
     <Input
-      className='text-base'
+      className="text-base bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 border-zinc-300 dark:border-zinc-600 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-[#8c5628] dark:focus:ring-amber-500 focus:border-transparent"
       id="password"
       type="password"
       placeholder="Enter your password"
+      autoComplete="new-password"
       value={password}
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
       required

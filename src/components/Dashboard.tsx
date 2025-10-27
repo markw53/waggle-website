@@ -1,67 +1,85 @@
 import { useAuth } from '../hooks/auth';
-import { useNavigate, Link } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      toast.success('Logged out!');
-      navigate('/');
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        toast.error(err.message || 'Logout failed.');
-      } else {
-        toast.error('Logout failed.');
-      }
-    }
-  };
+  const { user } = useAuth();
 
   return (
-    <div className="max-w-lg mx-auto p-8 bg-white dark:bg-neutral-900 rounded-xl shadow-xl flex flex-col items-center">
-      <h2 className="text-2xl font-semibold text-[#573a1c] dark:text-amber-300">Welcome to Waggle!</h2>
-      <p className="my-5 text-lg text-[#563708] dark:text-neutral-300">
-        Signed in as <b>{user?.email}</b>
-      </p>
-
-      <div className="w-full flex flex-col gap-4 mb-8">
-        <Link
-          to="/dogs"
-          className="text-[#236035] dark:text-green-300 bg-[#f3fde7] dark:bg-green-900/40 hover:bg-[#e1f7ce] dark:hover:bg-green-800/50 transition-colors px-4 py-3 rounded-lg font-medium text-lg shadow-sm flex items-center justify-center gap-2"
-        >
-          <span role="img" aria-label="Dogs">🐶</span> View/Search Dogs
-        </Link>
-        <Link
-          to="/add-dog"
-          className="text-[#236035] dark:text-green-300 bg-[#f3fde7] dark:bg-green-900/40 hover:bg-[#e1f7ce] dark:hover:bg-green-800/50 transition-colors px-4 py-3 rounded-lg font-medium text-lg shadow-sm flex items-center justify-center gap-2"
-        >
-          <span role="img" aria-label="Add Dog">➕🐕</span> Add a Dog
-        </Link>
-        <Link
-          to="/add-match"
-          className="text-[#236035] dark:text-green-300 bg-[#f3fde7] dark:bg-green-900/40 hover:bg-[#e1f7ce] dark:hover:bg-green-800/50 transition-colors px-4 py-3 rounded-lg font-medium text-lg shadow-sm flex items-center justify-center gap-2"
-        >
-          <span role="img" aria-label="Add Match">🤝</span> Add a Match
-        </Link>
-        <Link
-          to="/matches"
-          className="text-[#236035] dark:text-green-300 bg-[#f3fde7] dark:bg-green-900/40 hover:bg-[#e1f7ce] dark:hover:bg-green-800/50 transition-colors px-4 py-3 rounded-lg font-medium text-lg shadow-sm flex items-center justify-center gap-2"
-        >
-          <span role="img" aria-label="View Matches">📋</span> View Matches
-        </Link>
+    <div className="max-w-2xl mx-auto p-8 bg-white/95 dark:bg-zinc-800/95 rounded-xl shadow-xl backdrop-blur-sm">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold text-[#573a1c] dark:text-amber-200 mb-2">
+          Welcome to Waggle! 🐾
+        </h2>
+        <p className="text-lg text-gray-700 dark:text-gray-300">
+          Signed in as <span className="font-semibold text-[#573a1c] dark:text-amber-300">{user?.email}</span>
+        </p>
       </div>
 
-      <button
-        onClick={handleLogout}
-        className="mt-4 px-6 py-2 bg-[#a83824] hover:bg-[#8c2c17] text-white rounded-md font-semibold transition-opacity hover:opacity-90"
-      >
-        Log Out
-      </button>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <DashboardLink
+          to="/dogs"
+          icon="🐶"
+          label="View/Search Dogs"
+          description="Browse available dogs"
+        />
+        <DashboardLink
+          to="/add-dog"
+          icon="➕"
+          label="Add a Dog"
+          description="Register a new dog"
+        />
+        <DashboardLink
+          to="/add-match"
+          icon="💕"
+          label="Add a Match"
+          description="Create a breeding match"
+        />
+        <DashboardLink
+          to="/matches"
+          icon="📋"
+          label="View Matches"
+          description="See all your matches"
+        />
+      </div>
+
+      <div className="mt-8 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+        <p className="text-sm text-amber-900 dark:text-amber-200 text-center">
+          💡 <span className="font-medium">Tip:</span> Use the search feature to find the perfect match for your dog!
+        </p>
+      </div>
     </div>
   );
 };
+
+interface DashboardLinkProps {
+  to: string;
+  icon: string;
+  label: string;
+  description: string;
+}
+
+const DashboardLink: React.FC<DashboardLinkProps> = ({ to, icon, label, description }) => (
+  <Link
+    to={to}
+    className="group relative overflow-hidden bg-gradient-to-br from-[#f3fde7] to-[#e8f5d8] dark:from-green-900/30 dark:to-green-800/20 hover:from-[#e1f7ce] hover:to-[#d4f0bd] dark:hover:from-green-800/40 dark:hover:to-green-700/30 transition-all duration-300 px-6 py-5 rounded-xl shadow-md hover:shadow-lg border border-green-200 dark:border-green-800/50"
+  >
+    <div className="flex items-start gap-4">
+      <span className="text-4xl" role="img" aria-label={label}>
+        {icon}
+      </span>
+      <div className="flex-1">
+        <h3 className="text-lg font-semibold text-[#236035] dark:text-green-300 mb-1 group-hover:text-[#1a4828] dark:group-hover:text-green-200 transition-colors">
+          {label}
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          {description}
+        </p>
+      </div>
+      <span className="text-[#236035] dark:text-green-300 transform group-hover:translate-x-1 transition-transform">
+        →
+      </span>
+    </div>
+  </Link>
+);
 
 export default Dashboard;
