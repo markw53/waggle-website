@@ -38,47 +38,84 @@ const AddDog: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const newErrors = validateFields();
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
+  e.preventDefault();
+  console.log('Form submitted');
+  
+  const newErrors = validateFields();
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    console.log('Validation errors:', newErrors);
+    return;
+  }
+
+  if (!auth.currentUser) {
+    toast.error('You must be logged in to add a dog.');
+    navigate('/');
+    return;
+  }
+
+  setErrors({});
+  setLoading(true);
+
+  let imageUrl: string | undefined = undefined;
+
+  try {
+    // Upload image if present
+    if (imageFile) {
+      console.log('Uploading image...');
+      const storageRef = ref(
+        storage,
+        `dog_images/${auth.currentUser.uid}/${Date.now()}_${imageFile.name}`
+      );
+      await uploadBytes(storageRef, imageFile);
+      imageUrl = await getDownloadURL(storageRef);
+      console.log('Image uploaded:', imageUrl);
     }
 
-    setErrors({});
-    setLoading(true);
+    // Add document to Firestore
+    console.log('Adding dog to Firestore...');
+    const docRef = await addDoc(collection(db, 'dogs'), {
+      name: name.trim(),
+      breed: breed.trim(),
+      age: Number(age),
+      gender,
+      bio: bio.trim(),
+      imageUrl: imageUrl || null,
+      ownerId: auth.currentUser.uid,
+      createdAt: Timestamp.now(),
+    });
+    console.log('Dog added with ID:', docRef.id);
 
-    let imageUrl: string | undefined = undefined;
+    toast.success('Dog profile added successfully! 🐶');
+    navigate('/dogs');
+  } catch (error: unknown) {
+    console.error('Full error object:', error);
 
-    try {
-      if (imageFile) {
-        const storageRef = ref(
-          storage,
-          `dog_images/${auth.currentUser?.uid}/${Timestamp.now()}_${imageFile.name}`
-        );
-        await uploadBytes(storageRef, imageFile);
-        imageUrl = await getDownloadURL(storageRef);
-      }
+    let errorCode = '';
+    let errorMessage = '';
 
-      await addDoc(collection(db, 'dogs'), {
-        name,
-        breed,
-        age: Number(age),
-        gender,
-        bio,
-        imageUrl: imageUrl || null,
-        ownerId: auth.currentUser?.uid,
-        createdAt: Timestamp.now(),
-      });
-
-      toast.success('Dog profile added successfully! 🐶');
-      navigate('/dogs');
-    } catch (error) {
-      console.error('Error adding dog:', error);
-      toast.error('Failed to add dog profile. Please try again.');
+    if (typeof error === 'object' && error !== null) {
+      errorCode = (error as { code?: string }).code ?? '';
+      errorMessage = (error as { message?: string }).message ?? '';
     }
+
+    console.error('Error code:', errorCode);
+    console.error('Error message:', errorMessage);
+
+    // More specific error messages
+    if (errorCode === 'storage/unauthorized') {
+      toast.error('Storage permission denied. Please check Firebase Storage rules.');
+    } else if (errorCode === 'permission-denied') {
+      toast.error('Permission denied. Please check Firestore rules.');
+    } else if (errorMessage?.includes('storage')) {
+      toast.error('Storage error. Make sure Firebase Storage is enabled.');
+    } else {
+      toast.error(`Failed to add dog: ${errorMessage || 'Unknown error'}`);
+    }
+  } finally {
     setLoading(false);
-  };
+  }
+};
 
   return (
     <div className="max-w-4xl mx-auto mt-10 mb-10 p-6 sm:p-8 bg-white/95 dark:bg-zinc-800/95 shadow-xl rounded-xl backdrop-blur-sm border border-zinc-200 dark:border-zinc-700">

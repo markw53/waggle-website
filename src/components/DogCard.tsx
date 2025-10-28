@@ -1,23 +1,62 @@
 import { Dog } from '../types/dog';
 
 export const DogCard: React.FC<{ dog: Dog }> = ({ dog }) => (
-  <div className="bg-[#fffdfa] dark:bg-neutral-900 border border-gray-300 dark:border-neutral-700 p-5 rounded-lg shadow-md mb-4 max-w-md mx-auto">
-    <div className="flex items-center">
-      <img
-        src={dog.photos?.[0]}
-        alt={dog.name}
-        className="w-[70px] h-[70px] rounded-lg object-cover mr-5 bg-[#ececec] dark:bg-neutral-700"
-      />
-      <div>
-        <h3 className="text-lg font-semibold text-neutral-800 dark:text-white">{dog.name}</h3>
-        <p className="text-sm text-neutral-600 dark:text-neutral-300">
-          {dog.breed}, {dog.age}y, {dog.gender}
-        </p>
+  <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+    <div className="flex items-start gap-4">
+      {/* Dog Image */}
+      <div className="flex-shrink-0">
+        {dog.imageUrl ? (
+          <img
+            src={dog.imageUrl}
+            alt={`${dog.name} the ${dog.breed}`}
+            className="w-20 h-20 rounded-full object-cover border-2 border-[#8c5628] dark:border-amber-600"
+          />
+        ) : (
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-3xl">
+            🐕
+          </div>
+        )}
+      </div>
+
+      {/* Dog Info */}
+      <div className="flex-1 min-w-0">
+        <h3 className="text-xl font-bold text-[#573a1c] dark:text-amber-200 mb-1">
+          {dog.name}
+        </h3>
+        <div className="flex flex-wrap gap-2 text-sm text-gray-600 dark:text-gray-400 mb-3">
+          <span className="inline-flex items-center gap-1">
+            🐾 {dog.breed}
+          </span>
+          <span>•</span>
+          <span className="inline-flex items-center gap-1">
+            🎂 {dog.age} {dog.age === 1 ? 'year' : 'years'}
+          </span>
+          <span>•</span>
+          <span className="inline-flex items-center gap-1">
+            {dog.gender === 'Male' ? '♂️' : '♀️'} {dog.gender}
+          </span>
+        </div>
+
+        {/* Bio */}
+        {dog.bio && (
+          <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
+            {dog.bio}
+          </p>
+        )}
       </div>
     </div>
-    <div className="pt-4 pl-[80px] text-[0.96rem] text-neutral-700 dark:text-neutral-200">
-      <p><b>Traits:</b> {dog.traits.size}, {dog.traits.energy} energy, friendliness: {dog.traits.friendliness}</p>
-      <p>{dog.description}</p>
+
+    {/* Optional: View Details Button */}
+    <div className="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-700">
+      <button
+        className="text-sm text-[#8c5628] dark:text-amber-400 hover:text-[#6d4320] dark:hover:text-amber-300 font-medium transition-colors"
+        onClick={() => {
+          // Add view details functionality later
+          console.log('View details for:', dog.name);
+        }}
+      >
+        View Full Profile →
+      </button>
     </div>
   </div>
 );
