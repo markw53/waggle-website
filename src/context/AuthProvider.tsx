@@ -1,7 +1,7 @@
 // src/context/AuthProvider.tsx
 import React, { useEffect, useState } from 'react';
+import type { User } from 'firebase/auth';
 import {
-  User,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
@@ -10,8 +10,8 @@ import {
   signInWithPopup,
   GoogleAuthProvider
 } from 'firebase/auth';
-import { auth } from '../firebase';
-import { AuthContext } from './AuthContext';
+import { auth } from '@/firebase';
+import { AuthContext } from '@/context/AuthContext';
 
 export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);

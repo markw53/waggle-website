@@ -1,5 +1,5 @@
 // src/components/DogSearch.tsx
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useDogs } from '../hooks/useDogs';
 import DogCard from './DogCard';
 import { debounce } from 'lodash';
@@ -14,10 +14,16 @@ const DogSearch: React.FC = () => {
   const [gender, setGender] = useState('');
   const [minAge, setMinAge] = useState('');
   const [maxAge, setMaxAge] = useState('');
+  const [initialLoad, setInitialLoad] = useState(true);
 
-  useEffect(() => { 
-    fetchDogs(); 
-  }, [fetchDogs]);
+  // Fetch dogs only once on mount
+  useEffect(() => {
+    const loadDogs = async () => {
+      await fetchDogs();
+      setInitialLoad(false);
+    };
+    loadDogs();
+  }, [fetchDogs]); // Added fetchDogs to dependencies
 
   const breeds = useMemo(() => {
     return [...new Set(dogs.map(d => d.breed).filter(Boolean))].sort();
@@ -58,13 +64,28 @@ const DogSearch: React.FC = () => {
     [dogs, debouncedSearch, breed, gender, minAge, maxAge]
   );
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setSearch('');
     setBreed('');
     setGender('');
     setMinAge('');
     setMaxAge('');
-  };
+  }, []);
+
+  // Show initial loading spinner
+  if (initialLoad && loading) {
+    return (
+      <div className="max-w-6xl mx-auto my-10 p-6 sm:p-8 bg-white/95 dark:bg-zinc-800/95 rounded-xl shadow-xl backdrop-blur-sm border border-zinc-200 dark:border-zinc-700">
+        <div className="flex flex-col items-center justify-center py-24" role="status" aria-live="polite">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#8c5628] dark:border-amber-500 mb-6" aria-hidden="true"></div>
+          <h2 className="text-2xl font-bold text-[#573a1c] dark:text-amber-200 mb-2">
+            Loading Dogs...
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400">Please wait while we fetch all available dogs</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto my-10 p-6 sm:p-8 bg-white/95 dark:bg-zinc-800/95 rounded-xl shadow-xl backdrop-blur-sm border border-zinc-200 dark:border-zinc-700">
@@ -180,22 +201,15 @@ const DogSearch: React.FC = () => {
 
         {/* Results count */}
         <div className="text-sm text-gray-600 dark:text-gray-400 text-center">
-          {!loading && (
-            <span>
-              Showing <strong className="text-[#573a1c] dark:text-amber-300">{filtered.length}</strong> of <strong className="text-[#573a1c] dark:text-amber-300">{dogs.length}</strong> dogs
-            </span>
-          )}
+          <span>
+            Showing <strong className="text-[#573a1c] dark:text-amber-300">{filtered.length}</strong> of <strong className="text-[#573a1c] dark:text-amber-300">{dogs.length}</strong> dogs
+          </span>
         </div>
       </form>
 
       {/* Results */}
-      <div className="space-y-4">
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-12" role="status" aria-live="polite">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8c5628] dark:border-amber-500 mb-4" aria-hidden="true"></div>
-            <p className="text-gray-600 dark:text-gray-400">Loading dogs...</p>
-          </div>
-        ) : filtered.length === 0 ? (
+      <div className="min-h-[400px]">
+        {filtered.length === 0 ? (
           <div className="text-center py-12" role="status">
             <div className="text-6xl mb-4" aria-hidden="true">🐕</div>
             <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">

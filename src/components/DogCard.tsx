@@ -1,4 +1,5 @@
-import { Dog } from '../types/dog';
+import { Link } from 'react-router-dom';
+import type { Dog } from '@/types/dog';
 
 export const DogCard: React.FC<{ dog: Dog }> = ({ dog }) => (
   <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
@@ -48,15 +49,12 @@ export const DogCard: React.FC<{ dog: Dog }> = ({ dog }) => (
 
     {/* Optional: View Details Button */}
     <div className="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-700">
-      <button
+      <Link
+        to={`/dogs/${dog.id}`}
         className="text-sm text-[#8c5628] dark:text-amber-400 hover:text-[#6d4320] dark:hover:text-amber-300 font-medium transition-colors"
-        onClick={() => {
-          // Add view details functionality later
-          console.log('View details for:', dog.name);
-        }}
       >
         View Full Profile →
-      </button>
+      </Link>
     </div>
   </div>
 );

@@ -4,9 +4,9 @@ import {
   collection, getDocs, doc, addDoc,
   updateDoc, deleteDoc, query, where
 } from 'firebase/firestore';
-import { db } from '../firebase';
-import { Dog } from '../types/dog';
-import { useAuth } from './auth';
+import { db } from '@/firebase';
+import type { Dog } from '@/types/dog';
+import { useAuth } from '@/hooks/auth';
 
 export function useDogs(ownedOnly: boolean = false) {
   const { user } = useAuth();
