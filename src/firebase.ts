@@ -12,7 +12,14 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
+if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+  throw new Error('Missing Firebase configuration. Please check your .env file.');
+}
+
 const app = initializeApp(firebaseConfig);
+
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 export const db = getFirestore(app);
+
+export default app;

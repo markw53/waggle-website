@@ -1,6 +1,6 @@
 console.log('App is rendering');
 
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from '@components/Navbar';
 import Footer from '@components/Footer';
 import LoginForm from '@components/LoginForm';
@@ -16,6 +16,7 @@ import UserProfilePage from '@/pages/UserProfile';
 import AddDog from '@pages/AddDog';
 import AddMatch from '@pages/AddMatch';
 import MatchesList from '@pages/MatchesList';
+import NotFound from './pages/NotFound';
 import { Toaster } from 'react-hot-toast';
 
 const App: React.FC = () => (
@@ -35,7 +36,7 @@ const App: React.FC = () => (
           <Route path="/matches" element={<RequireAuth><MatchesList /></RequireAuth>} />
           <Route path="/dogs/:id" element={<RequireAuth><DogProfile /></RequireAuth>} />
           <Route path="/users/:id" element={<RequireAuth><UserProfilePage /></RequireAuth>} />
-          <Route path="*" element={<Navigate to="/dogs" />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />

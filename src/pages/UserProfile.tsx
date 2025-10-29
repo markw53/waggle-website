@@ -90,7 +90,7 @@ const UserProfilePage: React.FC = () => {
             className="w-32 h-32 rounded-full object-cover border-4 border-[#8c5628] dark:border-amber-600 shadow-lg"
           />
         ) : (
-          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-5xl border-4 border-[#8c5628] dark:border-amber-600 shadow-lg">
+          <div className="w-32 h-32 rounded-full bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-5xl border-4 border-[#8c5628] dark:border-amber-600 shadow-lg">
             👤
           </div>
         )}

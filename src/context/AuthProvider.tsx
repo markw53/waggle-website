@@ -8,8 +8,8 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
   signInWithPopup,
-  GoogleAuthProvider
-} from 'firebase/auth';
+  GoogleAuthProvider,
+  }  from 'firebase/auth';
 import { auth } from '@/firebase';
 import { AuthContext } from '@/context/AuthContext';
 
