@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useDogs } from '../hooks/useDogs';
-import { Dog } from '../types/dog';
+import type { Dog } from '../types/dog';
 // import { Timestamp } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 
@@ -245,7 +245,7 @@ const DogManager: React.FC = () => {
             >
               <div className="flex items-start gap-4">
                 {/* Dog Image */}
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   {dog.imageUrl ? (
                     <img
                       src={dog.imageUrl}
@@ -253,7 +253,7 @@ const DogManager: React.FC = () => {
                       className="w-16 h-16 rounded-full object-cover border-2 border-[#8c5628] dark:border-amber-600"
                     />
                   ) : (
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-2xl">
+                    <div className="w-16 h-16 rounded-full bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-2xl">
                       🐕
                     </div>
                   )}

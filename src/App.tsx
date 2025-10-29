@@ -11,11 +11,12 @@ import RequireAuth from '@/routes/RequireAuth';
 import RedirectIfAuth from '@/routes/RedirectIfAuth';
 import DogSearch from '@components/DogSearch';
 import DogProfile from '@/pages/DogProfile';
+import Profile from './pages/Profile';
+import UserProfilePage from '@/pages/UserProfile';
 import AddDog from '@pages/AddDog';
 import AddMatch from '@pages/AddMatch';
 import MatchesList from '@pages/MatchesList';
 import { Toaster } from 'react-hot-toast';
-import '@styles/globals.css';
 
 const App: React.FC = () => (
   <div className="min-h-screen w-full bg-cover bg-center bg-fixed bg-[url('/waggle-background.png')] dark:bg-zinc-900 flex flex-col">
@@ -27,11 +28,13 @@ const App: React.FC = () => (
           <Route path="/register" element={<RedirectIfAuth><RegisterForm /></RedirectIfAuth>} />
           <Route path="/reset-password" element={<RedirectIfAuth><ResetPasswordForm /></RedirectIfAuth>} />
           <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+          <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
           <Route path="/dogs" element={<RequireAuth><DogSearch /></RequireAuth>} />
           <Route path="/add-dog" element={<RequireAuth><AddDog /></RequireAuth>} />
           <Route path="/add-match" element={<RequireAuth><AddMatch /></RequireAuth>} />
           <Route path="/matches" element={<RequireAuth><MatchesList /></RequireAuth>} />
           <Route path="/dogs/:id" element={<RequireAuth><DogProfile /></RequireAuth>} />
+          <Route path="/users/:id" element={<RequireAuth><UserProfilePage /></RequireAuth>} />
           <Route path="*" element={<Navigate to="/dogs" />} />
         </Routes>
       </main>
