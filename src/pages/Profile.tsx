@@ -27,40 +27,57 @@ const Profile: React.FC = () => {
     createdAt: Timestamp.fromDate(new Date()),
   });
 
-  useEffect(() => {
-    if (!user) {
-      toast.error('Please log in to view your profile');
-      navigate('/');
-      return;
-    }
+ useEffect(() => {
+  if (!user) {
+    toast.error('Please log in to view your profile');
+    navigate('/');
+    return;
+  }
 
-    const fetchProfile = async () => {
-      try {
-        const docRef = doc(db, 'users', user.uid);
-        const docSnap = await getDoc(docRef);
+  const fetchProfile = async () => {
+    try {
+      const docRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-          setProfile({ uid: user.uid, ...docSnap.data() } as UserProfile);
-        } else {
-          // Create initial profile
-          const initialProfile: UserProfile = {
-            uid: user.uid,
-            email: user.email || '',
-            displayName: user.displayName || '',
-            photoURL: user.photoURL || '',
-            createdAt: Timestamp.fromDate(new Date()),
-          };
-          await setDoc(docRef, initialProfile);
-          setProfile(initialProfile);
-        }
-      } catch (error) {
-        console.error('Error fetching profile:', error);
-        toast.error('Failed to load profile');
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        console.log('Firestore data:', data);
+        console.log('Firebase Auth photoURL:', user.photoURL);
+        
+        setProfile({
+          uid: user.uid,
+          email: data.email || user.email || '',
+          displayName: data.displayName || data.name || user.displayName || '',
+          name: data.name || data.displayName || user.displayName || '',
+          photoURL: user.photoURL || data.photoURL || '', // ✅ Prioritize Firebase Auth photo
+          bio: data.bio || '',
+          location: data.location || '',
+          phoneNumber: data.phoneNumber || '',
+          createdAt: data.createdAt || Timestamp.fromDate(new Date()),
+          updatedAt: data.updatedAt,
+        } as UserProfile);
+      } else {
+        const initialProfile: UserProfile = {
+          uid: user.uid,
+          email: user.email || '',
+          displayName: user.displayName || '',
+          name: user.displayName || '',
+          photoURL: user.photoURL || '', // ✅ Use Firebase Auth photo
+          createdAt: Timestamp.fromDate(new Date()),
+        };
+        
+        console.log('Creating new profile:', initialProfile);
+        await setDoc(docRef, initialProfile);
+        setProfile(initialProfile);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      toast.error('Failed to load profile');
+    }
+  };
 
-    fetchProfile();
-  }, [user, navigate]);
+  fetchProfile();
+}, [user, navigate]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -75,37 +92,51 @@ const Profile: React.FC = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
+  e.preventDefault();
+  if (!user) {
+    toast.error('You must be logged in');
+    return;
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      let photoURL = profile.photoURL;
+  try {
+    let photoURL = profile.photoURL;
 
-      // Upload new image if selected
-      if (imageFile) {
-        const storageRef = ref(storage, `user_photos/${user.uid}/${Date.now()}_${imageFile.name}`);
-        await uploadBytes(storageRef, imageFile);
-        photoURL = await getDownloadURL(storageRef);
-      }
+    // Upload new image if selected
+    if (imageFile) {
+      const storageRef = ref(storage, `user_photos/${user.uid}/${Date.now()}_${imageFile.name}`);
+      await uploadBytes(storageRef, imageFile);
+      photoURL = await getDownloadURL(storageRef);
+    }
 
-      // Update Firebase Auth profile
-      await updateProfile(user, {
-        displayName: profile.displayName,
-        photoURL: photoURL,
-      });
-
-      // Update Firestore profile
-    const userRef = doc(db, 'users', user.uid);
-    await updateDoc(userRef, {
+    // Update Firebase Auth profile
+    await updateProfile(user, {
       displayName: profile.displayName,
-      bio: profile.bio || '',
-      location: profile.location || '',
-      phoneNumber: profile.phoneNumber || '',
-      photoURL,
-      updatedAt: Timestamp.fromDate(new Date()), // ✅ Changed from new Date()
+      photoURL: photoURL,
     });
+
+    // Prepare update data - only include fields that have values
+        const updateData: Partial<UserProfile> & { updatedAt: Timestamp } = {
+          email: profile.email,
+          updatedAt: Timestamp.fromDate(new Date()),
+        };
+
+    // Add optional fields only if they exist
+    if (profile.displayName) {
+      updateData.displayName = profile.displayName;
+      updateData.name = profile.displayName; // Keep backward compatibility
+    }
+    if (photoURL) updateData.photoURL = photoURL;
+    if (profile.bio !== undefined) updateData.bio = profile.bio;
+    if (profile.location !== undefined) updateData.location = profile.location;
+    if (profile.phoneNumber !== undefined) updateData.phoneNumber = profile.phoneNumber;
+
+    console.log('Updating user document:', user.uid, updateData); // Debug log
+
+    // Update Firestore profile
+    const userRef = doc(db, 'users', user.uid);
+    await updateDoc(userRef, updateData);
 
     // Update local state
     setProfile({ ...profile, photoURL, updatedAt: Timestamp.fromDate(new Date()) });
@@ -113,9 +144,21 @@ const Profile: React.FC = () => {
     setImagePreview(null);
     setEditing(false);
     toast.success('Profile updated successfully! 🎉');
-  } catch (error) {
+    
+    // Reload the auth state
+    await user.reload();
+  } catch (error: unknown) {
+    const firebaseError = error as { code?: string; message?: string };
     console.error('Error updating profile:', error);
-    toast.error('Failed to update profile');
+    console.error('Error code:', firebaseError.code);
+    console.error('Error message:', firebaseError.message);
+    toast.error(
+      `Failed to update profile: ${
+        typeof error === 'object' && error && 'message' in error
+          ? (error as { message?: string }).message
+          : String(error)
+      }`
+    );
   } finally {
     setLoading(false);
   }
@@ -126,6 +169,26 @@ const Profile: React.FC = () => {
     setImageFile(null);
     setImagePreview(null);
   };
+
+  const syncWithGoogle = async () => {
+  if (!user) return;
+  
+  try {
+    const userRef = doc(db, 'users', user.uid);
+    await setDoc(userRef, {
+      photoURL: user.photoURL || '',
+      displayName: user.displayName || '',
+      name: user.displayName || '',
+      updatedAt: Timestamp.fromDate(new Date()),
+    }, { merge: true });
+    
+    setProfile({ ...profile, photoURL: user.photoURL || '' });
+    toast.success('Profile synced with Google!');
+  } catch (error) {
+    console.error('Error syncing:', error);
+    toast.error('Failed to sync profile');
+  }
+};
 
   if (!user) {
     return null;
@@ -315,6 +378,14 @@ const Profile: React.FC = () => {
                   className="flex-1 px-6 py-3 rounded-lg font-semibold text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-zinc-700 hover:bg-gray-300 dark:hover:bg-zinc-600 transition-colors disabled:opacity-50"
                 >
                   Cancel
+                </button>
+                // Add this button in your JSX (temporary, for debugging)
+                <button
+                  type="button"
+                  onClick={syncWithGoogle}
+                  className="w-full px-6 py-3 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                >
+                  🔄 Sync with Google Account
                 </button>
                 <button
                   type="submit"

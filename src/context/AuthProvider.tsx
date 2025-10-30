@@ -12,17 +12,56 @@ import {
 } from 'firebase/auth';
 import type { ReactNode } from 'react';
 import type { User } from 'firebase/auth';
-import { auth } from '@/firebase';
+import { auth, db } from '@/firebase';
+import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 import { AuthContext } from './AuthContext';
+import type { UserProfile } from '@/types/user';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
+      
+      // ✅ Sync Firestore profile with Firebase Auth on every auth change
+      if (user) {
+        try {
+          const userRef = doc(db, 'users', user.uid);
+          const userSnap = await getDoc(userRef);
+          
+          if (!userSnap.exists()) {
+            // Create profile if it doesn't exist
+            const userProfile: UserProfile = {
+              uid: user.uid,
+              email: user.email || '',
+              displayName: user.displayName || '',
+              name: user.displayName || '',
+              photoURL: user.photoURL || '',
+              createdAt: Timestamp.fromDate(new Date()),
+            };
+            await setDoc(userRef, userProfile);
+            console.log('Created new user profile with photo:', user.photoURL);
+          } else {
+            // Update photo if it's different (e.g., user changed Google profile pic)
+            const existingData = userSnap.data();
+            if (user.photoURL && user.photoURL !== existingData.photoURL) {
+              await setDoc(userRef, {
+                photoURL: user.photoURL,
+                displayName: user.displayName || existingData.displayName,
+                name: user.displayName || existingData.name,
+                updatedAt: Timestamp.fromDate(new Date()),
+              }, { merge: true });
+              console.log('Updated user profile photo:', user.photoURL);
+            }
+          }
+        } catch (error) {
+          console.error('Error syncing user profile:', error);
+        }
+      }
+      
       setLoading(false);
     });
 
@@ -32,8 +71,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (email: string, password: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     
-    // Send verification email
     await sendEmailVerification(userCredential.user);
+    
+    const userProfile: UserProfile = {
+      uid: userCredential.user.uid,
+      email: userCredential.user.email || email,
+      displayName: userCredential.user.displayName || '',
+      name: userCredential.user.displayName || '',
+      photoURL: userCredential.user.photoURL || '',
+      createdAt: Timestamp.fromDate(new Date()),
+    };
+    
+    await setDoc(doc(db, 'users', userCredential.user.uid), userProfile);
     
     toast.success('Account created! Please check your email to verify your account.', {
       duration: 5000,
@@ -43,7 +92,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     
-    // Check if email is verified
     if (!userCredential.user.emailVerified) {
       toast.error(
         'Please verify your email before logging in. Check your inbox for the verification link.',
@@ -59,6 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     await signInWithPopup(auth, provider);
+    // The onAuthStateChanged will handle syncing the profile
     toast.success('Login successful!');
   };
 
