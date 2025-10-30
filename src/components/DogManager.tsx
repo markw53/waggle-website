@@ -277,6 +277,7 @@ const DogManager: React.FC = () => {
                 {/* Action Buttons */}
                 <div className="flex flex-col gap-2">
                   <button
+                    type="button"
                     onClick={() => handleEdit(dog)}
                     aria-label={`Edit ${dog.name}`}
                     className="px-4 py-1.5 rounded-lg bg-[#8c5628] dark:bg-amber-700 text-white text-sm hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-medium"
@@ -284,6 +285,7 @@ const DogManager: React.FC = () => {
                     Edit
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleDelete(dog.id)}
                     aria-label={`Delete ${dog.name}`}
                     className="px-4 py-1.5 rounded-lg bg-red-600 dark:bg-red-700 text-white text-sm hover:bg-red-700 dark:hover:bg-red-600 transition-colors font-medium"
