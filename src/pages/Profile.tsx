@@ -97,25 +97,29 @@ const Profile: React.FC = () => {
       });
 
       // Update Firestore profile
-      const userRef = doc(db, 'users', user.uid);
-      await updateDoc(userRef, {
-        ...profile,
-        photoURL,
-        updatedAt: new Date(),
-      });
+    const userRef = doc(db, 'users', user.uid);
+    await updateDoc(userRef, {
+      displayName: profile.displayName,
+      bio: profile.bio || '',
+      location: profile.location || '',
+      phoneNumber: profile.phoneNumber || '',
+      photoURL,
+      updatedAt: Timestamp.fromDate(new Date()), // ✅ Changed from new Date()
+    });
 
-      setProfile({ ...profile, photoURL });
-      setImageFile(null);
-      setImagePreview(null);
-      setEditing(false);
-      toast.success('Profile updated successfully! 🎉');
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      toast.error('Failed to update profile');
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Update local state
+    setProfile({ ...profile, photoURL, updatedAt: Timestamp.fromDate(new Date()) });
+    setImageFile(null);
+    setImagePreview(null);
+    setEditing(false);
+    toast.success('Profile updated successfully! 🎉');
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    toast.error('Failed to update profile');
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleCancel = () => {
     setEditing(false);

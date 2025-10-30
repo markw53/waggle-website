@@ -70,6 +70,7 @@ const UserProfilePage: React.FC = () => {
     <div className="max-w-6xl mx-auto my-10 p-6 sm:p-8 bg-white/95 dark:bg-zinc-800/95 rounded-xl shadow-xl backdrop-blur-sm border border-zinc-200 dark:border-zinc-700">
       {/* Back Button */}
       <button
+        type="button"
         onClick={() => navigate(-1)}
         aria-label="Go back to previous page"
         className="mb-6 flex items-center gap-2 text-[#8c5628] dark:text-amber-400 hover:text-[#6d4320] dark:hover:text-amber-300 font-medium transition-colors"
@@ -119,6 +120,7 @@ const UserProfilePage: React.FC = () => {
         {/* Contact Buttons */}
         <div className="flex flex-col gap-2 w-full sm:w-auto">
           <button
+            type="button"
             onClick={() => {
               if (userProfile.email) {
                 window.location.href = `mailto:${userProfile.email}`;
