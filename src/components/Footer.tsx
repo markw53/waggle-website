@@ -1,9 +1,52 @@
-// src/components/Footer.tsx (or .jsx if not using TypeScript)
+import { Link } from 'react-router-dom';
 
-export default function Footer() {
+const Footer: React.FC = () => {
   return (
-    <footer className="w-screen text-center py-4 bg-[#362519] text-[#f1ece7] text-base fixed bottom-0 left-0 opacity-90">
-      &copy; 2025 Waggle from Devon&apos;s Digital Solutions
+    <footer className="bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-700 py-6 px-4 mt-auto">
+      <div className="max-w-6xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          {/* Brand */}
+          <div className="text-center md:text-left">
+            <p className="text-lg font-bold text-[#573a1c] dark:text-amber-200">
+              Waggle 🐕
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Connecting dog breeders since {new Date().getFullYear()}
+            </p>
+          </div>
+
+          {/* Links */}
+          <div className="flex flex-wrap justify-center gap-6 text-sm">
+            <Link 
+              to="/privacy" 
+              className="text-gray-600 dark:text-gray-400 hover:text-[#8c5628] dark:hover:text-amber-400 transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            <Link 
+              to="/terms" 
+              className="text-gray-600 dark:text-gray-400 hover:text-[#8c5628] dark:hover:text-amber-400 transition-colors"
+            >
+              Terms of Service
+            </Link>
+            <a 
+              href="mailto:support@waggle.com" 
+              className="text-gray-600 dark:text-gray-400 hover:text-[#8c5628] dark:hover:text-amber-400 transition-colors"
+            >
+              Contact Us
+            </a>
+          </div>
+
+          {/* Copyright */}
+          <div className="text-center md:text-right">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              © {new Date().getFullYear()} Waggle. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </div>
     </footer>
   );
-}
+};
+
+export default Footer;

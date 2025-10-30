@@ -72,3 +72,27 @@ body {
 .no-transition * {
   transition: none !important;
 }
+
+/* Improved touch targets for mobile */
+@layer base {
+  button, a, input, select, textarea {
+    @apply touch-manipulation;
+  }
+  
+  /* Better mobile scrolling */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Prevent zoom on input focus (iOS) */
+  @media screen and (max-width: 768px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"],
+    textarea,
+    select {
+      font-size: 16px !important; /* Prevents iOS zoom */
+    }
+  }
+}

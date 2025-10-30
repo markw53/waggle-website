@@ -16,4 +16,43 @@ export default defineConfig({
       '@pages': path.resolve(__dirname, './src/pages'),
     },
   },
+  build: {
+    // Output directory
+    outDir: 'dist',
+    // Generate sourcemaps for production (optional, disable for smaller build)
+    sourcemap: false,
+    // Chunk size warning limit
+    chunkSizeWarningLimit: 1000,
+    // Rollup options
+    rollupOptions: {
+      output: {
+        // Manual chunks for better caching
+        manualChunks: {
+          // Core React
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          // Firebase
+          'firebase-vendor': [
+            'firebase/app',
+            'firebase/auth',
+            'firebase/firestore',
+            'firebase/storage',
+          ],
+          // UI libraries
+          'ui-vendor': ['react-hot-toast', 'lodash'],
+        },
+      },
+    },
+    // Minification
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true, // Remove console.logs in production
+        drop_debugger: true,
+      },
+    },
+  },
+  // Performance optimizations
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
+  },
 });

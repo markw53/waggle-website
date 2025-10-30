@@ -12,6 +12,7 @@ import { Label } from '../components/ui/label';
 const ResetPasswordForm: React.FC = () => {
   const { resetPassword } = useAuth();
   const [email, setEmail] = useState('');
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,6 +55,26 @@ const ResetPasswordForm: React.FC = () => {
                 required
                 className="text-base bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 border-zinc-300 dark:border-zinc-600 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:ring-2 focus:ring-[#8c5628] dark:focus:ring-amber-500 focus:border-transparent"
               />
+            </div>
+            <div className="flex items-start gap-2">
+              <input
+                id="accept-terms"
+                type="checkbox"
+                checked={acceptedTerms}
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
+                required
+                className="mt-1"
+              />
+              <label htmlFor="accept-terms" className="text-sm text-gray-700 dark:text-gray-300">
+                I agree to the{' '}
+                <Link to="/terms" target="_blank" className="text-[#8c5628] dark:text-amber-400 hover:underline">
+                  Terms of Service
+                </Link>
+                {' '}and{' '}
+                <Link to="/privacy" target="_blank" className="text-[#8c5628] dark:text-amber-400 hover:underline">
+                  Privacy Policy
+                </Link>
+              </label>
             </div>
             <Button 
               type="submit" 
