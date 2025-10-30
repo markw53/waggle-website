@@ -23,6 +23,7 @@ import TermsOfService from '@/pages/TermsOfService';
 import ResponsiveIndicator from '@/components/ResponsiveIndicator';
 import Messages from '@/pages/Messages';
 import ConversationPage from '@/pages/Conversation';
+import Analytics from './pages/Analytics';
 
 const App: React.FC = () => (
   <div className="min-h-screen w-full bg-cover bg-center bg-fixed bg-[url('/waggle-background.png')] dark:bg-zinc-900 flex flex-col">
@@ -46,6 +47,7 @@ const App: React.FC = () => (
           <Route path="/dogs/:id" element={<RequireAuth><DogProfile /></RequireAuth>} />
           <Route path="/users/:id" element={<RequireAuth><UserProfilePage /></RequireAuth>} />
           <Route path="/messages" element={<Messages />} />
+          <Route path="/analytics" element={<Analytics />} />
           <Route path="/messages/:id" element={<ConversationPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

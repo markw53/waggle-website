@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/context';
 import { useTheme } from '@/hooks/useTheme';
-import { useMessaging } from '@/hooks/useMessaging'; // ✅ Add this
+import { useMessaging } from '@/hooks/useMessaging';
 import { useEffect, useState, useMemo } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
@@ -21,7 +21,7 @@ import { db } from '@/firebase';
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
-  const { conversations } = useMessaging(); // ✅ Add this
+  const { conversations } = useMessaging(); 
   const [userPhotoURL, setUserPhotoURL] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -189,6 +189,15 @@ export default function Navbar() {
                 </Link>
               </DropdownMenuItem>
 
+              <DropdownMenuItem asChild>
+                <Link to="/analytics" className="cursor-pointer flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                  Analytics
+                </Link>
+              </DropdownMenuItem>
+
               <DropdownMenuSeparator className="bg-zinc-200 dark:bg-zinc-700" />
               
               <DropdownMenuSub>
@@ -307,6 +316,15 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
+
+            <DropdownMenuItem asChild>
+              <Link to="/analytics" className="cursor-pointer flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                Analytics
+              </Link>
+            </DropdownMenuItem>
 
             <div className="border-t border-zinc-200 dark:border-zinc-700 my-2"></div>
 
