@@ -13,15 +13,25 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/context';
 import { useTheme } from '@/hooks/useTheme';
-import { useEffect, useState } from 'react';
+import { useMessaging } from '@/hooks/useMessaging'; // ✅ Add this
+import { useEffect, useState, useMemo } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
+  const { conversations } = useMessaging(); // ✅ Add this
   const [userPhotoURL, setUserPhotoURL] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // ✅ Calculate total unread messages
+  const unreadCount = useMemo(() => {
+    if (!user || !conversations) return 0;
+    return conversations.reduce((total, conv) => {
+      return total + (conv.unreadCount?.[user.uid] || 0);
+    }, 0);
+  }, [conversations, user]);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -69,6 +79,7 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="sm:hidden p-2 text-gray-600 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md transition"
             aria-label="Toggle menu"
@@ -85,20 +96,28 @@ export default function Navbar() {
           {/* Desktop Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Avatar className="cursor-pointer h-9 w-9 ring-2 ring-[#8c5628] dark:ring-amber-600 hover:ring-[#6d4320] dark:hover:ring-amber-500 transition-all">
-                {userPhotoURL ? (
-                  <AvatarImage
-                    src={userPhotoURL}
-                    alt={user?.displayName || user?.email || 'User'}
-                  />
-                ) : (
-                  <AvatarFallback className="bg-linear-to-br from-[#8c5628] to-[#6d4320] dark:from-amber-600 dark:to-amber-700 text-white font-semibold">
-                    {user?.displayName?.charAt(0).toUpperCase() || 
-                     user?.email?.charAt(0).toUpperCase() || 
-                     'U'}
-                  </AvatarFallback>
+              <div className="relative cursor-pointer">
+                <Avatar className="h-9 w-9 ring-2 ring-[#8c5628] dark:ring-amber-600 hover:ring-[#6d4320] dark:hover:ring-amber-500 transition-all">
+                  {userPhotoURL ? (
+                    <AvatarImage
+                      src={userPhotoURL}
+                      alt={user?.displayName || user?.email || 'User'}
+                    />
+                  ) : (
+                    <AvatarFallback className="bg-linear-to-br from-[#8c5628] to-[#6d4320] dark:from-amber-600 dark:to-amber-700 text-white font-semibold">
+                      {user?.displayName?.charAt(0).toUpperCase() || 
+                       user?.email?.charAt(0).toUpperCase() || 
+                       'U'}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                {/* ✅ Unread badge on avatar */}
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center ring-2 ring-white dark:ring-zinc-900">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
                 )}
-              </Avatar>
+              </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
@@ -150,6 +169,23 @@ export default function Navbar() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
                   My Matches
+                </Link>
+              </DropdownMenuItem>
+
+              {/* ✅ Add Messages menu item */}
+              <DropdownMenuItem asChild>
+                <Link to="/messages" className="cursor-pointer flex items-center gap-2 justify-between">
+                  <div className="flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    Messages
+                  </div>
+                  {unreadCount > 0 && (
+                    <span className="ml-auto px-2 py-0.5 bg-red-500 text-white text-xs font-bold rounded-full">
+                      {unreadCount}
+                    </span>
+                  )}
                 </Link>
               </DropdownMenuItem>
 
@@ -253,12 +289,32 @@ export default function Navbar() {
               My Matches
             </Link>
 
+            {/* ✅ Add Messages mobile menu item */}
+            <Link
+              to="/messages"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition justify-between"
+            >
+              <div className="flex items-center gap-3">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                Messages
+              </div>
+              {unreadCount > 0 && (
+                <span className="px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
+                  {unreadCount}
+                </span>
+              )}
+            </Link>
+
             <div className="border-t border-zinc-200 dark:border-zinc-700 my-2"></div>
 
             <div className="px-4 py-2">
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Theme</p>
               <div className="flex gap-2">
                 <button
+                  type="button"
                   onClick={() => {
                     setTheme('light');
                     setMobileMenuOpen(false);
@@ -272,6 +328,7 @@ export default function Navbar() {
                   ☀️ Light
                 </button>
                 <button
+                  type="button"
                   onClick={() => {
                     setTheme('dark');
                     setMobileMenuOpen(false);
@@ -285,6 +342,7 @@ export default function Navbar() {
                   🌙 Dark
                 </button>
                 <button
+                  type="button"
                   onClick={() => {
                     setTheme('system');
                     setMobileMenuOpen(false);
@@ -303,6 +361,7 @@ export default function Navbar() {
             <div className="border-t border-zinc-200 dark:border-zinc-700 my-2"></div>
 
             <button
+              type="button"
               onClick={() => {
                 logout();
                 setMobileMenuOpen(false);
