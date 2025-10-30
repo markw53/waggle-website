@@ -1,4 +1,4 @@
-import { useAuth } from '../hooks/auth';
+import { useAuth } from '@/context';
 import { Link } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
@@ -61,7 +61,7 @@ interface DashboardLinkProps {
 const DashboardLink: React.FC<DashboardLinkProps> = ({ to, icon, label, description }) => (
   <Link
     to={to}
-    className="group relative overflow-hidden bg-gradient-to-br from-[#f3fde7] to-[#e8f5d8] dark:from-green-900/30 dark:to-green-800/20 hover:from-[#e1f7ce] hover:to-[#d4f0bd] dark:hover:from-green-800/40 dark:hover:to-green-700/30 transition-all duration-300 px-6 py-5 rounded-xl shadow-md hover:shadow-lg border border-green-200 dark:border-green-800/50"
+    className="group relative overflow-hidden bg-linear-to-br from-[#f3fde7] to-[#e8f5d8] dark:from-green-900/30 dark:to-green-800/20 hover:from-[#e1f7ce] hover:to-[#d4f0bd] dark:hover:from-green-800/40 dark:hover:to-green-700/30 transition-all duration-300 px-6 py-5 rounded-xl shadow-md hover:shadow-lg border border-green-200 dark:border-green-800/50"
   >
     <div className="flex items-start gap-4">
       <span className="text-4xl" role="img" aria-label={label}>

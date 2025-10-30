@@ -14,4 +14,4 @@ const ResponsiveIndicator: React.FC = () => {
   );
 };
 
-export default { ResponsiveIndicator };
+export default ResponsiveIndicator;

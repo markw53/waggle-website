@@ -1,4 +1,4 @@
-import { useAuth } from '@/hooks/auth';
+import { useAuth } from '@/context';
 import { useState } from 'react';
 
 const EmailVerificationBanner: React.FC = () => {

@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../hooks/auth';
+import { useAuth } from '@/context';
 
 const RedirectIfAuth: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const { user, loading } = useAuth();

@@ -55,6 +55,7 @@ const DogProfile: React.FC = () => {
     <div className="max-w-4xl mx-auto my-10 p-6 sm:p-8 bg-white/95 dark:bg-zinc-800/95 rounded-xl shadow-xl backdrop-blur-sm border border-zinc-200 dark:border-zinc-700">
       {/* Back Button */}
       <button
+        type="button"
         onClick={() => navigate(-1)}
         aria-label="Go back to previous page"
         className="mb-6 flex items-center gap-2 text-[#8c5628] dark:text-amber-400 hover:text-[#6d4320] dark:hover:text-amber-300 font-medium transition-colors"
@@ -74,7 +75,7 @@ const DogProfile: React.FC = () => {
             className="w-48 h-48 rounded-full object-cover border-4 border-[#8c5628] dark:border-amber-600 shadow-lg"
           />
         ) : (
-          <div className="w-48 h-48 rounded-full bg-gradient-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-7xl shadow-lg">
+          <div className="w-48 h-48 rounded-full bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-7xl shadow-lg">
             🐕
           </div>
         )}
@@ -148,6 +149,7 @@ const DogProfile: React.FC = () => {
       {/* Action Buttons */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <button
+          type="button"
           onClick={() => {
             // TODO: Implement contact owner functionality
             toast.success('Contact feature coming soon!');

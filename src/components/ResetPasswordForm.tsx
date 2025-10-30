@@ -1,13 +1,13 @@
 // src/components/ResetPasswordForm.tsx
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../hooks/auth';
+import { useAuth } from '@/context';
 import toast from 'react-hot-toast';
 
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Input } from '../components/ui/input';
-import { Button } from '../components/ui/button';
-import { Label } from '../components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 
 const ResetPasswordForm: React.FC = () => {
   const { resetPassword } = useAuth();

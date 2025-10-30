@@ -4,7 +4,7 @@ import { doc, getDoc, setDoc, updateDoc, Timestamp } from 'firebase/firestore';
 import { updateProfile } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/firebase'; // ✅ Removed 'auth' from here
-import { useAuth } from '@/hooks/auth';
+import { useAuth } from '@/context';
 import type { UserProfile } from '@/types/user';
 import toast from 'react-hot-toast';
 

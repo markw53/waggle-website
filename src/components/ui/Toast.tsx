@@ -8,7 +8,7 @@ import {
   ToastDescription,
   ToastClose
 } from "@radix-ui/react-toast"
-import { cn } from "../../lib/utils"
+import { cn } from "@/lib/utils"
 
 const ToastContainer: React.FC<React.PropsWithChildren<object>> = ({ children }) => (
   <ToastProvider swipeDirection="right">

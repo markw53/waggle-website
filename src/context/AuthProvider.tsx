@@ -1,54 +1,96 @@
 // src/context/AuthProvider.tsx
-import React, { useEffect, useState } from 'react';
-import type { User } from 'firebase/auth';
+import { useEffect, useState } from 'react';
 import {
-  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  sendEmailVerification,
   sendPasswordResetEmail,
   signInWithPopup,
   GoogleAuthProvider,
-  }  from 'firebase/auth';
+} from 'firebase/auth';
+import type { ReactNode } from 'react';
+import type { User } from 'firebase/auth';
 import { auth } from '@/firebase';
-import { AuthContext } from '@/context/AuthContext';
+import toast from 'react-hot-toast';
+import { AuthContext } from './AuthContext';
 
-export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
     });
-    return unsub;
+
+    return unsubscribe;
   }, []);
 
-  const login = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
-  };
-
   const register = async (email: string, password: string) => {
-    await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    
+    // Send verification email
+    await sendEmailVerification(userCredential.user);
+    
+    toast.success('Account created! Please check your email to verify your account.', {
+      duration: 5000,
+    });
   };
 
-  const logout = async () => {
-    await signOut(auth);
+  const login = async (email: string, password: string) => {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    
+    // Check if email is verified
+    if (!userCredential.user.emailVerified) {
+      toast.error(
+        'Please verify your email before logging in. Check your inbox for the verification link.',
+        { duration: 6000 }
+      );
+      await signOut(auth);
+      throw new Error('Email not verified');
+    }
+    
+    toast.success('Login successful!');
   };
 
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     await signInWithPopup(auth, provider);
+    toast.success('Login successful!');
+  };
+
+  const logout = async () => {
+    await signOut(auth);
+    toast.success('Logged out successfully');
   };
 
   const resetPassword = async (email: string) => {
     await sendPasswordResetEmail(auth, email);
+    toast.success('Password reset email sent! Check your inbox.');
   };
 
-  return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, loginWithGoogle, resetPassword }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  const resendVerificationEmail = async () => {
+    if (user && !user.emailVerified) {
+      await sendEmailVerification(user);
+      toast.success('Verification email sent! Check your inbox.');
+    } else {
+      toast.error('No user to send verification email to.');
+    }
+  };
+
+  const value = {
+    user,
+    loading,
+    register,
+    login,
+    logout,
+    resetPassword,
+    resendVerificationEmail,
+    loginWithGoogle,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}

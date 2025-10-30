@@ -5,7 +5,7 @@ export const DogCard: React.FC<{ dog: Dog }> = ({ dog }) => (
   <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
     <div className="flex items-start gap-4">
       {/* Dog Image */}
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         {dog.imageUrl ? (
           <img
             src={dog.imageUrl}
@@ -13,7 +13,7 @@ export const DogCard: React.FC<{ dog: Dog }> = ({ dog }) => (
             className="w-20 h-20 rounded-full object-cover border-2 border-[#8c5628] dark:border-amber-600"
           />
         ) : (
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-3xl">
+          <div className="w-20 h-20 rounded-full bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-3xl">
             🐕
           </div>
         )}

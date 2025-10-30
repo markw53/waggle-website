@@ -6,7 +6,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/firebase';
 import type { Dog } from '@/types/dog';
-import { useAuth } from '@/hooks/auth';
+import { useAuth } from '@/context';
 
 export function useDogs(ownedOnly: boolean = false) {
   const { user } = useAuth();

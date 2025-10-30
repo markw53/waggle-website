@@ -11,7 +11,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from '@/components/ui/dropdown-menu';
-import { useAuth } from '@/hooks/auth';
+import { useAuth } from '@/context';
 import { useTheme } from '@/hooks/useTheme';
 import { useEffect, useState } from 'react';
 import { doc, getDoc } from 'firebase/firestore';

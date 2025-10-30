@@ -1,7 +1,7 @@
 // src/components/RegisterForm.tsx
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/auth';
+import { useAuth } from '@/context';
 import toast from 'react-hot-toast';
 
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
