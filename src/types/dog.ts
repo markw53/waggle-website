@@ -2,35 +2,88 @@
 import { Timestamp } from 'firebase/firestore';
 
 export interface Dog {
-  id: string; // Firestore doc id
-  ownerId: string;
+  id: string;
   name: string;
   breed: string;
   age: number;
-  gender: 'Male' | 'Female'; // Capitalized to match your database
-  bio: string;
-  imageUrl: string | null; // Single image URL or null
-  createdAt: Timestamp; // Firebase Timestamp, not Date
-}
-
-// Optional: If you want to add these features later
-export interface DogExtended extends Dog {
-  location?: {
-    latitude: number;
-    longitude: number;
-    address?: string;
+  gender: 'Male' | 'Female';
+  imageUrl?: string;
+  bio?: string;
+  ownerId: string;
+  createdAt: Timestamp;
+  
+  // ✅ Health & Verification Fields
+  healthInfo: {
+    vetVerified: boolean;
+    vetCertificateUrl?: string;
+    vetName?: string;
+    vetPhone?: string;
+    lastCheckupDate?: Timestamp;
+    
+    // Health clearances
+    hipsDysplasiaCleared: boolean;
+    elbowDysplasiaCleared: boolean;
+    eyesCleared: boolean;
+    heartCleared: boolean;
+    
+    // Genetic testing
+    geneticTestingDone: boolean;
+    geneticTestResults?: string[]; // Array of cleared conditions
+    
+    // Vaccination
+    vaccinationUpToDate: boolean;
+    vaccinationRecordUrl?: string;
+    
+    // Other health checks
+    brucellosisTest: boolean; // Critical for breeding
+    brucellosisTestDate?: Timestamp;
+    
+    // Breeding restrictions
+    hasHereditaryConditions: boolean;
+    hereditaryConditionsDetails?: string;
   };
-  traits?: {
-    size: 'small' | 'medium' | 'large';
-    energy: 'low' | 'medium' | 'high';
-    friendliness: 'low' | 'medium' | 'high';
-    trainability?: 'low' | 'medium' | 'high';
+  
+  // Breeding eligibility
+  breedingEligibility: {
+    isEligible: boolean;
+    reasonIfIneligible?: string;
+    minimumAgeMet: boolean; // Must be at least 2 years old
+    maximumAgeMet: boolean; // Should not be too old
+    numberOfLitters?: number; // Track previous litters
+    lastLitterDate?: Timestamp;
+    
+    // Professional verification
+    breedingLicenseNumber?: string;
+    kennelClubRegistration?: string;
   };
-  medicalInfo?: {
-    vaccinated: boolean;
-    neutered: boolean;
-    lastCheckup?: Date;
-    notes?: string;
+  
+  // Temperament & behavior
+  temperament: {
+    aggressionIssues: boolean;
+    anxietyIssues: boolean;
+    trainable: boolean;
+    goodWithOtherDogs: boolean;
+    behaviorCertificateUrl?: string;
   };
-  photos?: string[]; // Multiple photos if you want to add this feature
+  
+  // Documents
+  documents: {
+    pedigree?: string; // URL to pedigree certificate
+    ownership?: string; // Proof of ownership
+    microchipNumber?: string;
+    registrationPapers?: string;
+  };
+  
+  // Admin verification
+  adminVerification: {
+    verified: boolean;
+    verifiedBy?: string; // Admin user ID
+    verifiedAt?: Timestamp;
+    verificationNotes?: string;
+    rejectionReason?: string;
+  };
+  
+  // Status
+  status: 'pending' | 'approved' | 'rejected' | 'suspended';
+  suspendedReason?: string;
 }
