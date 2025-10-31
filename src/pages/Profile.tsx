@@ -49,7 +49,7 @@ const Profile: React.FC = () => {
           email: data.email || user.email || '',
           displayName: data.displayName || data.name || user.displayName || '',
           name: data.name || data.displayName || user.displayName || '',
-          photoURL: user.photoURL || data.photoURL || '', // ✅ Prioritize Firebase Auth photo
+          photoURL: user.photoURL || data.photoURL || '', 
           bio: data.bio || '',
           location: data.location || '',
           phoneNumber: data.phoneNumber || '',
@@ -62,7 +62,7 @@ const Profile: React.FC = () => {
           email: user.email || '',
           displayName: user.displayName || '',
           name: user.displayName || '',
-          photoURL: user.photoURL || '', // ✅ Use Firebase Auth photo
+          photoURL: user.photoURL || '', 
           createdAt: Timestamp.fromDate(new Date()),
         };
         
@@ -125,7 +125,7 @@ const Profile: React.FC = () => {
     // Add optional fields only if they exist
     if (profile.displayName) {
       updateData.displayName = profile.displayName;
-      updateData.name = profile.displayName; // Keep backward compatibility
+      updateData.name = profile.displayName; 
     }
     if (photoURL) updateData.photoURL = photoURL;
     if (profile.bio !== undefined) updateData.bio = profile.bio;
@@ -355,7 +355,7 @@ const Profile: React.FC = () => {
               type="tel"
               value={profile.phoneNumber || ''}
               onChange={e => setProfile({ ...profile, phoneNumber: e.target.value })}
-              placeholder="+1 (555) 123-4567"
+              placeholder="+44 (7000) 123-456"
               maxLength={20}
               className="w-full px-4 py-2.5 border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8c5628] dark:focus:ring-amber-500"
             />
