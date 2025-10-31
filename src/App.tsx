@@ -11,8 +11,9 @@ import RedirectIfAuth from '@/routes/RedirectIfAuth';
 import DogSearch from '@components/DogSearch';
 import DogProfile from '@/pages/DogProfile';
 import Profile from './pages/Profile';
-import UserProfilePage from '@/pages/UserProfile';
+import UserProfilePage from '@/pages/UserProfilePage';
 import AddDog from '@pages/AddDog';
+import MyDogs from './pages/MyDogs';
 import AddMatch from '@pages/AddMatch';
 import MatchesList from '@pages/MatchesList';
 import NotFound from './pages/NotFound';
@@ -41,12 +42,13 @@ const App: React.FC = () => (
           <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/my-dogs" element={<RequireAuth><MyDogs /></RequireAuth>} />
           <Route path="/dogs" element={<RequireAuth><DogSearch /></RequireAuth>} />
           <Route path="/add-dog" element={<RequireAuth><AddDog /></RequireAuth>} />
           <Route path="/add-match" element={<RequireAuth><AddMatch /></RequireAuth>} />
           <Route path="/matches" element={<RequireAuth><MatchesList /></RequireAuth>} />
           <Route path="/dogs/:id" element={<RequireAuth><DogProfile /></RequireAuth>} />
-          <Route path="/users/:id" element={<RequireAuth><UserProfilePage /></RequireAuth>} />
+          <Route path="/users/:id" element={<UserProfilePage />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/admin/verification" element={<AdminVerification />} />

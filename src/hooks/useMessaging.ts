@@ -4,7 +4,6 @@ import {
   collection,
   query,
   where,
-  orderBy,
   onSnapshot,
   addDoc,
   updateDoc,
@@ -31,81 +30,130 @@ export function useMessaging() {
     }
 
     const conversationsRef = collection(db, 'conversations');
+    // Remove orderBy to avoid index requirement
     const q = query(
       conversationsRef,
-      where('participants', 'array-contains', user.uid),
-      orderBy('lastMessageAt', 'desc')
+      where('participants', 'array-contains', user.uid)
     );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const convos: Conversation[] = [];
-      snapshot.forEach((doc) => {
-        convos.push({ id: doc.id, ...doc.data() } as Conversation);
-      });
-      setConversations(convos);
-      setLoading(false);
-    });
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const convos: Conversation[] = [];
+        snapshot.forEach((doc) => {
+          convos.push({ id: doc.id, ...doc.data() } as Conversation);
+        });
+        
+        // Sort in JavaScript instead of Firestore
+        convos.sort((a, b) => {
+          const aTime = a.lastMessageAt?.toMillis() || 0;
+          const bTime = b.lastMessageAt?.toMillis() || 0;
+          return bTime - aTime; // Descending order (newest first)
+        });
+        
+        setConversations(convos);
+        setLoading(false);
+      },
+      (error) => {
+        console.error('Error fetching conversations:', error);
+        setLoading(false);
+      }
+    );
 
     return unsubscribe;
   }, [user]);
 
   const startConversation = async (otherUserId: string): Promise<string> => {
-    if (!user) throw new Error('Must be logged in');
-
-    // Check if conversation already exists
-    const conversationsRef = collection(db, 'conversations');
-    const q = query(
-      conversationsRef,
-      where('participants', 'array-contains', user.uid)
-    );
-    
-    const snapshot = await getDocs(q);
-    const existingConvo = snapshot.docs.find(doc => {
-      const data = doc.data();
-      return data.participants.includes(otherUserId);
-    });
-
-    if (existingConvo) {
-      return existingConvo.id;
+    if (!user) {
+      console.error('startConversation: No user logged in');
+      throw new Error('Must be logged in');
     }
 
-    // Fetch user details
-    const currentUserDoc = await getDoc(doc(db, 'users', user.uid));
-    const otherUserDoc = await getDoc(doc(db, 'users', otherUserId));
+    console.log('Starting conversation with:', otherUserId);
 
-    if (!currentUserDoc.exists() || !otherUserDoc.exists()) {
-      throw new Error('User not found');
+    try {
+      // Check if conversation already exists
+      const conversationsRef = collection(db, 'conversations');
+      const q = query(
+        conversationsRef,
+        where('participants', 'array-contains', user.uid)
+      );
+      
+      console.log('Checking for existing conversation...');
+      const snapshot = await getDocs(q);
+      console.log('Found conversations:', snapshot.size);
+      
+      const existingConvo = snapshot.docs.find(doc => {
+        const data = doc.data();
+        return data.participants.includes(otherUserId);
+      });
+
+      if (existingConvo) {
+        console.log('Existing conversation found:', existingConvo.id);
+        return existingConvo.id;
+      }
+
+      console.log('No existing conversation, creating new one...');
+
+      // Fetch user details
+      console.log('Fetching current user doc:', user.uid);
+      const currentUserDoc = await getDoc(doc(db, 'users', user.uid));
+      
+      console.log('Fetching other user doc:', otherUserId);
+      const otherUserDoc = await getDoc(doc(db, 'users', otherUserId));
+
+      if (!currentUserDoc.exists()) {
+        console.error('Current user document not found:', user.uid);
+        throw new Error('Your user profile not found. Please complete your profile first.');
+      }
+      
+      if (!otherUserDoc.exists()) {
+        console.error('Other user document not found:', otherUserId);
+        throw new Error('User profile not found');
+      }
+
+      const currentUserData = currentUserDoc.data();
+      const otherUserData = otherUserDoc.data();
+
+      console.log('Current user data:', currentUserData);
+      console.log('Other user data:', otherUserData);
+
+      // Create new conversation
+      const newConvo: Omit<Conversation, 'id'> = {
+        participants: [user.uid, otherUserId],
+        participantDetails: {
+          [user.uid]: {
+            displayName: currentUserData.displayName || currentUserData.name || 'Anonymous',
+            photoURL: currentUserData.photoURL || '',
+            email: currentUserData.email || '',
+          },
+          [otherUserId]: {
+            displayName: otherUserData.displayName || otherUserData.name || 'Anonymous',
+            photoURL: otherUserData.photoURL || '',
+            email: otherUserData.email || '',
+          },
+        },
+        lastMessage: '',
+        lastMessageAt: Timestamp.fromDate(new Date()),
+        unreadCount: {
+          [user.uid]: 0,
+          [otherUserId]: 0,
+        },
+        createdAt: Timestamp.fromDate(new Date()),
+      };
+
+      console.log('Creating new conversation document...');
+      const docRef = await addDoc(conversationsRef, newConvo);
+      console.log('Conversation created with ID:', docRef.id);
+      
+      return docRef.id;
+    } catch (error) {
+      console.error('Error in startConversation:', error);
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('Failed to start conversation');
     }
-
-    const currentUserData = currentUserDoc.data();
-    const otherUserData = otherUserDoc.data();
-
-    // Create new conversation
-    const newConvo: Omit<Conversation, 'id'> = {
-      participants: [user.uid, otherUserId],
-      participantDetails: {
-        [user.uid]: {
-          displayName: currentUserData.displayName || currentUserData.name || 'Anonymous',
-          photoURL: currentUserData.photoURL || '',
-          email: currentUserData.email || '',
-        },
-        [otherUserId]: {
-          displayName: otherUserData.displayName || otherUserData.name || 'Anonymous',
-          photoURL: otherUserData.photoURL || '',
-          email: otherUserData.email || '',
-        },
-      },
-      lastMessage: '',
-      lastMessageAt: Timestamp.fromDate(new Date()),
-      unreadCount: {
-        [user.uid]: 0,
-        [otherUserId]: 0,
-      },
-      createdAt: Timestamp.fromDate(new Date()),
-    };
-
-    const docRef = await addDoc(conversationsRef, newConvo);
-    return docRef.id;
   };
 
   const sendMessage = async (conversationId: string, text: string, toUserId: string) => {

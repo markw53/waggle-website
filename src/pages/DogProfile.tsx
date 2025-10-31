@@ -48,32 +48,36 @@ const DogProfile: React.FC = () => {
   }, [id, navigate]);
 
   const handleContactOwner = async () => {
-    if (!user) {
-      toast.error('Please log in to contact the owner');
-      navigate('/');
-      return;
-    }
+  if (!user) {
+    toast.error('Please log in to contact the owner');
+    navigate('/');
+    return;
+  }
 
-    if (!dog) return;
+  if (!dog) return;
 
-    // Check if user is trying to contact themselves
-    if (dog.ownerId === user.uid) {
-      toast.error("You can't message yourself!");
-      return;
-    }
+  // Check if user is trying to contact themselves
+  if (dog.ownerId === user.uid) {
+    toast.error("You can't message yourself!");
+    return;
+  }
 
-    setContactingOwner(true);
-    try {
-      const conversationId = await startConversation(dog.ownerId);
-      navigate(`/messages/${conversationId}`);
-      toast.success('Opening conversation...');
-    } catch (error) {
-      console.error('Error starting conversation:', error);
-      toast.error('Failed to start conversation');
-    } finally {
-      setContactingOwner(false);
-    }
-  };
+  setContactingOwner(true);
+  try {
+    console.log('Attempting to contact owner:', dog.ownerId); // Debug log
+    const conversationId = await startConversation(dog.ownerId);
+    console.log('Conversation started:', conversationId); // Debug log
+    navigate(`/messages/${conversationId}`);
+    toast.success('Opening conversation...');
+  } catch (error) {
+    console.error('Error starting conversation:', error);
+    // Show the actual error message
+    const errorMessage = error instanceof Error ? error.message : 'Failed to start conversation';
+    toast.error(errorMessage);
+  } finally {
+    setContactingOwner(false);
+  }
+};
 
   const handleRequestMatch = () => {
     if (!user) {

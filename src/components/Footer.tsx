@@ -13,6 +13,14 @@ const Footer: React.FC = () => {
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Connecting dog breeders since {new Date().getFullYear()}
             </p>
+            <a 
+              href="https://www.devonsdigitalsolutions.co.uk" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-xs text-gray-500 dark:text-gray-400 hover:text-[#8c5628] dark:hover:text-amber-400 transition-colors inline-block mt-1"
+            >
+              Built by Devon's Digital Solutions
+            </a>
           </div>
 
           {/* Links */}
@@ -30,7 +38,9 @@ const Footer: React.FC = () => {
               Terms of Service
             </Link>
             <a 
-              href="mailto:support@waggle.com" 
+              href="https://www.devonsdigitalsolutions.co.uk" 
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-gray-600 dark:text-gray-400 hover:text-[#8c5628] dark:hover:text-amber-400 transition-colors"
             >
               Contact Us
@@ -40,7 +50,10 @@ const Footer: React.FC = () => {
           {/* Copyright */}
           <div className="text-center md:text-right">
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              © {new Date().getFullYear()} Waggle. All rights reserved.
+              © {new Date().getFullYear()} Waggle
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              All rights reserved
             </p>
           </div>
         </div>
