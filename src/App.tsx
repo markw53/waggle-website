@@ -10,6 +10,7 @@ import RequireAuth from '@/routes/RequireAuth';
 import RedirectIfAuth from '@/routes/RedirectIfAuth';
 import DogSearch from '@components/DogSearch';
 import DogProfile from '@/pages/DogProfile';
+import GettingStarted from '@/pages/GettingStarted';
 import Profile from './pages/Profile';
 import UserProfilePage from '@/pages/UserProfilePage';
 import AddDog from '@pages/AddDog';
@@ -42,6 +43,7 @@ const App: React.FC = () => (
           <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/getting-started" element={<GettingStarted />} />
           <Route path="/my-dogs" element={<RequireAuth><MyDogs /></RequireAuth>} />
           <Route path="/dogs" element={<RequireAuth><DogSearch /></RequireAuth>} />
           <Route path="/add-dog" element={<RequireAuth><AddDog /></RequireAuth>} />

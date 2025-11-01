@@ -1,8 +1,16 @@
 import { useAuth } from '@/context';
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+  if (user && !user.displayName) {
+    navigate('/getting-started');
+  }
+}, [user, navigate]);
 
   return (
     <div className="max-w-2xl mx-auto p-8 bg-white/95 dark:bg-zinc-800/95 rounded-xl shadow-xl backdrop-blur-sm">
@@ -83,3 +91,4 @@ const DashboardLink: React.FC<DashboardLinkProps> = ({ to, icon, label, descript
 );
 
 export default Dashboard;
+
