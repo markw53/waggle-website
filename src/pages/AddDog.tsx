@@ -6,7 +6,6 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/firebase';
 import { useAuth } from '@/context';
 import HealthVerificationForm from '@/components/HealthVerificationForm';
-import type { Dog } from '@/types/dog';
 import toast from 'react-hot-toast';
 
 interface HealthInfo {
@@ -157,64 +156,147 @@ const AddDog: React.FC = () => {
 
     const eligibility = calculateEligibility();
     
-    // Create dog document
-    const newDog: Omit<Dog, 'id'> = {
+    // ✅ Build healthInfo object without undefined values
+    interface HealthInfoData {
+      vetVerified: boolean;
+      vetName: string;
+      vetPhone: string;
+      hipsDysplasiaCleared: boolean;
+      elbowDysplasiaCleared: boolean;
+      eyesCleared: boolean;
+      heartCleared: boolean;
+      geneticTestingDone: boolean;
+      geneticTestResults: string[];
+      vaccinationUpToDate: boolean;
+      brucellosisTest: boolean;
+      hasHereditaryConditions: boolean;
+      hereditaryConditionsDetails: string;
+      vetCertificateUrl?: string;
+      vaccinationRecordUrl?: string;
+      lastCheckupDate?: Timestamp;
+      brucellosisTestDate?: Timestamp;
+    }
+
+    const healthInfoData: HealthInfoData = {
+      vetVerified: healthInfo.vetVerified,
+      vetName: healthInfo.vetName,
+      vetPhone: healthInfo.vetPhone,
+      hipsDysplasiaCleared: healthInfo.hipsDysplasiaCleared,
+      elbowDysplasiaCleared: healthInfo.elbowDysplasiaCleared,
+      eyesCleared: healthInfo.eyesCleared,
+      heartCleared: healthInfo.heartCleared,
+      geneticTestingDone: healthInfo.geneticTestingDone,
+      geneticTestResults: healthInfo.geneticTestResults,
+      vaccinationUpToDate: healthInfo.vaccinationUpToDate,
+      brucellosisTest: healthInfo.brucellosisTest,
+      hasHereditaryConditions: healthInfo.hasHereditaryConditions,
+      hereditaryConditionsDetails: healthInfo.hereditaryConditionsDetails,
+    };
+
+    // Only add optional fields if they exist
+    if (healthInfo.vetCertificateUrl) {
+      healthInfoData.vetCertificateUrl = healthInfo.vetCertificateUrl;
+    }
+    if (healthInfo.vaccinationRecordUrl) {
+      healthInfoData.vaccinationRecordUrl = healthInfo.vaccinationRecordUrl;
+    }
+    if (healthInfo.lastCheckupDate) {
+      healthInfoData.lastCheckupDate = Timestamp.fromDate(new Date(healthInfo.lastCheckupDate));
+    }
+    if (healthInfo.brucellosisTestDate) {
+      healthInfoData.brucellosisTestDate = Timestamp.fromDate(new Date(healthInfo.brucellosisTestDate));
+    }
+
+    // ✅ Build breedingEligibility without undefined values
+    interface BreedingEligibilityData {
+      isEligible: boolean;
+      reasonIfIneligible: string;
+      minimumAgeMet: boolean;
+      maximumAgeMet: boolean;
+      numberOfLitters: number;
+      breedingLicenseNumber?: string;
+      kennelClubRegistration?: string;
+    }
+
+    const breedingEligibilityData: BreedingEligibilityData = {
+      isEligible: eligibility.isEligible,
+      reasonIfIneligible: eligibility.reasonIfIneligible,
+      minimumAgeMet: eligibility.minimumAgeMet,
+      maximumAgeMet: eligibility.maximumAgeMet,
+      numberOfLitters: 0,
+    };
+
+    if (dogData.breedingLicenseNumber) {
+      breedingEligibilityData.breedingLicenseNumber = dogData.breedingLicenseNumber;
+    }
+    if (dogData.kennelClubRegistration) {
+      breedingEligibilityData.kennelClubRegistration = dogData.kennelClubRegistration;
+    }
+
+    // ✅ Build documents without undefined values
+    interface DocumentsData {
+      microchipNumber?: string;
+    }
+
+    const documentsData: DocumentsData = {};
+    if (dogData.microchipNumber) {
+      documentsData.microchipNumber = dogData.microchipNumber;
+    }
+
+    // ✅ Build new dog object
+    interface NewDogData {
+      name: string;
+      breed: string;
+      age: number;
+      gender: 'Male' | 'Female';
+      ownerId: string;
+      createdAt: Timestamp;
+      healthInfo: HealthInfoData;
+      breedingEligibility: BreedingEligibilityData;
+      temperament: {
+        aggressionIssues: boolean;
+        anxietyIssues: boolean;
+        trainable: boolean;
+        goodWithOtherDogs: boolean;
+      };
+      documents: DocumentsData;
+      adminVerification: {
+        verified: boolean;
+      };
+      status: 'pending' | 'approved' | 'rejected' | 'suspended';
+      imageUrl?: string;
+      bio?: string;
+    }
+
+    const newDog: NewDogData = {
       name: dogData.name,
       breed: dogData.breed,
       age: parseInt(dogData.age),
       gender: dogData.gender,
-      imageUrl,
-      bio: dogData.bio,
       ownerId: user.uid,
       createdAt: Timestamp.fromDate(new Date()),
-      
-      healthInfo: {
-        vetVerified: healthInfo.vetVerified,
-        vetCertificateUrl: healthInfo.vetCertificateUrl,
-        vetName: healthInfo.vetName,
-        vetPhone: healthInfo.vetPhone,
-        lastCheckupDate: healthInfo.lastCheckupDate ? Timestamp.fromDate(new Date(healthInfo.lastCheckupDate)) : undefined,
-        hipsDysplasiaCleared: healthInfo.hipsDysplasiaCleared,
-        elbowDysplasiaCleared: healthInfo.elbowDysplasiaCleared,
-        eyesCleared: healthInfo.eyesCleared,
-        heartCleared: healthInfo.heartCleared,
-        geneticTestingDone: healthInfo.geneticTestingDone,
-        geneticTestResults: healthInfo.geneticTestResults,
-        vaccinationUpToDate: healthInfo.vaccinationUpToDate,
-        vaccinationRecordUrl: healthInfo.vaccinationRecordUrl,
-        brucellosisTest: healthInfo.brucellosisTest,
-        brucellosisTestDate: healthInfo.brucellosisTestDate ? Timestamp.fromDate(new Date(healthInfo.brucellosisTestDate)) : undefined,
-        hasHereditaryConditions: healthInfo.hasHereditaryConditions,
-        hereditaryConditionsDetails: healthInfo.hereditaryConditionsDetails,
-      },
-      
-      breedingEligibility: {
-        isEligible: eligibility.isEligible,
-        reasonIfIneligible: eligibility.reasonIfIneligible,
-        minimumAgeMet: eligibility.minimumAgeMet,
-        maximumAgeMet: eligibility.maximumAgeMet,
-        numberOfLitters: 0,
-        breedingLicenseNumber: dogData.breedingLicenseNumber || undefined,
-        kennelClubRegistration: dogData.kennelClubRegistration || undefined,
-      },
-      
+      healthInfo: healthInfoData,
+      breedingEligibility: breedingEligibilityData,
       temperament: {
         aggressionIssues: false,
         anxietyIssues: false,
         trainable: true,
         goodWithOtherDogs: true,
       },
-      
-      documents: {
-        microchipNumber: dogData.microchipNumber || undefined,
-      },
-      
+      documents: documentsData,
       adminVerification: {
-        verified: false, // Requires admin approval
+        verified: false,
       },
-      
-      status: 'pending', // Pending admin verification
+      status: 'pending',
     };
+
+    // Only add optional fields if they exist
+    if (imageUrl) {
+      newDog.imageUrl = imageUrl;
+    }
+    if (dogData.bio) {
+      newDog.bio = dogData.bio;
+    }
 
     await addDoc(collection(db, 'dogs'), newDog);
     
@@ -230,11 +312,6 @@ const AddDog: React.FC = () => {
     setLoading(false);
   }
 };
-
-  if (!user) {
-    navigate('/');
-    return null;
-  }
 
   return (
     <div className="max-w-4xl mx-auto my-10 p-6 sm:p-8">

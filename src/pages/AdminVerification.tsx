@@ -6,10 +6,12 @@ import { db } from '@/firebase';
 import { useAuth } from '@/context';
 import type { Dog } from '@/types/dog';
 import toast from 'react-hot-toast';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 
 const AdminVerification: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { isAdmin, loading: adminLoading } = useIsAdmin();
   const [pendingDogs, setPendingDogs] = useState<Dog[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDog, setSelectedDog] = useState<Dog | null>(null);
@@ -20,14 +22,30 @@ const AdminVerification: React.FC = () => {
   // For now, we'll assume any logged-in user can access this
   // In production, check if user has admin role in Firestore
 
-  useEffect(() => {
-    if (!user) {
+   useEffect(() => {
+    if (!user || (!adminLoading && !isAdmin)) {
+      toast.error('Access denied. Admin privileges required.');
       navigate('/');
       return;
     }
 
-    fetchPendingDogs();
-  }, [user, navigate]);
+    if (!adminLoading && isAdmin) {
+      fetchPendingDogs();
+    }
+  }, [user, isAdmin, adminLoading, navigate]);
+
+  if (adminLoading || loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#8c5628] dark:border-amber-500 mb-4"></div>
+        <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return null;
+  }
 
   const fetchPendingDogs = async () => {
     setLoading(true);
