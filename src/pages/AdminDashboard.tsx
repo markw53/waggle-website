@@ -223,9 +223,11 @@ const AdminDashboard: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto my-10 p-6">
+  <div className="max-w-7xl mx-auto my-10 p-6">
+    {/* Header with Stats - Now with Background */}
+    <div className="bg-white dark:bg-zinc-800 rounded-xl p-6 sm:p-8 mb-8 border-2 border-zinc-200 dark:border-zinc-700 shadow-lg">
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-4xl font-bold text-[#573a1c] dark:text-amber-200 mb-2">
           🛡️ Admin Dashboard
         </h1>
@@ -235,70 +237,72 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       {/* Quick Stats Overview */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-        <div className="bg-white dark:bg-zinc-800 p-4 rounded-lg border border-zinc-200 dark:border-zinc-700">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Dogs</p>
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="bg-zinc-50 dark:bg-zinc-900 p-4 rounded-lg border-2 border-zinc-200 dark:border-zinc-700 shadow-sm">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 font-medium">Total Dogs</p>
           <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{stats.total}</p>
         </div>
-        <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
-          <p className="text-sm text-amber-800 dark:text-amber-400 mb-1">Pending</p>
+        <div className="bg-amber-50 dark:bg-amber-900/30 p-4 rounded-lg border-2 border-amber-200 dark:border-amber-800 shadow-sm">
+          <p className="text-sm text-amber-800 dark:text-amber-400 mb-1 font-medium">Pending</p>
           <p className="text-3xl font-bold text-amber-900 dark:text-amber-200">{stats.pending}</p>
         </div>
-        <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
-          <p className="text-sm text-green-800 dark:text-green-400 mb-1">Approved</p>
+        <div className="bg-green-50 dark:bg-green-900/30 p-4 rounded-lg border-2 border-green-200 dark:border-green-800 shadow-sm">
+          <p className="text-sm text-green-800 dark:text-green-400 mb-1 font-medium">Approved</p>
           <p className="text-3xl font-bold text-green-900 dark:text-green-200">{stats.approved}</p>
         </div>
-        <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
-          <p className="text-sm text-red-800 dark:text-red-400 mb-1">Rejected</p>
+        <div className="bg-red-50 dark:bg-red-900/30 p-4 rounded-lg border-2 border-red-200 dark:border-red-800 shadow-sm">
+          <p className="text-sm text-red-800 dark:text-red-400 mb-1 font-medium">Rejected</p>
           <p className="text-3xl font-bold text-red-900 dark:text-red-200">{stats.rejected}</p>
         </div>
-        <div className="bg-gray-50 dark:bg-gray-900/20 p-4 rounded-lg border border-gray-200 dark:border-gray-800">
-          <p className="text-sm text-gray-800 dark:text-gray-400 mb-1">Suspended</p>
+        <div className="bg-gray-50 dark:bg-gray-900/30 p-4 rounded-lg border-2 border-gray-200 dark:border-gray-800 shadow-sm">
+          <p className="text-sm text-gray-800 dark:text-gray-400 mb-1 font-medium">Suspended</p>
           <p className="text-3xl font-bold text-gray-900 dark:text-gray-200">{stats.suspended}</p>
         </div>
       </div>
+    </div>
 
-      {/* Tabs */}
-      <div className="bg-white dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden">
-        <div className="border-b border-zinc-200 dark:border-zinc-700">
-          <div className="flex">
-            <button
-              type="button"
-              onClick={() => setActiveTab('pending')}
-              className={`flex-1 px-6 py-4 font-semibold transition-colors ${
-                activeTab === 'pending'
-                  ? 'bg-[#8c5628] dark:bg-amber-700 text-white'
-                  : 'bg-zinc-50 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
-              }`}
-            >
-              ⏳ Pending Approval ({stats.pending})
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('all')}
-              className={`flex-1 px-6 py-4 font-semibold transition-colors ${
-                activeTab === 'all'
-                  ? 'bg-[#8c5628] dark:bg-amber-700 text-white'
-                  : 'bg-zinc-50 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
-              }`}
-            >
-              📋 All Dogs ({stats.total})
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('stats')}
-              className={`flex-1 px-6 py-4 font-semibold transition-colors ${
-                activeTab === 'stats'
-                  ? 'bg-[#8c5628] dark:bg-amber-700 text-white'
-                  : 'bg-zinc-50 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
-              }`}
-            >
-              📊 Statistics
-            </button>
-          </div>
+    {/* Tabs */}
+    <div className="bg-white dark:bg-zinc-800 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 overflow-hidden shadow-lg">
+      <div className="border-b-2 border-zinc-200 dark:border-zinc-700">
+        <div className="flex">
+          <button
+            type="button"
+            onClick={() => setActiveTab('pending')}
+            className={`flex-1 px-6 py-4 font-semibold transition-colors ${
+              activeTab === 'pending'
+                ? 'bg-[#8c5628] dark:bg-amber-700 text-white'
+                : 'bg-zinc-50 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
+            }`}
+          >
+            ⏳ Pending Approval ({stats.pending})
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('all')}
+            className={`flex-1 px-6 py-4 font-semibold transition-colors ${
+              activeTab === 'all'
+                ? 'bg-[#8c5628] dark:bg-amber-700 text-white'
+                : 'bg-zinc-50 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
+            }`}
+          >
+            📋 All Dogs ({stats.total})
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('stats')}
+            className={`flex-1 px-6 py-4 font-semibold transition-colors ${
+              activeTab === 'stats'
+                ? 'bg-[#8c5628] dark:bg-amber-700 text-white'
+                : 'bg-zinc-50 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
+            }`}
+          >
+            📊 Statistics
+          </button>
         </div>
+      </div>
 
-        <div className="p-6">
+      <div className="p-6">
+        {/* ... rest of your tabs content stays the same ... */}
           {/* PENDING TAB */}
           {activeTab === 'pending' && (
             <div>
@@ -495,7 +499,7 @@ const DogVerificationCard: React.FC<{
   dog: Dog;
   onReview: (dog: Dog) => void;
 }> = ({ dog, onReview }) => (
-  <div className="bg-white dark:bg-zinc-800 p-6 rounded-xl border border-zinc-200 dark:border-zinc-700">
+  <div className="bg-zinc-50 dark:bg-zinc-900 p-6 rounded-xl border-2 border-zinc-200 dark:border-zinc-700 shadow-sm">
     <div className="flex flex-col lg:flex-row gap-6">
       {/* Dog Image */}
       <div className="shrink-0">
@@ -506,27 +510,27 @@ const DogVerificationCard: React.FC<{
             className="w-48 h-48 rounded-lg object-cover border-2 border-[#8c5628] dark:border-amber-600"
           />
         ) : (
-          <div className="w-48 h-48 rounded-lg bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-6xl">
+          <div className="w-48 h-48 rounded-lg bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-6xl border-2 border-zinc-300 dark:border-zinc-600">
             🐕
           </div>
         )}
       </div>
 
       {/* Dog Info */}
-      <div className="flex-1">
+      <div className="flex-1 bg-white dark:bg-zinc-800 p-5 rounded-lg border border-zinc-200 dark:border-zinc-700">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           {dog.name}
         </h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-4">
+        <p className="text-gray-700 dark:text-gray-300 mb-4 font-medium">
           {dog.breed} • {dog.age} years • {dog.gender}
         </p>
 
-                {/* Eligibility Status */}
+        {/* Eligibility Status */}
         <div
-          className={`inline-block px-4 py-2 rounded-lg mb-4 ${
+          className={`inline-block px-4 py-2 rounded-lg mb-4 font-semibold ${
             dog.breedingEligibility.isEligible
-              ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
-              : 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200'
+              ? 'bg-green-100 dark:bg-green-900/40 text-green-900 dark:text-green-200 border border-green-300 dark:border-green-700'
+              : 'bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700'
           }`}
         >
           {dog.breedingEligibility.isEligible
@@ -535,28 +539,28 @@ const DogVerificationCard: React.FC<{
         </div>
 
         {/* Health Info Summary */}
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="bg-zinc-50 dark:bg-zinc-700 p-3 rounded-lg">
-            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Vet Verified</p>
-            <p className="font-semibold text-gray-900 dark:text-gray-100">
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="bg-zinc-100 dark:bg-zinc-700/70 p-3 rounded-lg border border-zinc-200 dark:border-zinc-600">
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1 font-medium">Vet Verified</p>
+            <p className="font-bold text-gray-900 dark:text-gray-100">
               {dog.healthInfo.vetVerified ? '✅ Yes' : '❌ No'}
             </p>
           </div>
-          <div className="bg-zinc-50 dark:bg-zinc-700 p-3 rounded-lg">
-            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Brucellosis</p>
-            <p className="font-semibold text-gray-900 dark:text-gray-100">
+          <div className="bg-zinc-100 dark:bg-zinc-700/70 p-3 rounded-lg border border-zinc-200 dark:border-zinc-600">
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1 font-medium">Brucellosis</p>
+            <p className="font-bold text-gray-900 dark:text-gray-100">
               {dog.healthInfo.brucellosisTest ? '✅ Negative' : '❌ Not Tested'}
             </p>
           </div>
-          <div className="bg-zinc-50 dark:bg-zinc-700 p-3 rounded-lg">
-            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Vaccinations</p>
-            <p className="font-semibold text-gray-900 dark:text-gray-100">
+          <div className="bg-zinc-100 dark:bg-zinc-700/70 p-3 rounded-lg border border-zinc-200 dark:border-zinc-600">
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1 font-medium">Vaccinations</p>
+            <p className="font-bold text-gray-900 dark:text-gray-100">
               {dog.healthInfo.vaccinationUpToDate ? '✅ Current' : '❌ Outdated'}
             </p>
           </div>
-          <div className="bg-zinc-50 dark:bg-zinc-700 p-3 rounded-lg">
-            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Genetic Testing</p>
-            <p className="font-semibold text-gray-900 dark:text-gray-100">
+          <div className="bg-zinc-100 dark:bg-zinc-700/70 p-3 rounded-lg border border-zinc-200 dark:border-zinc-600">
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-1 font-medium">Genetic Testing</p>
+            <p className="font-bold text-gray-900 dark:text-gray-100">
               {dog.healthInfo.geneticTestingDone ? '✅ Done' : '⚠️ Not Done'}
             </p>
           </div>
@@ -564,9 +568,9 @@ const DogVerificationCard: React.FC<{
 
         {/* Documents */}
         {(dog.healthInfo.vetCertificateUrl || dog.healthInfo.vaccinationRecordUrl) && (
-          <div className="mb-4">
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
-              Documents
+          <div className="mb-4 bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
+              <span>📄</span> Documents
             </h3>
             <div className="space-y-2">
               {dog.healthInfo.vetCertificateUrl && (
@@ -574,7 +578,7 @@ const DogVerificationCard: React.FC<{
                   href={dog.healthInfo.vetCertificateUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline"
+                  className="flex items-center gap-2 text-blue-700 dark:text-blue-300 hover:underline font-medium"
                 >
                   📄 Veterinary Certificate
                 </a>
@@ -584,7 +588,7 @@ const DogVerificationCard: React.FC<{
                   href={dog.healthInfo.vaccinationRecordUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline"
+                  className="flex items-center gap-2 text-blue-700 dark:text-blue-300 hover:underline font-medium"
                 >
                   💉 Vaccination Record
                 </a>
@@ -595,16 +599,16 @@ const DogVerificationCard: React.FC<{
 
         {/* Veterinarian Info */}
         {dog.healthInfo.vetName && (
-          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg mb-4">
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
-              Veterinarian Contact
+          <div className="bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-lg mb-4 border border-indigo-200 dark:border-indigo-800">
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
+              <span>👨‍⚕️</span> Veterinarian Contact
             </h3>
-            <p className="text-sm text-gray-700 dark:text-gray-300">
-              <span className="font-medium">Name:</span> {dog.healthInfo.vetName}
+            <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
+              <span className="font-bold">Name:</span> {dog.healthInfo.vetName}
             </p>
             {dog.healthInfo.vetPhone && (
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                <span className="font-medium">Phone:</span> {dog.healthInfo.vetPhone}
+              <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
+                <span className="font-bold">Phone:</span> {dog.healthInfo.vetPhone}
               </p>
             )}
           </div>
@@ -614,7 +618,7 @@ const DogVerificationCard: React.FC<{
         <button
           type="button"
           onClick={() => onReview(dog)}
-          className="w-full px-4 py-2 bg-[#8c5628] dark:bg-amber-700 text-white rounded-lg hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-semibold"
+          className="w-full px-4 py-3 bg-[#8c5628] dark:bg-amber-700 text-white rounded-lg hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-semibold shadow-md"
         >
           Review Details
         </button>
@@ -630,18 +634,25 @@ const DogManagementCard: React.FC<{
   onSuspend: (dog: Dog) => void;
   onUnsuspend: (dogId: string) => void;
 }> = ({ dog, onReview, onSuspend, onUnsuspend }) => {
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status?: string) => {
+    const safeStatus = status || 'pending';
+    
     const badges = {
-      pending: 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200',
-      approved: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200',
-      rejected: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200',
-      suspended: 'bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-200',
+      pending: 'bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 border-2 border-amber-300 dark:border-amber-700',
+      approved: 'bg-green-100 dark:bg-green-900/40 text-green-900 dark:text-green-200 border-2 border-green-300 dark:border-green-700',
+      rejected: 'bg-red-100 dark:bg-red-900/40 text-red-900 dark:text-red-200 border-2 border-red-300 dark:border-red-700',
+      suspended: 'bg-gray-100 dark:bg-gray-900/40 text-gray-900 dark:text-gray-200 border-2 border-gray-300 dark:border-gray-700',
     };
-    return badges[status as keyof typeof badges] || badges.pending;
+    return badges[safeStatus as keyof typeof badges] || badges.pending;
+  };
+
+  const getStatusLabel = (status?: string) => {
+    const safeStatus = status || 'pending';
+    return safeStatus.charAt(0).toUpperCase() + safeStatus.slice(1);
   };
 
   return (
-    <div className="bg-white dark:bg-zinc-800 p-4 rounded-lg border border-zinc-200 dark:border-zinc-700">
+    <div className="bg-zinc-50 dark:bg-zinc-900 p-4 rounded-lg border-2 border-zinc-200 dark:border-zinc-700 shadow-sm">
       <div className="flex items-start gap-4">
         {/* Dog Image */}
         <div className="shrink-0">
@@ -652,45 +663,56 @@ const DogManagementCard: React.FC<{
               className="w-20 h-20 rounded-lg object-cover border-2 border-[#8c5628] dark:border-amber-600"
             />
           ) : (
-            <div className="w-20 h-20 rounded-lg bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-3xl">
+            <div className="w-20 h-20 rounded-lg bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-3xl border-2 border-zinc-300 dark:border-zinc-600">
               🐕
             </div>
           )}
         </div>
 
         {/* Dog Info */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 bg-white dark:bg-zinc-800 p-4 rounded-lg border border-zinc-200 dark:border-zinc-700">
           <div className="flex items-start justify-between gap-4 mb-2">
             <div>
               <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
                 {dog.name}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">
                 {dog.breed} • {dog.age} years • {dog.gender}
               </p>
             </div>
-            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadge(dog.status)}`}>
-              {dog.status.charAt(0).toUpperCase() + dog.status.slice(1)}
+            <span className={`px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap ${getStatusBadge(dog.status)}`}>
+              {getStatusLabel(dog.status)}
             </span>
           </div>
 
           {/* ID */}
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-            ID: {dog.id}
-          </p>
+          <div className="bg-zinc-100 dark:bg-zinc-700/70 px-3 py-2 rounded mb-3 border border-zinc-200 dark:border-zinc-600">
+            <p className="text-xs text-gray-700 dark:text-gray-300 font-mono font-semibold">
+              ID: {dog.id}
+            </p>
+          </div>
 
           {/* Suspension/Rejection Reason */}
           {dog.status === 'suspended' && dog.suspendedReason && (
-            <div className="bg-gray-50 dark:bg-gray-900/30 p-2 rounded mb-3">
-              <p className="text-xs text-gray-700 dark:text-gray-300">
-                <span className="font-semibold">Suspended:</span> {dog.suspendedReason}
+            <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded mb-3 border-2 border-gray-300 dark:border-gray-600">
+              <p className="text-xs text-gray-900 dark:text-gray-100 font-medium">
+                <span className="font-bold">⛔ Suspended:</span> {dog.suspendedReason}
               </p>
             </div>
           )}
           {dog.status === 'rejected' && dog.adminVerification?.rejectionReason && (
-            <div className="bg-red-50 dark:bg-red-900/30 p-2 rounded mb-3">
-              <p className="text-xs text-red-700 dark:text-red-300">
-                <span className="font-semibold">Rejected:</span> {dog.adminVerification.rejectionReason}
+            <div className="bg-red-100 dark:bg-red-900/40 p-3 rounded mb-3 border-2 border-red-300 dark:border-red-700">
+              <p className="text-xs text-red-900 dark:text-red-200 font-medium">
+                <span className="font-bold">❌ Rejected:</span> {dog.adminVerification.rejectionReason}
+              </p>
+            </div>
+          )}
+
+          {/* Warning for dogs without status */}
+          {!dog.status && (
+            <div className="bg-amber-100 dark:bg-amber-900/40 p-3 rounded mb-3 border-2 border-amber-300 dark:border-amber-700">
+              <p className="text-xs text-amber-900 dark:text-amber-200 font-medium">
+                <span className="font-bold">⚠️ Legacy Entry:</span> This dog was created before status tracking.
               </p>
             </div>
           )}
@@ -700,7 +722,7 @@ const DogManagementCard: React.FC<{
             <button
               type="button"
               onClick={() => onReview(dog)}
-              className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-sm"
             >
               View Details
             </button>
@@ -708,7 +730,7 @@ const DogManagementCard: React.FC<{
               <button
                 type="button"
                 onClick={() => onSuspend(dog)}
-                className="px-3 py-1.5 text-sm bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
+                className="px-3 py-2 text-sm bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold shadow-sm"
               >
                 Suspend
               </button>
@@ -717,9 +739,18 @@ const DogManagementCard: React.FC<{
               <button
                 type="button"
                 onClick={() => onUnsuspend(dog.id)}
-                className="px-3 py-1.5 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                className="px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold shadow-sm"
               >
                 Unsuspend
+              </button>
+            )}
+            {!dog.status && (
+              <button
+                type="button"
+                onClick={() => onReview(dog)}
+                className="px-3 py-2 text-sm bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors font-semibold shadow-sm"
+              >
+                Review & Update
               </button>
             )}
           </div>
@@ -757,13 +788,13 @@ const ReviewModal: React.FC<{
   onUnsuspend,
   onClose,
 }) => {
-  const isPending = dog.status === 'pending';
+  const isPending = dog.status === 'pending' || !dog.status;
   const isSuspended = dog.status === 'suspended';
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50" onClick={onClose}>
       <div
-        className="bg-white dark:bg-zinc-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6"
+        className="bg-white dark:bg-zinc-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 border-2 border-zinc-300 dark:border-zinc-600 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
@@ -771,23 +802,23 @@ const ReviewModal: React.FC<{
         </h2>
 
         {/* Dog Details Summary */}
-        <div className="mb-6 p-4 bg-zinc-50 dark:bg-zinc-700/50 rounded-lg">
+        <div className="mb-6 p-5 bg-zinc-100 dark:bg-zinc-700/70 rounded-lg border-2 border-zinc-200 dark:border-zinc-600">
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Breed</p>
-              <p className="font-semibold text-gray-900 dark:text-gray-100">{dog.breed}</p>
+            <div className="bg-white dark:bg-zinc-800 p-3 rounded-lg border border-zinc-200 dark:border-zinc-700">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 font-medium">Breed</p>
+              <p className="font-bold text-gray-900 dark:text-gray-100">{dog.breed}</p>
             </div>
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Age</p>
-              <p className="font-semibold text-gray-900 dark:text-gray-100">{dog.age} years</p>
+            <div className="bg-white dark:bg-zinc-800 p-3 rounded-lg border border-zinc-200 dark:border-zinc-700">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 font-medium">Age</p>
+              <p className="font-bold text-gray-900 dark:text-gray-100">{dog.age} years</p>
             </div>
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Gender</p>
-              <p className="font-semibold text-gray-900 dark:text-gray-100">{dog.gender}</p>
+            <div className="bg-white dark:bg-zinc-800 p-3 rounded-lg border border-zinc-200 dark:border-zinc-700">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 font-medium">Gender</p>
+              <p className="font-bold text-gray-900 dark:text-gray-100">{dog.gender}</p>
             </div>
-            <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Status</p>
-              <p className="font-semibold text-gray-900 dark:text-gray-100 capitalize">{dog.status}</p>
+            <div className="bg-white dark:bg-zinc-800 p-3 rounded-lg border border-zinc-200 dark:border-zinc-700">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 font-medium">Status</p>
+              <p className="font-bold text-gray-900 dark:text-gray-100 capitalize">{dog.status || 'pending'}</p>
             </div>
           </div>
         </div>
@@ -797,28 +828,28 @@ const ReviewModal: React.FC<{
           <>
             {/* Verification Notes */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
+              <label className="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-2">
                 Verification Notes (Optional)
               </label>
               <textarea
                 value={verificationNotes}
                 onChange={(e) => setVerificationNotes(e.target.value)}
                 rows={3}
-                className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg"
+                className="w-full px-4 py-3 border-2 border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg font-medium focus:ring-2 focus:ring-[#8c5628] dark:focus:ring-amber-500"
                 placeholder="Add any notes about this verification..."
               />
             </div>
 
             {/* Rejection Reason */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
+              <label className="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-2">
                 Rejection Reason (Required if rejecting)
               </label>
               <textarea
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
                 rows={3}
-                className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg"
+                className="w-full px-4 py-3 border-2 border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg font-medium focus:ring-2 focus:ring-red-500"
                 placeholder="Explain why this dog cannot be approved..."
               />
             </div>
@@ -828,21 +859,21 @@ const ReviewModal: React.FC<{
               <button
                 type="button"
                 onClick={() => onApprove(dog.id)}
-                className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
+                className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-bold shadow-md"
               >
                 ✅ Approve
               </button>
               <button
                 type="button"
                 onClick={() => onReject(dog.id)}
-                className="px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold"
+                className="px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-bold shadow-md"
               >
                 ❌ Reject
               </button>
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-3 bg-zinc-200 dark:bg-zinc-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors font-semibold"
+                className="px-4 py-3 bg-zinc-300 dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-zinc-400 dark:hover:bg-zinc-600 transition-colors font-bold shadow-md"
               >
                 Cancel
               </button>
@@ -854,14 +885,14 @@ const ReviewModal: React.FC<{
         {dog.status === 'approved' && (
           <>
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
+              <label className="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-2">
                 Suspension Reason (Required)
               </label>
               <textarea
                 value={suspensionReason}
                 onChange={(e) => setSuspensionReason(e.target.value)}
                 rows={3}
-                className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg"
+                className="w-full px-4 py-3 border-2 border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg font-medium focus:ring-2 focus:ring-gray-500"
                 placeholder="Explain why this dog is being suspended..."
               />
             </div>
@@ -870,14 +901,14 @@ const ReviewModal: React.FC<{
               <button
                 type="button"
                 onClick={() => onSuspend(dog.id)}
-                className="px-4 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold"
+                className="px-4 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-bold shadow-md"
               >
                 🚫 Suspend Dog
               </button>
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-3 bg-zinc-200 dark:bg-zinc-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors font-semibold"
+                className="px-4 py-3 bg-zinc-300 dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-zinc-400 dark:hover:bg-zinc-600 transition-colors font-bold shadow-md"
               >
                 Cancel
               </button>
@@ -888,9 +919,9 @@ const ReviewModal: React.FC<{
         {/* Unsuspension */}
         {isSuspended && (
           <>
-            <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900/30 rounded-lg">
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                <span className="font-semibold">Current Suspension Reason:</span> {dog.suspendedReason}
+            <div className="mb-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg border-2 border-gray-300 dark:border-gray-600">
+              <p className="text-sm text-gray-900 dark:text-gray-100 font-medium">
+                <span className="font-bold">⛔ Current Suspension Reason:</span> {dog.suspendedReason}
               </p>
             </div>
 
@@ -898,14 +929,14 @@ const ReviewModal: React.FC<{
               <button
                 type="button"
                 onClick={() => onUnsuspend(dog.id)}
-                className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
+                className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-bold shadow-md"
               >
                 ✅ Unsuspend Dog
               </button>
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-3 bg-zinc-200 dark:bg-zinc-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors font-semibold"
+                className="px-4 py-3 bg-zinc-300 dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-zinc-400 dark:hover:bg-zinc-600 transition-colors font-bold shadow-md"
               >
                 Cancel
               </button>
@@ -916,16 +947,16 @@ const ReviewModal: React.FC<{
         {/* View Only for Rejected */}
         {dog.status === 'rejected' && (
           <>
-            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/30 rounded-lg">
-              <p className="text-sm text-red-700 dark:text-red-300">
-                <span className="font-semibold">Rejection Reason:</span> {dog.adminVerification?.rejectionReason}
+            <div className="mb-6 p-4 bg-red-100 dark:bg-red-900/40 rounded-lg border-2 border-red-300 dark:border-red-700">
+              <p className="text-sm text-red-900 dark:text-red-200 font-medium">
+                <span className="font-bold">❌ Rejection Reason:</span> {dog.adminVerification?.rejectionReason}
               </p>
             </div>
 
             <button
               type="button"
               onClick={onClose}
-              className="w-full px-4 py-3 bg-zinc-200 dark:bg-zinc-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-600 transition-colors font-semibold"
+              className="w-full px-4 py-3 bg-zinc-300 dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-zinc-400 dark:hover:bg-zinc-600 transition-colors font-bold shadow-md"
             >
               Close
             </button>
@@ -948,19 +979,44 @@ const TopBreedsDisplay: React.FC<{ dogs: Dog[] }> = ({ dogs }) => {
     .slice(0, 10);
 
   if (sortedBreeds.length === 0) {
-    return <p className="text-gray-600 dark:text-gray-400">No breed data available</p>;
+    return (
+      <div className="text-center py-8 bg-zinc-100 dark:bg-zinc-700/50 rounded-lg border border-zinc-200 dark:border-zinc-600">
+        <p className="text-gray-600 dark:text-gray-400 font-medium">No breed data available</p>
+      </div>
+    );
   }
+
+  const maxCount = sortedBreeds[0][1];
 
   return (
     <div className="space-y-3">
-      {sortedBreeds.map(([breed, count]) => (
-        <div key={breed} className="flex justify-between items-center">
-          <span className="text-gray-700 dark:text-gray-300">{breed}</span>
-          <span className="font-semibold text-gray-900 dark:text-gray-100">
-            {count} {count === 1 ? 'dog' : 'dogs'}
-          </span>
-        </div>
-      ))}
+      {sortedBreeds.map(([breed, count], index) => {
+        const percentage = (count / maxCount) * 100;
+        return (
+          <div key={breed} className="bg-white dark:bg-zinc-800 p-4 rounded-lg border border-zinc-200 dark:border-zinc-700">
+            <div className="flex justify-between items-center mb-2">
+              <div className="flex items-center gap-3">
+                <span className="text-lg font-bold text-gray-500 dark:text-gray-400">
+                  #{index + 1}
+                </span>
+                <span className="text-gray-900 dark:text-gray-100 font-semibold">
+                  {breed}
+                </span>
+              </div>
+              <span className="font-bold text-gray-900 dark:text-gray-100 bg-zinc-100 dark:bg-zinc-700 px-3 py-1 rounded-lg">
+                {count} {count === 1 ? 'dog' : 'dogs'}
+              </span>
+            </div>
+            {/* Progress bar */}
+            <div className="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2.5">
+              <div
+                className="bg-linear-to-r from-[#8c5628] to-amber-600 h-2.5 rounded-full transition-all duration-500"
+                style={{ width: `${percentage}%` }}
+              ></div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };

@@ -25,7 +25,7 @@ export default function Navbar() {
   const { conversations } = useMessaging(); 
   const [userPhotoURL, setUserPhotoURL] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isAdmin } = useIsAdmin();
+  const { isAdmin, loading: adminLoading } = useIsAdmin();
 
   // ✅ Calculate total unread messages
   const unreadCount = useMemo(() => {
@@ -59,6 +59,13 @@ export default function Navbar() {
 
     fetchUserProfile();
   }, [user]);
+
+  // Add these console logs
+useEffect(() => {
+  console.log('👤 User ID:', user?.uid);
+  console.log('🔍 Is Admin:', isAdmin);
+  console.log('⏳ Admin Loading:', adminLoading);
+}, [user, isAdmin, adminLoading]);
 
   return (
     <nav className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border bg-white dark:bg-zinc-900 text-foreground shadow-sm">

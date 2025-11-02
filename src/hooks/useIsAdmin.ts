@@ -18,8 +18,23 @@ export function useIsAdmin() {
       }
 
       try {
+        // Check in admins collection first
         const adminDoc = await getDoc(doc(db, 'admins', user.uid));
-        setIsAdmin(adminDoc.exists() && adminDoc.data()?.role === 'admin');
+        if (adminDoc.exists() && adminDoc.data()?.role === 'admin') {
+          setIsAdmin(true);
+          setLoading(false);
+          return;
+        }
+
+        // Fallback: check users collection for isAdmin field
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists() && userDoc.data()?.isAdmin === true) {
+          setIsAdmin(true);
+          setLoading(false);
+          return;
+        }
+
+        setIsAdmin(false);
       } catch (error) {
         console.error('Error checking admin status:', error);
         setIsAdmin(false);
