@@ -1,3 +1,4 @@
+// src/pages/UserProfilePage.tsx
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
@@ -7,6 +8,7 @@ import type { Dog } from '@/types/dog';
 import DogCard from '@/components/DogCard';
 import toast from 'react-hot-toast';
 import { useMessaging } from '@/hooks/useMessaging';
+import { ROUTES, getConversationRoute } from '@/config/routes';
 
 const UserProfilePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,7 +22,7 @@ const UserProfilePage: React.FC = () => {
     const fetchUserProfile = async () => {
       if (!id) {
         toast.error('Invalid user ID');
-        navigate('/dogs');
+        navigate(ROUTES.DOGS);
         return;
       }
 
@@ -30,7 +32,7 @@ const UserProfilePage: React.FC = () => {
         const userDoc = await getDoc(doc(db, 'users', id));
         if (!userDoc.exists()) {
           toast.error('User not found');
-          navigate('/dogs');
+          navigate(ROUTES.DOGS);
           return;
         }
 
@@ -48,7 +50,7 @@ const UserProfilePage: React.FC = () => {
       } catch (error) {
         console.error('Error fetching user profile:', error);
         toast.error('Failed to load user profile');
-        navigate('/dogs');
+        navigate(ROUTES.DOGS);
       } finally {
         setLoading(false);
       }
@@ -126,7 +128,7 @@ const UserProfilePage: React.FC = () => {
             onClick={async () => {
               try {
                 const conversationId = await startConversation(userProfile.uid);
-                navigate(`/messages/${conversationId}`);
+                navigate(getConversationRoute(conversationId));
                 toast.success('Opening conversation...');
               } catch (error) {
                 console.error('Error starting conversation:', error);

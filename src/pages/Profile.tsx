@@ -7,6 +7,7 @@ import { db, storage } from '@/firebase'; // ✅ Removed 'auth' from here
 import { useAuth } from '@/context';
 import type { UserProfile } from '@/types/user';
 import toast from 'react-hot-toast';
+import { ROUTES } from '@/config/routes';
 
 const Profile: React.FC = () => {
   const { user } = useAuth();
@@ -30,7 +31,7 @@ const Profile: React.FC = () => {
  useEffect(() => {
   if (!user) {
     toast.error('Please log in to view your profile');
-    navigate('/');
+    navigate(ROUTES.HOME);
     return;
   }
 
@@ -421,14 +422,14 @@ const Profile: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
               <button
                 type="button"
-                onClick={() => navigate('/add-dog')}
+                onClick={() => navigate(ROUTES.ADD_DOG)}
                 className="px-6 py-3 rounded-lg font-medium text-[#8c5628] dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors flex items-center justify-center gap-2"
               >
                 <span>🐕</span> Add a Dog
               </button>
               <button
                 type="button"
-                onClick={() => navigate('/dogs')}
+                onClick={() => navigate(ROUTES.DOGS)}
                 className="px-6 py-3 rounded-lg font-medium text-[#8c5628] dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors flex items-center justify-center gap-2"
               >
                 <span>🔍</span> Browse Dogs

@@ -7,6 +7,7 @@ import { db, storage } from '@/firebase';
 import { useAuth } from '@/context';
 import HealthVerificationForm from '@/components/HealthVerificationForm';
 import toast from 'react-hot-toast';
+import { ROUTES } from '@/config/routes';
 
 interface HealthInfo {
   vetVerified: boolean;
@@ -304,7 +305,7 @@ const AddDog: React.FC = () => {
       duration: 5000,
     });
     
-    navigate('/dashboard');
+    navigate(ROUTES.DASHBOARD);
   } catch (error) {
     console.error('Error adding dog:', error);
     toast.error('Failed to register dog');

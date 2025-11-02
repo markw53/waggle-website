@@ -5,7 +5,9 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useAuth } from '@/context';
 import { useMessaging } from '@/hooks/useMessaging';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 import type { Dog } from '@/types/dog';
+import { ROUTES, getConversationRoute, getUserProfileRoute, getEditDogRoute } from '@/config/routes'; // ✅ Added getUserProfileRoute and getEditDogRoute
 import toast from 'react-hot-toast';
 
 const DogProfile: React.FC = () => {
@@ -13,6 +15,7 @@ const DogProfile: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { startConversation } = useMessaging();
+  const { isAdmin } = useIsAdmin();
   
   const [dog, setDog] = useState<Dog | null>(null);
   const [loading, setLoading] = useState(true);
@@ -22,7 +25,7 @@ const DogProfile: React.FC = () => {
     const fetchDog = async () => {
       if (!id) {
         toast.error('Invalid dog ID');
-        navigate('/dogs');
+        navigate(ROUTES.DOGS);
         return;
       }
       
@@ -32,34 +35,37 @@ const DogProfile: React.FC = () => {
         if (dogDoc.exists()) {
           const dogData = { id: dogDoc.id, ...dogDoc.data() } as Dog;
           
-          // ✅ Check if dog is approved OR if user is the owner
-          if (dogData.status !== 'approved' && dogData.ownerId !== user?.uid) {
+          // ✅ Updated check: Allow access if dog is approved, user is owner, OR user is admin
+          const isOwner = dogData.ownerId === user?.uid;
+          const isApproved = dogData.status === 'approved';
+          
+          if (!isApproved && !isOwner && !isAdmin) {
             toast.error('This dog is not yet approved for viewing');
-            navigate('/dogs');
+            navigate(ROUTES.DOGS);
             return;
           }
           
           setDog(dogData);
         } else {
           toast.error('Dog not found');
-          navigate('/dogs');
+          navigate(ROUTES.DOGS);
         }
       } catch (error) {
         console.error('Error fetching dog:', error);
         toast.error('Failed to load dog profile');
-        navigate('/dogs');
+        navigate(ROUTES.DOGS);
       } finally {
         setLoading(false);
       }
     };
 
     fetchDog();
-  }, [id, navigate, user]);
+  }, [id, navigate, user, isAdmin]);
 
   const handleContactOwner = async () => {
     if (!user) {
       toast.error('Please log in to contact the owner');
-      navigate('/');
+      navigate(ROUTES.HOME);
       return;
     }
 
@@ -76,7 +82,7 @@ const DogProfile: React.FC = () => {
       console.log('Attempting to contact owner:', dog.ownerId);
       const conversationId = await startConversation(dog.ownerId);
       console.log('Conversation started:', conversationId);
-      navigate(`/messages/${conversationId}`);
+      navigate(getConversationRoute(conversationId));
       toast.success('Opening conversation...');
     } catch (error) {
       console.error('Error starting conversation:', error);
@@ -90,7 +96,7 @@ const DogProfile: React.FC = () => {
   const handleRequestMatch = () => {
     if (!user) {
       toast.error('Please log in to request a match');
-      navigate('/');
+      navigate(ROUTES.HOME);
       return;
     }
 
@@ -101,13 +107,12 @@ const DogProfile: React.FC = () => {
       return;
     }
 
-    // TODO: Implement match request functionality
-    navigate('/add-match', { state: { selectedDog: dog } });
+    navigate(ROUTES.ADD_MATCH, { state: { selectedDog: dog } });
   };
 
   const handleViewOwnerProfile = () => {
     if (!dog) return;
-    navigate(`/user/${dog.ownerId}`);
+    navigate(getUserProfileRoute(dog.ownerId)); // ✅ Updated
   };
 
   if (loading) {
@@ -176,7 +181,7 @@ const DogProfile: React.FC = () => {
           </p>
           <button
             type="button"
-            onClick={() => navigate(`/edit-dog/${dog.id}`)}
+            onClick={() => navigate(getEditDogRoute(dog.id))} // ✅ Updated
             className="mt-3 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-sm"
           >
             Edit Dog to Resubmit
@@ -301,7 +306,7 @@ const DogProfile: React.FC = () => {
         <div className="mb-6">
           <button
             type="button"
-            onClick={() => navigate(`/edit-dog/${dog.id}`)}
+            onClick={() => navigate(getEditDogRoute(dog.id))} // ✅ Updated
             className="w-full px-6 py-3 bg-[#8c5628] dark:bg-amber-700 text-white rounded-lg hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-semibold text-lg shadow-md"
           >
             ✏️ Edit Dog Profile

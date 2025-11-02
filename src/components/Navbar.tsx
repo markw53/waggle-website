@@ -18,6 +18,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
+import { ROUTES } from '@/config/routes';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -71,7 +72,7 @@ useEffect(() => {
     <nav className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border bg-white dark:bg-zinc-900 text-foreground shadow-sm">
       <div className="flex justify-between items-center max-w-7xl mx-auto">
         {/* Logo/Brand */}
-        <Link to="/dashboard" className="flex items-center gap-2">
+        <Link to={ROUTES.DASHBOARD} className="flex items-center gap-2">
           <span className="text-lg sm:text-xl font-bold text-[#573a20] dark:text-amber-200">
             Waggle
           </span>
@@ -80,7 +81,7 @@ useEffect(() => {
         <div className="flex items-center gap-2 sm:gap-4">
           {/* Desktop Home Link */}
           <Link
-            to="/dashboard"
+            to={ROUTES.DASHBOARD}
             className="hidden sm:block text-[#573a20] dark:text-zinc-100 text-base font-medium bg-[#ffeedd] dark:bg-zinc-800 px-3 py-1.5 rounded-md shadow-sm hover:bg-[#f9deb3] dark:hover:bg-zinc-700 transition"
           >
             Home
@@ -146,7 +147,7 @@ useEffect(() => {
               <DropdownMenuSeparator className="bg-zinc-200 dark:bg-zinc-700" />
               
               <DropdownMenuItem asChild>
-                <Link to="/getting-started" className="cursor-pointer flex items-center gap-2">
+                <Link to={ROUTES.GETTING_STARTED} className="cursor-pointer flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -155,7 +156,7 @@ useEffect(() => {
               </DropdownMenuItem>
 
               <DropdownMenuItem asChild>
-                <Link to="/profile" className="cursor-pointer flex items-center gap-2">
+                <Link to={ROUTES.PROFILE} className="cursor-pointer flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
@@ -164,7 +165,7 @@ useEffect(() => {
               </DropdownMenuItem>
 
               <DropdownMenuItem asChild>
-                <Link to="/my-dogs" className="cursor-pointer flex items-center gap-2">
+                <Link to={ROUTES.MY_DOGS} className="cursor-pointer flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                   </svg>
@@ -173,7 +174,7 @@ useEffect(() => {
               </DropdownMenuItem>
 
               <DropdownMenuItem asChild>
-                <Link to="/dogs" className="cursor-pointer flex items-center gap-2">
+                <Link to={ROUTES.DOGS} className="cursor-pointer flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
@@ -182,7 +183,7 @@ useEffect(() => {
               </DropdownMenuItem>
 
               <DropdownMenuItem asChild>
-                <Link to="/add-dog" className="cursor-pointer flex items-center gap-2">
+                <Link to={ROUTES.ADD_DOG} className="cursor-pointer flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
@@ -191,7 +192,7 @@ useEffect(() => {
               </DropdownMenuItem>
 
               <DropdownMenuItem asChild>
-                <Link to="/matches" className="cursor-pointer flex items-center gap-2">
+                <Link to={ROUTES.MATCHES} className="cursor-pointer flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
@@ -201,7 +202,7 @@ useEffect(() => {
 
               {/* ✅ Add Messages menu item */}
               <DropdownMenuItem asChild>
-                <Link to="/messages" className="cursor-pointer flex items-center gap-2 justify-between">
+                <Link to={ROUTES.MESSAGES} className="cursor-pointer flex items-center gap-2 justify-between">
                   <div className="flex items-center gap-2">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -217,7 +218,7 @@ useEffect(() => {
               </DropdownMenuItem>
 
               <DropdownMenuItem asChild>
-                <Link to="/analytics" className="cursor-pointer flex items-center gap-2">
+                <Link to={ROUTES.ANALYTICS} className="cursor-pointer flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
@@ -229,7 +230,7 @@ useEffect(() => {
                 <>
                   <DropdownMenuSeparator className="bg-zinc-200 dark:bg-zinc-700" />
                   <DropdownMenuItem asChild>
-                    <Link to="/admin/verification" className="cursor-pointer flex items-center gap-2 text-amber-600 dark:text-amber-400">
+                    <Link to={ROUTES.ADMIN_DASHBOARD} className="cursor-pointer flex items-center gap-2 text-amber-600 dark:text-amber-400">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                       </svg>
@@ -296,7 +297,7 @@ useEffect(() => {
         <div className="sm:hidden mt-4 pb-4 border-t border-zinc-200 dark:border-zinc-700 pt-4">
           <div className="flex flex-col space-y-2">
             <Link
-              to="/getting-started"
+              to={ROUTES.GETTING_STARTED}
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition"
             >
@@ -306,7 +307,7 @@ useEffect(() => {
               Getting Started
             </Link>
             <Link
-              to="/profile"
+              to={ROUTES.PROFILE}
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition"
             >
@@ -317,7 +318,7 @@ useEffect(() => {
             </Link>
 
             <Link
-              to="/my-dogs"
+              to={ROUTES.MY_DOGS}
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition"
             >
@@ -328,7 +329,7 @@ useEffect(() => {
             </Link>
 
             <Link
-              to="/dogs"
+              to={ROUTES.DOGS}
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition"
             >
@@ -339,7 +340,7 @@ useEffect(() => {
             </Link>
 
             <Link
-              to="/add-dog"
+              to={ROUTES.ADD_DOG}
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition"
             >
@@ -350,7 +351,7 @@ useEffect(() => {
             </Link>
 
             <Link
-              to="/matches"
+              to={ROUTES.MATCHES}
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition"
             >
@@ -362,7 +363,7 @@ useEffect(() => {
 
             {/* ✅ Add Messages mobile menu item */}
             <Link
-              to="/messages"
+              to={ROUTES.MESSAGES}
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition justify-between"
             >
@@ -380,7 +381,7 @@ useEffect(() => {
             </Link>
 
             <DropdownMenuItem asChild>
-              <Link to="/analytics" className="cursor-pointer flex items-center gap-2">
+              <Link to={ROUTES.ANALYTICS} className="cursor-pointer flex items-center gap-2">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
@@ -392,7 +393,7 @@ useEffect(() => {
               <>
                 <div className="border-t border-zinc-200 dark:border-zinc-700 my-2"></div>
                 <Link
-                  to="/admin/verification"
+                  to={ROUTES.ADMIN_DASHBOARD}
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center gap-3 px-4 py-3 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition font-semibold"
                 >

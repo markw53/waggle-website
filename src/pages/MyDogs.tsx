@@ -6,6 +6,7 @@ import { db } from '@/firebase';
 import { useAuth } from '@/context';
 import type { Dog } from '@/types/dog';
 import DogCard from '@/components/DogCard';
+import { ROUTES, getDogProfileRoute, getEditDogRoute } from '@/config/routes'; // ✅ Added
 import toast from 'react-hot-toast';
 
 const MyDogs: React.FC = () => {
@@ -42,7 +43,7 @@ const MyDogs: React.FC = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate('/');
+      navigate(ROUTES.HOME); // ✅ Updated
       return;
     }
 
@@ -99,7 +100,7 @@ const MyDogs: React.FC = () => {
           </div>
           <button
             type="button"
-            onClick={() => navigate('/add-dog')}
+            onClick={() => navigate(ROUTES.ADD_DOG)} // ✅ Updated
             className="px-6 py-3 bg-[#8c5628] dark:bg-amber-700 text-white rounded-lg hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-semibold shadow-md flex items-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -173,7 +174,7 @@ const MyDogs: React.FC = () => {
           {filter === 'all' && (
             <button
               type="button"
-              onClick={() => navigate('/add-dog')}
+              onClick={() => navigate(ROUTES.ADD_DOG)} // ✅ Updated
               className="px-6 py-3 bg-[#8c5628] dark:bg-amber-700 text-white rounded-lg hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-semibold"
             >
               Register Your First Dog
@@ -212,7 +213,7 @@ const MyDogs: React.FC = () => {
               <div className="flex gap-2">
                 <button
                   type="button"
-                  onClick={() => navigate(`/dog/${dog.id}`)}
+                  onClick={() => navigate(getDogProfileRoute(dog.id))} // ✅ Updated
                   className="flex-1 px-4 py-2 bg-[#8c5628] dark:bg-amber-700 text-white rounded-lg hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-medium text-sm"
                   title="View dog profile"
                 >
@@ -220,7 +221,7 @@ const MyDogs: React.FC = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigate(`/edit-dog/${dog.id}`)}
+                  onClick={() => navigate(getEditDogRoute(dog.id))} // ✅ Updated
                   className="flex-1 px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors font-medium text-sm"
                   title="Edit dog information"
                 >

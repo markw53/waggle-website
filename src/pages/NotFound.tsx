@@ -1,4 +1,6 @@
+// src/pages/NotFound.tsx
 import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/config/routes'; // ✅ Added
 
 const NotFound: React.FC = () => {
   const navigate = useNavigate();
@@ -21,7 +23,7 @@ const NotFound: React.FC = () => {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate(ROUTES.HOME)} // ✅ Updated
             className="px-8 py-3 bg-[#8c5628] dark:bg-amber-700 text-white rounded-lg hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-semibold shadow-md"
           >
             Go Home
@@ -40,19 +42,19 @@ const NotFound: React.FC = () => {
           </p>
           <div className="flex flex-wrap gap-2 justify-center">
             <button
-              onClick={() => navigate('/dogs')}
+              onClick={() => navigate(ROUTES.DOGS)} // ✅ Updated
               className="px-4 py-2 text-sm bg-zinc-100 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
             >
               Browse Dogs
             </button>
             <button
-              onClick={() => navigate('/add-dog')}
+              onClick={() => navigate(ROUTES.ADD_DOG)} // ✅ Updated
               className="px-4 py-2 text-sm bg-zinc-100 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
             >
               Add a Dog
             </button>
             <button
-              onClick={() => navigate('/profile')}
+              onClick={() => navigate(ROUTES.PROFILE)} // ✅ Updated
               className="px-4 py-2 text-sm bg-zinc-100 dark:bg-zinc-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
             >
               My Profile

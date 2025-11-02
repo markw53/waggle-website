@@ -1,16 +1,15 @@
+// src/routes/RequireAuth.tsx
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context';
+import { ROUTES } from '@/config/routes';
+import Loading from '@/components/Loading';
 
 const RequireAuth: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
-  if (loading) return null; // Or a spinner
-
-  if (!user) {
-    // Redirect to login, keep the next location state
-    return <Navigate to="/" state={{ from: location }} replace />;
-  }
+  if (loading) return <Loading message="Verifying access..." />;
+  if (!user) return <Navigate to={ROUTES.HOME} state={{ from: location }} replace />;
 
   return <>{children}</>;
 };
