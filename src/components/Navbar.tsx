@@ -17,6 +17,7 @@ import { useMessaging } from '@/hooks/useMessaging';
 import { useEffect, useState, useMemo } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -24,6 +25,7 @@ export default function Navbar() {
   const { conversations } = useMessaging(); 
   const [userPhotoURL, setUserPhotoURL] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isAdmin } = useIsAdmin();
 
   // ✅ Calculate total unread messages
   const unreadCount = useMemo(() => {
@@ -137,6 +139,15 @@ export default function Navbar() {
               <DropdownMenuSeparator className="bg-zinc-200 dark:bg-zinc-700" />
               
               <DropdownMenuItem asChild>
+                <Link to="/getting-started" className="cursor-pointer flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Getting Started
+                </Link>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem asChild>
                 <Link to="/profile" className="cursor-pointer flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -207,6 +218,20 @@ export default function Navbar() {
                 </Link>
               </DropdownMenuItem>
 
+              {isAdmin && (
+                <>
+                  <DropdownMenuSeparator className="bg-zinc-200 dark:bg-zinc-700" />
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin/verification" className="cursor-pointer flex items-center gap-2 text-amber-600 dark:text-amber-400">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                      🔒 Admin Panel
+                    </Link>
+                  </DropdownMenuItem>
+                </>
+              )}
+
               <DropdownMenuSeparator className="bg-zinc-200 dark:bg-zinc-700" />
               
               <DropdownMenuSub>
@@ -263,6 +288,16 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="sm:hidden mt-4 pb-4 border-t border-zinc-200 dark:border-zinc-700 pt-4">
           <div className="flex flex-col space-y-2">
+            <Link
+              to="/getting-started"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Getting Started
+            </Link>
             <Link
               to="/profile"
               onClick={() => setMobileMenuOpen(false)}
@@ -345,6 +380,22 @@ export default function Navbar() {
                 Analytics
               </Link>
             </DropdownMenuItem>
+
+            {isAdmin && (
+              <>
+                <div className="border-t border-zinc-200 dark:border-zinc-700 my-2"></div>
+                <Link
+                  to="/admin/verification"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition font-semibold"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  🔒 Admin Panel
+                </Link>
+              </>
+            )}
 
             <div className="border-t border-zinc-200 dark:border-zinc-700 my-2"></div>
 
