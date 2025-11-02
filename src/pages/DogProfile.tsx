@@ -30,7 +30,16 @@ const DogProfile: React.FC = () => {
       try {
         const dogDoc = await getDoc(doc(db, 'dogs', id));
         if (dogDoc.exists()) {
-          setDog({ id: dogDoc.id, ...dogDoc.data() } as Dog);
+          const dogData = { id: dogDoc.id, ...dogDoc.data() } as Dog;
+          
+          // ✅ Check if dog is approved OR if user is the owner
+          if (dogData.status !== 'approved' && dogData.ownerId !== user?.uid) {
+            toast.error('This dog is not yet approved for viewing');
+            navigate('/dogs');
+            return;
+          }
+          
+          setDog(dogData);
         } else {
           toast.error('Dog not found');
           navigate('/dogs');
@@ -45,39 +54,38 @@ const DogProfile: React.FC = () => {
     };
 
     fetchDog();
-  }, [id, navigate]);
+  }, [id, navigate, user]);
 
   const handleContactOwner = async () => {
-  if (!user) {
-    toast.error('Please log in to contact the owner');
-    navigate('/');
-    return;
-  }
+    if (!user) {
+      toast.error('Please log in to contact the owner');
+      navigate('/');
+      return;
+    }
 
-  if (!dog) return;
+    if (!dog) return;
 
-  // Check if user is trying to contact themselves
-  if (dog.ownerId === user.uid) {
-    toast.error("You can't message yourself!");
-    return;
-  }
+    // Check if user is trying to contact themselves
+    if (dog.ownerId === user.uid) {
+      toast.error("You can't message yourself!");
+      return;
+    }
 
-  setContactingOwner(true);
-  try {
-    console.log('Attempting to contact owner:', dog.ownerId); // Debug log
-    const conversationId = await startConversation(dog.ownerId);
-    console.log('Conversation started:', conversationId); // Debug log
-    navigate(`/messages/${conversationId}`);
-    toast.success('Opening conversation...');
-  } catch (error) {
-    console.error('Error starting conversation:', error);
-    // Show the actual error message
-    const errorMessage = error instanceof Error ? error.message : 'Failed to start conversation';
-    toast.error(errorMessage);
-  } finally {
-    setContactingOwner(false);
-  }
-};
+    setContactingOwner(true);
+    try {
+      console.log('Attempting to contact owner:', dog.ownerId);
+      const conversationId = await startConversation(dog.ownerId);
+      console.log('Conversation started:', conversationId);
+      navigate(`/messages/${conversationId}`);
+      toast.success('Opening conversation...');
+    } catch (error) {
+      console.error('Error starting conversation:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to start conversation';
+      toast.error(errorMessage);
+    } finally {
+      setContactingOwner(false);
+    }
+  };
 
   const handleRequestMatch = () => {
     if (!user) {
@@ -133,9 +141,46 @@ const DogProfile: React.FC = () => {
       {/* Own Dog Banner */}
       {isOwnDog && (
         <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
-          <p className="text-amber-800 dark:text-amber-200 font-medium flex items-center gap-2">
-            <span>👤</span> This is your dog
+          <div className="flex items-center justify-between">
+            <p className="text-amber-800 dark:text-amber-200 font-medium flex items-center gap-2">
+              <span>👤</span> This is your dog
+            </p>
+            {/* ✅ Show status badge for own dogs */}
+            {dog.status === 'pending' && (
+              <span className="px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 text-sm font-semibold rounded-full">
+                ⏳ Pending Approval
+              </span>
+            )}
+            {dog.status === 'rejected' && (
+              <span className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 text-sm font-semibold rounded-full">
+                ❌ Rejected
+              </span>
+            )}
+            {dog.status === 'approved' && (
+              <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-sm font-semibold rounded-full">
+                ✅ Approved
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ✅ Rejection reason for own dogs */}
+      {isOwnDog && dog.status === 'rejected' && dog.adminVerification?.rejectionReason && (
+        <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-lg">
+          <h3 className="font-semibold text-red-900 dark:text-red-200 mb-2 flex items-center gap-2">
+            <span>⚠️</span> Rejection Reason
+          </h3>
+          <p className="text-sm text-red-800 dark:text-red-300">
+            {dog.adminVerification.rejectionReason}
           </p>
+          <button
+            type="button"
+            onClick={() => navigate(`/edit-dog/${dog.id}`)}
+            className="mt-3 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-sm"
+          >
+            Edit Dog to Resubmit
+          </button>
         </div>
       )}
 
@@ -219,8 +264,8 @@ const DogProfile: React.FC = () => {
         </div>
       )}
 
-      {/* Action Buttons */}
-      {!isOwnDog ? (
+      {/* Action Buttons - Only show for approved dogs or hide for pending/rejected */}
+      {!isOwnDog && dog.status === 'approved' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           <button
             type="button"
@@ -250,7 +295,9 @@ const DogProfile: React.FC = () => {
             💕 Request Match
           </button>
         </div>
-      ) : (
+      )}
+
+      {isOwnDog && (
         <div className="mb-6">
           <button
             type="button"
@@ -262,8 +309,8 @@ const DogProfile: React.FC = () => {
         </div>
       )}
 
-      {/* View Owner Profile */}
-      {!isOwnDog && (
+      {/* View Owner Profile - Only for approved dogs */}
+      {!isOwnDog && dog.status === 'approved' && (
         <button
           type="button"
           onClick={handleViewOwnerProfile}

@@ -38,7 +38,7 @@ const MyDogs: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [user]); // ✅ Add user as dependency
+  }, [user]);
 
   useEffect(() => {
     if (!user) {
@@ -47,7 +47,7 @@ const MyDogs: React.FC = () => {
     }
 
     fetchMyDogs();
-  }, [user, navigate, fetchMyDogs]); // ✅ Now includes fetchMyDogs
+  }, [user, navigate, fetchMyDogs]);
 
   const handleDeleteDog = async (dogId: string, dogName: string) => {
     if (!window.confirm(`Are you sure you want to delete ${dogName}? This action cannot be undone.`)) {
@@ -86,27 +86,27 @@ const MyDogs: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto my-10 p-6">
-        {/* Header */}
-        <div className="mb-8">
+      {/* Header */}
+      <div className="mb-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white dark:bg-zinc-800 p-6 rounded-xl border border-zinc-200 dark:border-zinc-700">
-            <div>
+          <div>
             <h1 className="text-4xl font-bold text-[#573a1c] dark:text-amber-200 mb-2">
-                🐕 My Dogs
+              🐕 My Dogs
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-                Manage your registered dogs
+              Manage your registered dogs
             </p>
-            </div>
-            <button
+          </div>
+          <button
             type="button"
             onClick={() => navigate('/add-dog')}
             className="px-6 py-3 bg-[#8c5628] dark:bg-amber-700 text-white rounded-lg hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-semibold shadow-md flex items-center gap-2"
-            >
+          >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
             Add New Dog
-            </button>
+          </button>
         </div>
 
         {/* Filter Tabs */}
@@ -183,34 +183,38 @@ const MyDogs: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredDogs.map(dog => (
-            <div key={dog.id} className="relative">
-              {/* Status Badge */}
-              <div className="absolute top-4 right-4 z-10">
-                {dog.status === 'approved' && (
-                  <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-xs font-semibold rounded-full">
-                    ✅ Approved
-                  </span>
-                )}
-                {dog.status === 'pending' && (
-                  <span className="px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 text-xs font-semibold rounded-full">
-                    ⏳ Pending
-                  </span>
-                )}
-                {dog.status === 'rejected' && (
-                  <span className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 text-xs font-semibold rounded-full">
-                    ❌ Rejected
-                  </span>
-                )}
+            <div key={dog.id} className="space-y-4">
+              {/* ✅ Dog Card with Status Badge */}
+              <div className="relative">
+                {/* Status Badge */}
+                <div className="absolute top-4 right-4 z-10">
+                  {dog.status === 'approved' && (
+                    <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-xs font-semibold rounded-full shadow-md">
+                      ✅ Approved
+                    </span>
+                  )}
+                  {dog.status === 'pending' && (
+                    <span className="px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 text-xs font-semibold rounded-full shadow-md">
+                      ⏳ Pending
+                    </span>
+                  )}
+                  {dog.status === 'rejected' && (
+                    <span className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 text-xs font-semibold rounded-full shadow-md">
+                      ❌ Rejected
+                    </span>
+                  )}
+                </div>
+                
+                <DogCard dog={dog} />
               </div>
 
-              <DogCard dog={dog} />
-
               {/* Action Buttons */}
-              <div className="mt-4 flex gap-2">
+              <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => navigate(`/dog/${dog.id}`)}
                   className="flex-1 px-4 py-2 bg-[#8c5628] dark:bg-amber-700 text-white rounded-lg hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-medium text-sm"
+                  title="View dog profile"
                 >
                   View
                 </button>
@@ -218,6 +222,7 @@ const MyDogs: React.FC = () => {
                   type="button"
                   onClick={() => navigate(`/edit-dog/${dog.id}`)}
                   className="flex-1 px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors font-medium text-sm"
+                  title="Edit dog information"
                 >
                   Edit
                 </button>
@@ -225,6 +230,8 @@ const MyDogs: React.FC = () => {
                   type="button"
                   onClick={() => handleDeleteDog(dog.id, dog.name)}
                   className="px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded-lg hover:bg-red-700 dark:hover:bg-red-600 transition-colors font-medium text-sm"
+                  title="Delete dog"
+                  aria-label={`Delete ${dog.name}`}
                 >
                   🗑️
                 </button>
@@ -232,7 +239,7 @@ const MyDogs: React.FC = () => {
 
               {/* Rejection Reason */}
               {dog.status === 'rejected' && dog.adminVerification?.rejectionReason && (
-                <div className="mt-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                   <p className="text-xs font-semibold text-red-900 dark:text-red-200 mb-1">
                     Rejection Reason:
                   </p>

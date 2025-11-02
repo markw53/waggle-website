@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useDogs } from '../hooks/useDogs';
-import type { Dog } from '../types/dog';
+import { useDogs } from '@/hooks/useDogs';
+import type { Dog } from '@/types/dog';
 // import { Timestamp } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 
@@ -14,9 +14,37 @@ const DogManager: React.FC = () => {
     name: '',
     breed: '',
     age: 1,
-    gender: 'Male',
+    gender: 'Male' as const,
     bio: '',
-    imageUrl: null,
+    imageUrl: undefined,
+    // ✅ Add all required fields from Dog type:
+    healthInfo: {
+      vetVerified: false,
+      hipsDysplasiaCleared: false,
+      elbowDysplasiaCleared: false,
+      eyesCleared: false,
+      heartCleared: false,
+      geneticTestingDone: false,
+      vaccinationUpToDate: false,
+      brucellosisTest: false,
+      hasHereditaryConditions: false,
+    },
+    breedingEligibility: {
+      isEligible: false,
+      minimumAgeMet: false,
+      maximumAgeMet: true,
+    },
+    temperament: {
+      aggressionIssues: false,
+      anxietyIssues: false,
+      trainable: true,
+      goodWithOtherDogs: true,
+    },
+    documents: {},
+    adminVerification: {
+      verified: false,
+    },
+    status: 'pending' as const,
   };
 
   const [form, setForm] = useState<DogForm>(initialFormState);
@@ -63,6 +91,14 @@ const DogManager: React.FC = () => {
       gender: dog.gender,
       bio: dog.bio || '',
       imageUrl: dog.imageUrl,
+      // ✅ Include all nested objects:
+      healthInfo: dog.healthInfo,
+      breedingEligibility: dog.breedingEligibility,
+      temperament: dog.temperament,
+      documents: dog.documents,
+      adminVerification: dog.adminVerification,
+      status: dog.status,
+      suspendedReason: dog.suspendedReason,
     });
     setEditId(dog.id);
   };
@@ -170,7 +206,7 @@ const DogManager: React.FC = () => {
                 type="url"
                 placeholder="https://example.com/dog-image.jpg"
                 value={form.imageUrl || ''}
-                onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value || null }))}
+                onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value || undefined }))}
                 className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8c5628] dark:focus:ring-amber-500"
               />
             </div>
@@ -190,7 +226,7 @@ const DogManager: React.FC = () => {
                 className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8c5628] dark:focus:ring-amber-500 resize-y"
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                {form.bio.length}/160 characters
+                {form.bio?.length || 0}/160 characters
               </p>
             </div>
           </div>

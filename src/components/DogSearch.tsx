@@ -1,6 +1,6 @@
 // src/components/DogSearch.tsx
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { useDogs } from '../hooks/useDogs';
+import { useDogs } from '@/hooks/useDogs';
 import DogCard from './DogCard';
 import { debounce } from 'lodash';
 

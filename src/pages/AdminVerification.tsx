@@ -18,10 +18,6 @@ const AdminVerification: React.FC = () => {
   const [verificationNotes, setVerificationNotes] = useState('');
   const [rejectionReason, setRejectionReason] = useState('');
 
-  // TODO: Add admin role check here
-  // For now, we'll assume any logged-in user can access this
-  // In production, check if user has admin role in Firestore
-
    useEffect(() => {
     if (!user || (!adminLoading && !isAdmin)) {
       toast.error('Access denied. Admin privileges required.');
