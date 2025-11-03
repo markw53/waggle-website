@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import toast from 'react-hot-toast';
+import { ROUTES } from '@/config/routes';
 
 interface DogProfile {
   id: string;
@@ -27,7 +28,7 @@ const AddMatch: React.FC = () => {
         const user = auth.currentUser;
         if (!user) {
           toast.error('You must be logged in.');
-          navigate('/');
+          navigate(ROUTES.HOME);
           return;
         }
         const dogQuery = query(collection(db, 'dogs'), where('ownerId', '==', user.uid));
@@ -75,7 +76,7 @@ const AddMatch: React.FC = () => {
         createdAt: new Date(),
       });
       toast.success('Match added successfully! 💕');
-      navigate('/matches');
+      navigate(ROUTES.MATCHES);
     } catch (error) {
       console.error('Error adding match:', error);
       toast.error('Could not add match. Please try again.');
@@ -107,7 +108,7 @@ const AddMatch: React.FC = () => {
             You need at least 2 dogs to create a match. Please add more dogs first.
           </p>
           <button
-            onClick={() => navigate('/add-dog')}
+            onClick={() => navigate(ROUTES.ADD_DOG)}
             className="px-6 py-3 rounded-lg font-semibold text-white bg-[#8c5628] dark:bg-amber-700 hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors"
           >
             Add a Dog
@@ -209,7 +210,7 @@ const AddMatch: React.FC = () => {
         <div className="flex gap-4 pt-4">
           <button
             type="button"
-            onClick={() => navigate('/matches')}
+            onClick={() => navigate(ROUTES.MATCHES)}
             className="flex-1 px-6 py-3 rounded-lg font-semibold text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-zinc-700 hover:bg-gray-300 dark:hover:bg-zinc-600 transition-colors"
           >
             Cancel

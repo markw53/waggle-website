@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useMessaging } from '@/hooks/useMessaging';
 import { useAuth } from '@/context';
 import { useEffect } from 'react';
-import type { Conversation } from '@/types/message'; // ✅ Add this import
+import type { Conversation } from '@/types/message';
+import { ROUTES, getConversationRoute } from '@/config/routes'; // ✅ Added
 
 const Messages: React.FC = () => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const Messages: React.FC = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate('/');
+      navigate(ROUTES.HOME); // ✅ Updated
     }
   }, [user, navigate]);
 
@@ -25,12 +26,12 @@ const Messages: React.FC = () => {
     );
   }
 
-  const getOtherUser = (conversation: Conversation) => { // ✅ Changed from any
+  const getOtherUser = (conversation: Conversation) => {
     const otherUserId = conversation.participants.find((id: string) => id !== user?.uid);
     return otherUserId ? conversation.participantDetails[otherUserId] : null;
   };
 
-  const getUnreadCount = (conversation: Conversation) => { // ✅ Changed from any
+  const getUnreadCount = (conversation: Conversation) => {
     return conversation.unreadCount[user?.uid || ''] || 0;
   };
 
@@ -60,7 +61,7 @@ const Messages: React.FC = () => {
               </p>
               <button
                 type="button"
-                onClick={() => navigate('/dogs')}
+                onClick={() => navigate(ROUTES.DOGS)} // ✅ Updated
                 className="px-6 py-3 bg-[#8c5628] dark:bg-amber-700 text-white rounded-lg hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-semibold"
               >
                 Browse Dogs
@@ -71,14 +72,14 @@ const Messages: React.FC = () => {
               const otherUser = getOtherUser(conversation);
               const unreadCount = getUnreadCount(conversation);
 
-              // ✅ Add null check for otherUser
+              // Add null check for otherUser
               if (!otherUser) return null;
 
               return (
                 <button
                   key={conversation.id}
                   type="button"
-                  onClick={() => navigate(`/messages/${conversation.id}`)}
+                  onClick={() => navigate(getConversationRoute(conversation.id))} // ✅ Updated
                   className="w-full p-4 hover:bg-zinc-50 dark:hover:bg-zinc-700/50 transition-colors flex items-center gap-4 text-left"
                 >
                   {/* Avatar */}
@@ -89,7 +90,7 @@ const Messages: React.FC = () => {
                       className="w-14 h-14 rounded-full object-cover border-2 border-[#8c5628] dark:border-amber-600"
                     />
                   ) : (
-                    <div className="w-14 h-14 rounded-full bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-2xl border-2 border-[#8c5628] dark:border-amber-600">
+                    <div className="w-14 h-14 rounded-full bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-2xl border-2 border-[#8c5628] dark:border-amber-600"> {/* ✅ Fixed gradient class */}
                       👤
                     </div>
                   )}

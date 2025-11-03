@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { ROUTES } from '@/config/routes'; // ✅ Added
 import {
   BarChart,
   Bar,
@@ -28,7 +29,7 @@ const Analytics: React.FC = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate('/');
+      navigate(ROUTES.HOME); // ✅ Updated
     }
   }, [user, navigate]);
 
@@ -240,21 +241,21 @@ const Analytics: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <button
           type="button"
-          onClick={() => navigate('/dogs')}
+          onClick={() => navigate(ROUTES.DOGS)} // ✅ Updated
           className="p-4 bg-[#8c5628] dark:bg-amber-700 text-white rounded-lg hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-semibold flex items-center justify-center gap-2"
         >
           <span>🐕</span> View All Dogs
         </button>
         <button
           type="button"
-          onClick={() => navigate('/matches')}
+          onClick={() => navigate(ROUTES.MATCHES)} // ✅ Updated
           className="p-4 bg-green-600 dark:bg-green-700 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors font-semibold flex items-center justify-center gap-2"
         >
           <span>💕</span> View Matches
         </button>
         <button
           type="button"
-          onClick={() => navigate('/messages')}
+          onClick={() => navigate(ROUTES.MESSAGES)} // ✅ Updated
           className="p-4 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors font-semibold flex items-center justify-center gap-2"
         >
           <span>💬</span> View Messages

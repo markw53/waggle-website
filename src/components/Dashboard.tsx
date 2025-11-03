@@ -1,6 +1,7 @@
 import { useAuth } from '@/context';
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/config/routes';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -8,7 +9,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
   if (user && !user.displayName) {
-    navigate('/getting-started');
+    navigate(ROUTES.GETTING_STARTED);
   }
 }, [user, navigate]);
 

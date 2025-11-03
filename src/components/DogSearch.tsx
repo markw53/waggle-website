@@ -25,7 +25,7 @@ const DogSearch: React.FC = () => {
     const fetchDogs = async () => {
       if (!user) {
         toast.error('Please log in to browse dogs');
-        navigate('/');
+        navigate(ROUTES.HOME);
         return;
       }
 

@@ -7,6 +7,7 @@ import { useAuth } from '@/context';
 import type { Dog } from '@/types/dog';
 import toast from 'react-hot-toast';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
+import { ROUTES } from '@/config/routes';
 
 type TabType = 'pending' | 'all' | 'stats';
 type FilterStatus = 'all' | 'approved' | 'rejected' | 'suspended' | 'pending';
@@ -49,7 +50,7 @@ const AdminDashboard: React.FC = () => {
   useEffect(() => {
     if (!user || (!adminLoading && !isAdmin)) {
       toast.error('Access denied. Admin privileges required.');
-      navigate('/');
+      navigate(ROUTES.HOME);
       return;
     }
 

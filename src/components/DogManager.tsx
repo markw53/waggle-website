@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import { useDogs } from '@/hooks/useDogs';
 import type { Dog } from '@/types/dog';
-// import { Timestamp } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 
-// Form type (without Firestore-specific fields)
 type DogForm = Omit<Dog, 'id' | 'createdAt' | 'ownerId'>;
 
 const DogManager: React.FC = () => {

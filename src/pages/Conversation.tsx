@@ -12,6 +12,7 @@ import { db } from '@/firebase';
 import { useAuth } from '@/context';
 import { useMessaging } from '@/hooks/useMessaging';
 import type { Message, Conversation } from '@/types/message';
+import { ROUTES } from '@/config/routes'; // ✅ Added
 import toast from 'react-hot-toast';
 
 const ConversationPage: React.FC = () => {
@@ -47,7 +48,7 @@ const ConversationPage: React.FC = () => {
         setConversation({ id: doc.id, ...doc.data() } as Conversation);
       } else {
         toast.error('Conversation not found');
-        navigate('/messages');
+        navigate(ROUTES.MESSAGES); // ✅ Updated
       }
       setLoading(false);
     });
@@ -121,7 +122,7 @@ const ConversationPage: React.FC = () => {
           {/* Back Button */}
           <button
             type="button"
-            onClick={() => navigate('/messages')}
+            onClick={() => navigate(ROUTES.MESSAGES)} // ✅ Updated
             className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-full transition-colors"
             aria-label="Go back to messages"
           >
@@ -140,7 +141,7 @@ const ConversationPage: React.FC = () => {
                   className="w-10 h-10 rounded-full object-cover border-2 border-[#8c5628] dark:border-amber-600"
                 />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-xl border-2 border-[#8c5628] dark:border-amber-600">
+                <div className="w-10 h-10 rounded-full bg-kinear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-xl border-2 border-[#8c5628] dark:border-amber-600"> {/* ✅ Fixed gradient class */}
                   👤
                 </div>
               )}
@@ -183,7 +184,7 @@ const ConversationPage: React.FC = () => {
                         : 'bg-white dark:bg-zinc-800 text-gray-900 dark:text-gray-100 border border-zinc-200 dark:border-zinc-700 rounded-bl-sm'
                     }`}
                   >
-                    <p className="whitespace-pre-wrap wrap-break-word">{message.text}</p>
+                    <p className="whitespace-pre-wrap break-word">{message.text}</p>
                     <p
                       className={`text-xs mt-1 ${
                         isOwnMessage

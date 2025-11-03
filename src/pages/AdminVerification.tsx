@@ -5,6 +5,7 @@ import { collection, query, where, getDocs, doc, updateDoc, Timestamp } from 'fi
 import { db } from '@/firebase';
 import { useAuth } from '@/context';
 import type { Dog } from '@/types/dog';
+import { ROUTES } from '@/config/routes'; 
 import toast from 'react-hot-toast';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 
@@ -21,7 +22,7 @@ const AdminVerification: React.FC = () => {
    useEffect(() => {
     if (!user || (!adminLoading && !isAdmin)) {
       toast.error('Access denied. Admin privileges required.');
-      navigate('/');
+      navigate(ROUTES.HOME); 
       return;
     }
 
@@ -162,7 +163,7 @@ const AdminVerification: React.FC = () => {
                       className="w-48 h-48 rounded-lg object-cover border-2 border-[#8c5628] dark:border-amber-600"
                     />
                   ) : (
-                    <div className="w-48 h-48 rounded-lg bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-6xl">
+                    <div className="w-48 h-48 rounded-lg bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-700 dark:to-zinc-600 flex items-center justify-center text-6xl"> 
                       🐕
                     </div>
                   )}

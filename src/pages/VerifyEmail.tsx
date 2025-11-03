@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { applyActionCode } from 'firebase/auth';
 import { auth } from '@/firebase';
 import toast from 'react-hot-toast';
+import { ROUTES } from '@/config/routes';
 
 const VerifyEmail: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -62,7 +63,7 @@ const VerifyEmail: React.FC = () => {
         </div>
 
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate(ROUTES.HOME)}
           className="w-full px-6 py-3 bg-[#8c5628] dark:bg-amber-700 text-white rounded-lg hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-semibold"
         >
           {success ? 'Go to Login' : 'Back to Home'}

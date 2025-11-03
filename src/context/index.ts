@@ -1,5 +1,5 @@
 // src/context/index.ts
-export { AuthProvider } from './AuthProvider';
-export { useAuth } from './useAuth';
-export { AuthContext } from './AuthContext';
-export type { AuthContextType } from './AuthContext';
+export { AuthProvider } from '@/context/AuthProvider';
+export { useAuth } from '@/context/useAuth';
+export { AuthContext } from '@/context/AuthContext';
+export type { AuthContextType } from '@/context/AuthContext';

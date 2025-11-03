@@ -15,7 +15,7 @@ import type { User } from 'firebase/auth';
 import { auth, db } from '@/firebase';
 import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 import toast from 'react-hot-toast';
-import { AuthContext } from './AuthContext';
+import { AuthContext } from '@/context/AuthContext';
 import type { UserProfile } from '@/types/user';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
