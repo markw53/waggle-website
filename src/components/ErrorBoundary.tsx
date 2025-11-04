@@ -1,6 +1,6 @@
 import { Component } from 'react';
-import type { ErrorInfo } from 'react';
-import type { ReactNode } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
+import * as Sentry from '@sentry/react';
 
 interface Props {
   children: ReactNode;
@@ -22,9 +22,16 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Uncaught error:', error, errorInfo);
-    // TODO: Send to error logging service (Sentry, etc.)
+  console.error('Uncaught error:', error, errorInfo);
+
+  if (import.meta.env.VITE_ENVIRONMENT !== 'development') {
+    Sentry.captureException(error, {
+      extra: {
+        componentStack: errorInfo.componentStack, // ✅ explicitly pass just the string
+      },
+    });
   }
+}
 
   private handleReset = () => {
     this.setState({ hasError: false, error: null });
@@ -42,9 +49,9 @@ class ErrorBoundary extends Component<Props, State> {
                 Oops! Something went wrong
               </h1>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                We're sorry, but something unexpected happened. Our team has been notified.
+                We&apos;re sorry, but something unexpected happened. Our team has been notified.
               </p>
-              
+
               {/* Show error details in development */}
               {import.meta.env.DEV && this.state.error && (
                 <details className="mb-6 text-left">

@@ -5,6 +5,10 @@ import App from '@/App';
 import { AuthProvider } from '@/context/AuthProvider';
 import { ThemeProvider } from '@/context/theme';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { initSentry } from '@/lib/sentry';
+
+// Initialize Sentry for error tracking
+initSentry();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

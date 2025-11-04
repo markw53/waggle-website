@@ -15,9 +15,13 @@ dist-ssr
 # Environment variables
 .env
 .env.local
-.env.development
 .env.production
-.env.*.local
+.env.production.local
+.env.staging
+.env.staging.local
+
+# Don't ignore
+!.env.example
 
 # Firebase
 .firebase/

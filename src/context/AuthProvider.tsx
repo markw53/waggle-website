@@ -1,5 +1,6 @@
 // src/context/AuthProvider.tsx
 import { useEffect, useState } from 'react';
+import { setUserContext, clearUserContext } from '@/lib/sentry';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -23,50 +24,62 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
-      
-      // ✅ Sync Firestore profile with Firebase Auth on every auth change
-      if (user) {
-        try {
-          const userRef = doc(db, 'users', user.uid);
-          const userSnap = await getDoc(userRef);
-          
-          if (!userSnap.exists()) {
-            // Create profile if it doesn't exist
-            const userProfile: UserProfile = {
-              uid: user.uid,
-              email: user.email || '',
-              displayName: user.displayName || '',
-              name: user.displayName || '',
-              photoURL: user.photoURL || '',
-              createdAt: Timestamp.fromDate(new Date()),
-            };
-            await setDoc(userRef, userProfile);
-            console.log('Created new user profile with photo:', user.photoURL);
-          } else {
-            // Update photo if it's different (e.g., user changed Google profile pic)
-            const existingData = userSnap.data();
-            if (user.photoURL && user.photoURL !== existingData.photoURL) {
-              await setDoc(userRef, {
+  const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    setUser(user);
+
+    // ✅ Set or clear Sentry user context
+    if (user) {
+      setUserContext({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+      });
+
+      // Sync Firestore profile with Firebase Auth on every auth change
+      try {
+        const userRef = doc(db, 'users', user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (!userSnap.exists()) {
+          const userProfile: UserProfile = {
+            uid: user.uid,
+            email: user.email || '',
+            displayName: user.displayName || '',
+            name: user.displayName || '',
+            photoURL: user.photoURL || '',
+            createdAt: Timestamp.fromDate(new Date()),
+          };
+          await setDoc(userRef, userProfile);
+          console.log('Created new user profile with photo:', user.photoURL);
+        } else {
+          const existingData = userSnap.data();
+          if (user.photoURL && user.photoURL !== existingData.photoURL) {
+            await setDoc(
+              userRef,
+              {
                 photoURL: user.photoURL,
                 displayName: user.displayName || existingData.displayName,
                 name: user.displayName || existingData.name,
                 updatedAt: Timestamp.fromDate(new Date()),
-              }, { merge: true });
-              console.log('Updated user profile photo:', user.photoURL);
-            }
+              },
+              { merge: true }
+            );
+            console.log('Updated user profile photo:', user.photoURL);
           }
-        } catch (error) {
-          console.error('Error syncing user profile:', error);
         }
+      } catch (error) {
+        console.error('Error syncing user profile:', error);
       }
-      
-      setLoading(false);
-    });
+    } else {
+      // ✅ Clear Sentry user context when user logs out
+      clearUserContext();
+    }
 
-    return unsubscribe;
-  }, []);
+    setLoading(false);
+  });
+
+  return unsubscribe;
+}, []);
 
   const register = async (email: string, password: string) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
