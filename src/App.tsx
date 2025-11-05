@@ -2,6 +2,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ROUTES } from '@/config/routes';
+import CookieConsentBanner from './components/CookieConsentBanner';
 
 // Layout Components
 import Navbar from '@components/Navbar';
@@ -102,6 +103,7 @@ const App: React.FC = () => (
       <Toaster position="top-center" />
     </BrowserRouter>
     <ResponsiveIndicator />
+    <CookieConsentBanner />
   </div>
 );
 
