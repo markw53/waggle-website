@@ -2,6 +2,7 @@
 export const ROUTES = {
   // Public
   HOME: '/',
+  LOGIN: '/login',
   VERIFY_EMAIL: '/verify-email',
   GETTING_STARTED: '/getting-started',
   PRIVACY: '/privacy',
@@ -21,6 +22,8 @@ export const ROUTES = {
   ADD_DOG: '/add-dog',
   MY_DOGS: '/my-dogs',
   EDIT_DOG: '/edit-dog/:id',
+  BREEDING_CALENDAR: '/breeding-calendar',
+  BREEDING_CALENDAR_DOG: '/breeding-calendar/:dogId',
   
   // Matches
   ADD_MATCH: '/add-match',
@@ -34,7 +37,10 @@ export const ROUTES = {
   ANALYTICS: '/analytics',
   
   // Admin
-  ADMIN_DASHBOARD: '/admin/verification',
+  ADMIN_DASHBOARD: '/admin',
+  ADMIN_VERIFICATIONS: '/admin/verifications',
+  ADMIN_USERS: '/admin/users',
+  ADMIN_REPORTS: '/admin/reports',
   
   // User
   USER_PROFILE: '/users/:id',
@@ -45,3 +51,4 @@ export const getDogProfileRoute = (id: string) => `/dogs/${id}`;
 export const getEditDogRoute = (id: string) => `/edit-dog/${id}`; 
 export const getConversationRoute = (id: string) => `/messages/${id}`;
 export const getUserProfileRoute = (id: string) => `/users/${id}`;
+export const getBreedingCalendarDogRoute = (dogId: string) => `/breeding-calendar/${dogId}`;

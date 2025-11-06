@@ -198,7 +198,10 @@ export default function Navbar() {
                     Breeding Calendar
                   </div>
                   {upcomingCyclesCount > 0 && (
-                    <span className="ml-auto px-2 py-0.5 bg-green-500 text-white text-xs font-bold rounded-full">
+                    <span 
+                      className="ml-auto px-2 py-0.5 bg-green-500 text-white text-xs font-bold rounded-full"
+                      title={`${upcomingCyclesCount} cycle${upcomingCyclesCount > 1 ? 's' : ''} starting in next 7 days`}
+                    >
                       {upcomingCyclesCount}
                     </span>
                   )}
@@ -377,7 +380,10 @@ export default function Navbar() {
                 Breeding Calendar
               </div>
               {upcomingCyclesCount > 0 && (
-                <span className="px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
+                <span 
+                  className="ml-auto px-2 py-0.5 bg-green-500 text-white text-xs font-bold rounded-full"
+                  title={`${upcomingCyclesCount} cycle${upcomingCyclesCount > 1 ? 's' : ''} starting in next 7 days`}
+                >
                   {upcomingCyclesCount}
                 </span>
               )}
