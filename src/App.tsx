@@ -26,6 +26,7 @@ import Profile from './pages/Profile';
 import UserProfilePage from '@/pages/UserProfilePage';
 import GettingStarted from '@/pages/GettingStarted';
 import NotFound from './pages/NotFound';
+import BreedingCalendarPage from '@/pages/BreedingCalendarPage';
 
 // Dog Pages
 import DogSearch from '@components/DogSearch';
@@ -80,6 +81,9 @@ const App: React.FC = () => (
           <Route path={ROUTES.ADD_DOG} element={<RequireAuth><AddDog /></RequireAuth>} />
           <Route path={ROUTES.MY_DOGS} element={<RequireAuth><MyDogs /></RequireAuth>} />
 
+          {/* Breeding Calendar */}
+          <Route path={ROUTES.BREEDING_CALENDAR} element={<RequireAuth><BreedingCalendarPage /></RequireAuth>} />
+          
           {/* Match Management */}
           <Route path={ROUTES.ADD_MATCH} element={<RequireAuth><AddMatch /></RequireAuth>} />
           <Route path={ROUTES.MATCHES} element={<RequireAuth><MatchesList /></RequireAuth>} />
