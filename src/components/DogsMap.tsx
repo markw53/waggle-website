@@ -11,7 +11,11 @@ import 'leaflet/dist/leaflet.css';
 import toast from 'react-hot-toast';
 
 // Fix default marker icon
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+type LeafletIconDefault = typeof L.Icon.Default.prototype & {
+  _getIconUrl?: () => string;
+};
+
+delete (L.Icon.Default.prototype as LeafletIconDefault)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -64,7 +68,9 @@ export default function DogsMap() {
           toast.success('Location detected!');
         },
         () => {
-          toast.info('Using default GB location');
+          toast('Using default GB location', {
+            icon: 'ℹ️',
+            });
         }
       );
     }
