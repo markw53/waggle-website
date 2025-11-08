@@ -8,6 +8,8 @@ import type { Dog } from '@/types/dog';
 import toast from 'react-hot-toast';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { ROUTES } from '@/config/routes';
+import Admin2FASetup from '@/components/Admin2FASetup';
+import { multiFactor } from 'firebase/auth';
 
 type TabType = 'pending' | 'all' | 'stats';
 type FilterStatus = 'all' | 'approved' | 'rejected' | 'suspended' | 'pending';
@@ -22,6 +24,7 @@ interface Stats {
 
 const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
+  const is2FAEnabled = user && multiFactor(user).enrolledFactors.length > 0;
   const navigate = useNavigate();
   const { isAdmin, loading: adminLoading } = useIsAdmin();
   
@@ -232,6 +235,21 @@ const AdminDashboard: React.FC = () => {
         <h1 className="text-4xl font-bold text-[#573a1c] dark:text-amber-200 mb-2">
           🛡️ Admin Dashboard
         </h1>
+
+        {/* 👇 Show 2FA setup if not enabled */}
+        {!is2FAEnabled && (
+          <div className="mb-8">
+            <Admin2FASetup />
+          </div>
+        )}
+
+        {/* Show enabled status badge if already set up */}
+        {is2FAEnabled && (
+          <div className="mb-8">
+            <Admin2FASetup />
+          </div>
+        )}
+        
         <p className="text-gray-600 dark:text-gray-400">
           Manage dog verifications and monitor platform activity
         </p>

@@ -1,43 +1,110 @@
 import { useState } from 'react';
 import { auth } from '@/firebase';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   GoogleAuthProvider,
-  FacebookAuthProvider, // 👈 add this
-  signInWithPopup
+  FacebookAuthProvider,
+  signInWithPopup,
+  PhoneAuthProvider,
+  PhoneMultiFactorGenerator,
+  RecaptchaVerifier,
+  getMultiFactorResolver // ✅ Add this
+} from 'firebase/auth';
+import type { MultiFactorResolver, MultiFactorError   
 } from 'firebase/auth';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [show2FAPrompt, setShow2FAPrompt] = useState(false);
+  const [verificationId, setVerificationId] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [resolver, setResolver] = useState<MultiFactorResolver | null>(null);
+  const navigate = useNavigate();
 
   const handleAuth = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
       toast.success('Login successful! Welcome to Waggle.');
-    } catch (err) {
+      navigate('/dashboard');
+    } catch (err: unknown) {
       if (err instanceof Error && "code" in err) {
         console.error("Firebase error:", err);
         const errorCode = (err as { code: string }).code;
-        switch (errorCode) {
-          case "auth/invalid-email":
-            toast.error("Invalid email address.");
-            break;
-          case "auth/user-not-found":
-            toast.error("No user found with this email.");
-            break;
-          case "auth/wrong-password":
-            toast.error("Incorrect password.");
-            break;
-          default:
-            toast.error("Login failed. " + errorCode);
+        
+        // 👇 Handle 2FA requirement
+        if (errorCode === 'auth/multi-factor-auth-required') {
+          await handle2FAChallenge(err as MultiFactorError); // ✅ Fixed - pass the error directly
+        } else {
+          switch (errorCode) {
+            case "auth/invalid-email":
+              toast.error("Invalid email address.");
+              break;
+            case "auth/user-not-found":
+              toast.error("No user found with this email.");
+              break;
+            case "auth/wrong-password":
+              toast.error("Incorrect password.");
+              break;
+            default:
+              toast.error("Login failed. " + errorCode);
+          }
         }
       } else {
         toast.error("An unexpected error occurred.");
+      }
+    }
+  };
+
+  const handle2FAChallenge = async (error: MultiFactorError) => { // ✅ Fixed type
+    try {
+      // ✅ Extract resolver using getMultiFactorResolver
+      const res = getMultiFactorResolver(auth, error as MultiFactorError);
+      setResolver(res);
+
+      // Setup invisible reCAPTCHA
+      const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container-login', {
+        size: 'invisible',
+      });
+
+      const phoneInfoOptions = {
+        multiFactorHint: res.hints[0],
+        session: res.session,
+      };
+
+      const phoneAuthProvider = new PhoneAuthProvider(auth);
+      const verId = await phoneAuthProvider.verifyPhoneNumber(
+        phoneInfoOptions,
+        recaptchaVerifier
+      );
+
+      setVerificationId(verId);
+      setShow2FAPrompt(true);
+      toast.success('2FA code sent to your phone!');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(`2FA setup failed: ${error.message}`);
+      }
+    }
+  };
+
+  const handleVerify2FA = async () => {
+    if (!verificationId || !resolver) return;
+
+    try {
+      const cred = PhoneAuthProvider.credential(verificationId, verificationCode);
+      const multiFactorAssertion = PhoneMultiFactorGenerator.assertion(cred);
+
+      await resolver.resolveSignIn(multiFactorAssertion);
+      toast.success('Login successful with 2FA!');
+      navigate('/dashboard');
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(`Verification failed: ${error.message}`);
       }
     }
   };
@@ -47,18 +114,21 @@ export default function LoginForm() {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
       toast.success('Logged in with Google!');
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'An unexpected error occurred.');
+      navigate('/dashboard');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      }
     }
   };
 
-  // 👇 NEW: Facebook login handler
   const handleFacebook = async () => {
     try {
       const provider = new FacebookAuthProvider();
       await signInWithPopup(auth, provider);
       toast.success('Logged in with Facebook!');
-    } catch (err) {
+      navigate('/dashboard');
+    } catch (err: unknown) {
       if (err instanceof Error && "code" in err) {
         const errorCode = (err as { code: string }).code;
         if (errorCode === 'auth/account-exists-with-different-credential') {
@@ -80,10 +150,54 @@ export default function LoginForm() {
     try {
       await sendPasswordResetEmail(auth, email);
       toast.success('Password reset email sent.');
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'An unexpected error occurred.');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      }
     }
   };
+
+  // 2FA Prompt Modal
+  if (show2FAPrompt) {
+    return (
+      <div className="max-w-md mx-auto p-8 bg-white/95 dark:bg-zinc-800/95 rounded-xl shadow-lg backdrop-blur-sm">
+        <h2 className="text-xl font-semibold text-[#573a1c] dark:text-amber-200 mb-4 text-center">
+          🔐 Two-Factor Authentication
+        </h2>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 text-center">
+          Enter the 6-digit code sent to your phone
+        </p>
+
+        <input
+          type="text"
+          placeholder="123456"
+          value={verificationCode}
+          onChange={(e) => setVerificationCode(e.target.value)}
+          maxLength={6}
+          className="w-full mb-4 px-3 py-2 border border-[#b88a6a] dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 text-center text-2xl tracking-widest focus:outline-none focus:ring-2 focus:ring-[#8c5628] dark:focus:ring-amber-500"
+        />
+
+        <button
+          onClick={handleVerify2FA}
+          disabled={verificationCode.length !== 6}
+          className="w-full bg-[#8c5628] dark:bg-amber-700 text-white py-2 rounded-md font-medium hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Verify
+        </button>
+
+        <button
+          onClick={() => {
+            setShow2FAPrompt(false);
+            setVerificationCode('');
+          }}
+          className="w-full mt-2 text-sm text-gray-600 dark:text-gray-400 hover:underline"
+        >
+          Cancel
+        </button>
+        <div id="recaptcha-container-login"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-md mx-auto p-8 bg-white/95 dark:bg-zinc-800/95 rounded-xl shadow-lg flex flex-col items-center backdrop-blur-sm">
@@ -117,7 +231,6 @@ export default function LoginForm() {
           Login
         </button>
 
-        {/* Social login buttons */}
         <div className="mt-4 space-y-2">
           <button
             type="button"
@@ -133,7 +246,6 @@ export default function LoginForm() {
             Sign in with Google
           </button>
 
-          {/* 👇 NEW Facebook button */}
           <button
             type="button"
             onClick={handleFacebook}
