@@ -62,6 +62,67 @@ const AddDog: React.FC = () => {
     }
   };
 
+  const [location, setLocation] = useState({
+  lat: 0,
+  lng: 0,
+  city: '',
+  county: '',
+  postcode: '',
+  country: 'United Kingdom',
+  });
+  const [gettingLocation, setGettingLocation] = useState(false);
+
+  // ✅ Reverse geocoding using Nominatim (free, no API key)
+  const reverseGeocode = async (lat: number, lng: number) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`
+      );
+      const data = await response.json();
+
+      if (data.address) {
+        setLocation({
+          lat,
+          lng,
+          city: data.address.city || data.address.town || data.address.village || '',
+          county: data.address.county || data.address.state || '',
+          postcode: data.address.postcode || '',
+          country: data.address.country || 'United Kingdom',
+        });
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error('Geocoding error:', error.message);
+      }
+      // Still save coordinates even if geocoding fails
+      setLocation(prev => ({ ...prev, lat, lng }));
+    }
+  };
+
+    const handleGetLocation = () => {
+      if (!navigator.geolocation) {
+        toast.error('Geolocation not supported');
+        return;
+      }
+
+      setGettingLocation(true);
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+
+          await reverseGeocode(lat, lng);
+          toast.success('Location detected!');
+          setGettingLocation(false);
+        },
+        (error) => {
+          toast.error('Could not get location');
+          setGettingLocation(false);
+        }
+      );
+    };
+
+
   const checkAgeEligibility = (age: number) => {
     const minimumAgeMet = age >= 2;
     const maximumAgeMet = age <= 8; // Can be adjusted based on breed
@@ -497,6 +558,72 @@ const AddDog: React.FC = () => {
                   placeholder="123456789012345"
                   title="Enter microchip number if available"
                 />
+              </div>
+
+              // In your form JSX:
+              <div className="space-y-4">
+                <h3 className="font-semibold text-gray-900 dark:text-white">
+                  Location (Optional but Recommended)
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Help others find breeding partners near them
+                </p>
+
+                <button
+                  type="button"
+                  onClick={handleGetLocation}
+                  disabled={gettingLocation}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  {gettingLocation ? 'Detecting...' : 'Use My Location'}
+                </button>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      City/Town
+                    </label>
+                    <input
+                      id="city"
+                      type="text"
+                      placeholder="London"
+                      value={location.city}
+                      onChange={(e) => setLocation(prev => ({ ...prev, city: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="county" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                      County
+                    </label>
+                    <input
+                      id="county"
+                      type="text"
+                      placeholder="Greater London"
+                      value={location.county}
+                      onChange={(e) => setLocation(prev => ({ ...prev, county: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="postcode" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Postcode
+                  </label>
+                  <input
+                    id="postcode"
+                    type="text"
+                    placeholder="SW1A 1AA"
+                    value={location.postcode}
+                    onChange={(e) => setLocation(prev => ({ ...prev, postcode: e.target.value.toUpperCase() }))}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100"
+                  />
+                </div>
               </div>
 
               {/* Kennel Club Registration */}

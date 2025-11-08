@@ -18,6 +18,7 @@ export const ROUTES = {
   
   // Dogs
   DOGS: '/dogs',
+  DOGS_MAP: '/dogs/map',
   DOG_PROFILE: '/dogs/:id',
   ADD_DOG: '/add-dog',
   MY_DOGS: '/my-dogs',

@@ -96,3 +96,34 @@ body {
     }
   }
 }
+
+/* Leaflet marker cluster styles */
+.marker-cluster-small {
+  background-color: rgba(140, 86, 40, 0.6);
+}
+
+.marker-cluster-small div {
+  background-color: rgba(140, 86, 40, 0.8);
+  color: white;
+  font-weight: bold;
+}
+
+.marker-cluster-medium {
+  background-color: rgba(140, 86, 40, 0.7);
+}
+
+.marker-cluster-medium div {
+  background-color: rgba(140, 86, 40, 0.9);
+  color: white;
+  font-weight: bold;
+}
+
+.marker-cluster-large {
+  background-color: rgba(109, 67, 32, 0.8);
+}
+
+.marker-cluster-large div {
+  background-color: rgba(109, 67, 32, 1);
+  color: white;
+  font-weight: bold;
+}

@@ -1,15 +1,25 @@
 // src/types/dog.ts
 import { Timestamp } from 'firebase/firestore';
 
+export interface Location {
+  lat: number;
+  lng: number;
+  city?: string;
+  county?: string;
+  postcode?: string;
+  country?: string;
+}
+
 export interface Dog {
   id: string;
   name: string;
   breed: string;
   age: number;
   gender: 'Male' | 'Female';
+  ownerId: string;
   imageUrl?: string;
   bio?: string;
-  ownerId: string;
+  location?: Location; 
   createdAt: Timestamp;
   
   // ✅ Health & Verification Fields
