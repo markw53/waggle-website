@@ -268,24 +268,27 @@ export default function EditDog() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
-      {/* Back Button */}
-      <button
-        type="button"
-        onClick={() => navigate(ROUTES.MY_DOGS)}
-        className="mb-4 flex items-center gap-2 text-amber-700 dark:text-amber-400 hover:text-amber-600 dark:hover:text-amber-300 font-medium transition-colors"
-      >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-        Back to My Dogs
-      </button>
+      {/* Header with background */}
+      <div className="bg-white/95 dark:bg-zinc-800/95 backdrop-blur-sm rounded-lg shadow-lg p-6 mb-6 border border-zinc-200 dark:border-zinc-700">
+        {/* Back Button */}
+        <button
+          type="button"
+          onClick={() => navigate(ROUTES.MY_DOGS)}
+          className="mb-4 flex items-center gap-2 text-amber-700 dark:text-amber-400 hover:text-amber-600 dark:hover:text-amber-300 font-medium transition-colors"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to My Dogs
+        </button>
 
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-        Edit Dog Profile
-      </h1>
-      <p className="text-gray-600 dark:text-gray-400 mb-8">
-        Update your dog's information. Changes will require admin re-approval.
-      </p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          Edit Dog Profile
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Update your dog's information. Changes will require admin re-approval.
+        </p>
+      </div>
 
       <form onSubmit={handleSubmit} className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6 space-y-6">
         {/* Basic Information */}
@@ -516,7 +519,7 @@ export default function EditDog() {
           </div>
         </div>
 
-        {/* Warning about re-approval */}
+                {/* Warning about re-approval */}
         <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
           <p className="text-sm text-amber-800 dark:text-amber-200 flex items-start gap-2">
             <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

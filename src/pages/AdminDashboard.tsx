@@ -545,17 +545,23 @@ const DogVerificationCard: React.FC<{
         </p>
 
         {/* Eligibility Status */}
-        <div
-          className={`inline-block px-4 py-2 rounded-lg mb-4 font-semibold ${
-            dog.breedingEligibility.isEligible
-              ? 'bg-green-100 dark:bg-green-900/40 text-green-900 dark:text-green-200 border border-green-300 dark:border-green-700'
-              : 'bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700'
-          }`}
-        >
-          {dog.breedingEligibility.isEligible
-            ? '✅ Meets Basic Requirements'
-            : `⚠️ ${dog.breedingEligibility.reasonIfIneligible}`}
-        </div>
+        {dog.breedingEligibility ? (
+          <div
+            className={`inline-block px-4 py-2 rounded-lg mb-4 font-semibold ${
+              dog.breedingEligibility.isEligible
+                ? 'bg-green-100 dark:bg-green-900/40 text-green-900 dark:text-green-200 border border-green-300 dark:border-green-700'
+                : 'bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700'
+            }`}
+          >
+            {dog.breedingEligibility.isEligible
+              ? '✅ Meets Basic Requirements'
+              : `⚠️ ${dog.breedingEligibility.reasonIfIneligible}`}
+          </div>
+        ) : (
+          <div className="inline-block px-4 py-2 rounded-lg mb-4 font-semibold bg-gray-100 dark:bg-gray-900/40 text-gray-900 dark:text-gray-200 border border-gray-300 dark:border-gray-700">
+            ℹ️ Legacy Entry - Eligibility Not Set
+          </div>
+        )}
 
         {/* Health Info Summary */}
         <div className="grid grid-cols-2 gap-3 mb-4">
