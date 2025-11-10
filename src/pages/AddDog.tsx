@@ -144,8 +144,8 @@ export default function AddDog() {
         breed,
         age,
         gender,
-        description,
-        photoURL,
+        bio: description,        // ✅ Changed to 'bio'
+        imageUrl: photoURL,      // ✅ Changed to 'imageUrl'
         ownerId: user.uid,
         status: 'pending',
         healthInfo: {

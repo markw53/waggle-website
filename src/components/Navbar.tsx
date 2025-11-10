@@ -39,7 +39,10 @@ export default function Navbar() {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      if (!user) return;
+      if (!user) {
+        setUserPhotoURL(null); // ✅ Clear the photo URL when user logs out
+        return;
+      }
 
       try {
         if (user.photoURL) {

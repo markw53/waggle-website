@@ -10,16 +10,17 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import toast from 'react-hot-toast';
 
-// Fix default marker icon
+// Fix default marker icon - use local images
 type LeafletIconDefault = typeof L.Icon.Default.prototype & {
   _getIconUrl?: () => string;
 };
 
 delete (L.Icon.Default.prototype as LeafletIconDefault)._getIconUrl;
+
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconRetinaUrl: '/leaflet/marker-icon-2x.png',
+  iconUrl: '/leaflet/marker-icon.png',
+  shadowUrl: '/leaflet/marker-shadow.png',
 });
 
 // Helper: Calculate distance between two coordinates (Haversine formula)
@@ -91,6 +92,10 @@ export default function DogsMap() {
         const dogsList: Dog[] = snapshot.docs
           .map(doc => ({ id: doc.id, ...doc.data() } as Dog))
           .filter(dog => dog.location?.lat && dog.location?.lng);
+
+        console.log('📊 Total approved dogs:', snapshot.docs.length);
+        console.log('📍 Dogs with location:', dogsList.length);
+        console.log('🐕 Dogs data:', dogsList);
 
         setDogs(dogsList);
         setFilteredDogs(dogsList);
