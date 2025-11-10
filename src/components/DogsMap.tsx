@@ -1,3 +1,4 @@
+// src/components/DogsMap.tsx
 import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
@@ -10,17 +11,105 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import toast from 'react-hot-toast';
 
-// Fix default marker icon - use local images
-type LeafletIconDefault = typeof L.Icon.Default.prototype & {
-  _getIconUrl?: () => string;
+// ✅ Custom dog marker icon (no external images needed)
+const createDogMarker = (dog: Dog) => {
+  const color = dog.gender === 'Male' ? '#3B82F6' : '#EC4899'; // Blue for male, pink for female
+  
+  return L.divIcon({
+    html: `
+      <div style="
+        position: relative;
+        width: 40px;
+        height: 50px;
+      ">
+        <div style="
+          width: 32px;
+          height: 32px;
+          background: ${color};
+          border: 3px solid white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+          font-size: 20px;
+          position: absolute;
+          top: 0;
+          left: 4px;
+        ">
+          🐕
+        </div>
+        <div style="
+          width: 0;
+          height: 0;
+          border-left: 6px solid transparent;
+          border-right: 6px solid transparent;
+          border-top: 10px solid ${color};
+          position: absolute;
+          bottom: 0;
+          left: 14px;
+        "></div>
+      </div>
+    `,
+    className: 'custom-dog-marker',
+    iconSize: [40, 50],
+    iconAnchor: [20, 50],
+    popupAnchor: [0, -50],
+  });
 };
 
-delete (L.Icon.Default.prototype as LeafletIconDefault)._getIconUrl;
-
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: '/leaflet/marker-icon-2x.png',
-  iconUrl: '/leaflet/marker-icon.png',
-  shadowUrl: '/leaflet/marker-shadow.png',
+// ✅ Custom user location marker
+const userLocationIcon = L.divIcon({
+  html: `
+    <div style="
+      position: relative;
+      width: 40px;
+      height: 50px;
+    ">
+      <div style="
+        width: 36px;
+        height: 36px;
+        background: #10B981;
+        border: 4px solid white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+        font-size: 22px;
+        position: absolute;
+        top: 0;
+        left: 2px;
+        animation: pulse 2s infinite;
+      ">
+        📍
+      </div>
+      <div style="
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-top: 12px solid #10B981;
+        position: absolute;
+        bottom: 0;
+        left: 14px;
+      "></div>
+    </div>
+    <style>
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+    </style>
+  `,
+  className: 'custom-user-marker',
+  iconSize: [40, 50],
+  iconAnchor: [20, 50],
+  popupAnchor: [0, -50],
 });
 
 // Helper: Calculate distance between two coordinates (Haversine formula)
@@ -71,7 +160,7 @@ export default function DogsMap() {
         () => {
           toast('Using default GB location', {
             icon: 'ℹ️',
-            });
+          });
         }
       );
     }
@@ -95,13 +184,14 @@ export default function DogsMap() {
 
         console.log('📊 Total approved dogs:', snapshot.docs.length);
         console.log('📍 Dogs with location:', dogsList.length);
-        console.log('🐕 Dogs data:', dogsList);
+        console.log('🐕 Sample dog data:', dogsList[0]);
 
         setDogs(dogsList);
         setFilteredDogs(dogsList);
       } catch (error: unknown) {
         if (error instanceof Error) {
           console.error('Error fetching dogs:', error.message);
+          toast.error('Failed to load dogs');
         }
       } finally {
         setLoading(false);
@@ -135,6 +225,7 @@ export default function DogsMap() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[600px] bg-gray-100 dark:bg-zinc-800 rounded-lg">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-amber-700 mb-4"></div>
         <p className="text-gray-600 dark:text-gray-400">Loading map...</p>
       </div>
     );
@@ -181,13 +272,32 @@ export default function DogsMap() {
             {/* Toggle radius display */}
             {userLocation && (
               <button
+                type="button"
                 onClick={() => setShowRadius(!showRadius)}
-                className="px-3 py-1 text-sm bg-amber-700 hover:bg-amber-600 text-white rounded-md"
+                className="px-3 py-1 text-sm bg-amber-700 hover:bg-amber-600 text-white rounded-md transition-colors"
               >
                 {showRadius ? 'Hide' : 'Show'} Radius
               </button>
             )}
           </div>
+        </div>
+
+        {/* Legend */}
+        <div className="mt-4 flex items-center gap-4 text-xs text-gray-600 dark:text-gray-400">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-blue-500 rounded-full border-2 border-white"></div>
+            <span>Male Dogs</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 bg-pink-500 rounded-full border-2 border-white"></div>
+            <span>Female Dogs</span>
+          </div>
+          {userLocation && (
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+              <span>Your Location</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -211,19 +321,23 @@ export default function DogsMap() {
             center={userLocation}
             radius={radiusKm * 1000} // Convert km to meters
             pathOptions={{
-              color: '#8c5628',
-              fillColor: '#8c5628',
+              color: '#10B981',
+              fillColor: '#10B981',
               fillOpacity: 0.1,
+              weight: 2,
             }}
           />
         )}
 
         {/* User location marker */}
         {userLocation && (
-          <Marker position={userLocation}>
+          <Marker position={userLocation} icon={userLocationIcon}>
             <Popup>
               <div className="p-2 text-center">
-                <p className="font-semibold">📍 Your Location</p>
+                <p className="font-semibold text-gray-900">📍 Your Location</p>
+                <p className="text-xs text-gray-600 mt-1">
+                  Showing dogs within {radiusKm}km
+                </p>
               </div>
             </Popup>
           </Marker>
@@ -241,6 +355,7 @@ export default function DogsMap() {
               <Marker
                 key={dog.id}
                 position={[dog.location.lat, dog.location.lng]}
+                icon={createDogMarker(dog)}
               >
                 <Popup maxWidth={250}>
                   <div className="p-2">
@@ -249,7 +364,7 @@ export default function DogsMap() {
                         <img
                           src={dog.imageUrl}
                           alt={dog.name}
-                          className="w-16 h-16 rounded-full object-cover"
+                          className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
                         />
                       )}
                       <div>
@@ -258,12 +373,15 @@ export default function DogsMap() {
                           {dog.breed} • {dog.gender}
                         </p>
                         <p className="text-xs text-gray-500">
+                          {dog.age} {dog.age === 1 ? 'year' : 'years'} old
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
                           {dog.location.city && `${dog.location.city}, `}
                           {dog.location.county || dog.location.postcode}
                         </p>
                         {userLocation && (
                           <p className="text-xs text-amber-700 font-semibold mt-1">
-                            {getDistanceInKm(
+                            📏 {getDistanceInKm(
                               userLocation[0],
                               userLocation[1],
                               dog.location.lat,
@@ -275,7 +393,7 @@ export default function DogsMap() {
                     </div>
                     <Link
                       to={getDogProfileRoute(dog.id)}
-                      className="block w-full text-center bg-amber-700 hover:bg-amber-600 text-white py-1.5 px-3 rounded text-sm font-medium"
+                      className="block w-full text-center bg-amber-700 hover:bg-amber-600 text-white py-1.5 px-3 rounded text-sm font-medium transition-colors"
                     >
                       View Profile
                     </Link>
