@@ -2,6 +2,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ROUTES } from '@/config/routes';
+import 'leaflet/dist/leaflet.css';
 import CookieConsentBanner from './components/CookieConsentBanner';
 
 // Layout Components

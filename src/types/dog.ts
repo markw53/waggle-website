@@ -10,6 +10,18 @@ export interface Location {
   country?: string;
 }
 
+// ✅ NEW: Kennel Club Info interface
+export interface KennelClubInfo {
+  registrationNumber?: string;
+  registeredName?: string;
+  breedRegistered?: string;
+  dateRegistered?: Timestamp;
+  registrationVerified?: boolean;
+  registrationDocumentUrl?: string;
+  verifiedBy?: string; // Admin user ID who verified
+  verifiedAt?: Timestamp;
+}
+
 export interface Dog {
   id: string;
   name: string;
@@ -22,7 +34,10 @@ export interface Dog {
   location?: Location; 
   createdAt: Timestamp;
   
-  // ✅ Health & Verification Fields
+  // ✅ ADD THIS
+  kennelClubInfo?: KennelClubInfo;
+  
+  // Health & Verification Fields
   healthInfo: {
     vetVerified: boolean;
     vetCertificateUrl?: string;
@@ -38,14 +53,14 @@ export interface Dog {
     
     // Genetic testing
     geneticTestingDone: boolean;
-    geneticTestResults?: string[]; // Array of cleared conditions
+    geneticTestResults?: string[];
     
     // Vaccination
     vaccinationUpToDate: boolean;
     vaccinationRecordUrl?: string;
     
     // Other health checks
-    brucellosisTest: boolean; // Critical for breeding
+    brucellosisTest: boolean;
     brucellosisTestDate?: Timestamp;
     
     // Breeding restrictions
@@ -57,12 +72,11 @@ export interface Dog {
   breedingEligibility: {
     isEligible: boolean;
     reasonIfIneligible?: string;
-    minimumAgeMet: boolean; // Must be at least 2 years old
-    maximumAgeMet: boolean; // Should not be too old
-    numberOfLitters?: number; // Track previous litters
+    minimumAgeMet: boolean;
+    maximumAgeMet: boolean;
+    numberOfLitters?: number;
     lastLitterDate?: Timestamp;
     
-    // Professional verification
     breedingLicenseNumber?: string;
     kennelClubRegistration?: string;
   };
@@ -78,8 +92,8 @@ export interface Dog {
   
   // Documents
   documents: {
-    pedigree?: string; // URL to pedigree certificate
-    ownership?: string; // Proof of ownership
+    pedigree?: string;
+    ownership?: string;
     microchipNumber?: string;
     registrationPapers?: string;
   };
@@ -87,7 +101,7 @@ export interface Dog {
   // Admin verification
   adminVerification: {
     verified: boolean;
-    verifiedBy?: string; // Admin user ID
+    verifiedBy?: string;
     verifiedAt?: Timestamp;
     verificationNotes?: string;
     rejectionReason?: string;

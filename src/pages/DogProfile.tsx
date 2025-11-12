@@ -269,6 +269,95 @@ const DogProfile: React.FC = () => {
         </div>
       )}
 
+      {/* ✅ NEW: Kennel Club Information Section */}
+      {dog.kennelClubInfo?.registrationNumber && (
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-6 rounded-lg mb-8">
+          <h2 className="font-semibold text-xl text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+            <span>🏆</span> Kennel Club Registration
+          </h2>
+          
+          <div className="space-y-4">
+            {/* Registration Number */}
+            <div className="bg-white dark:bg-blue-950 p-4 rounded-lg border border-blue-300 dark:border-blue-700">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 font-medium">
+                    Registration Number
+                  </p>
+                  <p className="text-2xl font-bold text-blue-900 dark:text-blue-200">
+                    {dog.kennelClubInfo.registrationNumber}
+                  </p>
+                </div>
+                {dog.kennelClubInfo.registrationVerified && (
+                  <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-sm font-semibold rounded-full flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Verified
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Registered Name (if different) */}
+            {dog.kennelClubInfo.registeredName && dog.kennelClubInfo.registeredName !== dog.name && (
+              <div className="bg-white dark:bg-blue-950 p-4 rounded-lg border border-blue-300 dark:border-blue-700">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 font-medium">
+                  Registered Name
+                </p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  {dog.kennelClubInfo.registeredName}
+                </p>
+              </div>
+            )}
+
+            {/* Registration Document */}
+            {dog.kennelClubInfo.registrationDocumentUrl && (
+              <div>
+                <a
+                  href={dog.kennelClubInfo.registrationDocumentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-blue-700 dark:text-blue-300 hover:underline font-medium"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  View Registration Certificate
+                </a>
+              </div>
+            )}
+
+            {/* Links to KC */}
+            <div className="pt-4 border-t border-blue-200 dark:border-blue-700 space-y-2">
+              <a
+                href={`https://www.thekennelclub.org.uk/search/breeds-a-to-z/breeds/${dog.breed.toLowerCase().replace(/ /g, '-')}/`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-blue-700 dark:text-blue-300 hover:underline font-medium text-sm"
+              >
+                📖 View {dog.breed} Breed Standard
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+              
+              <a
+                href="https://www.thekennelclub.org.uk/health-and-dog-care/breed-health-and-care-schemes/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-blue-700 dark:text-blue-300 hover:underline font-medium text-sm"
+              >
+                🏥 Health Testing Requirements
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Action Buttons - Only show for approved dogs or hide for pending/rejected */}
       {!isOwnDog && dog.status === 'approved' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">

@@ -23,6 +23,11 @@ export default function EditDog() {
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string>('');
   const [existingPhotoURL, setExistingPhotoURL] = useState<string>('');
+  const [kcRegistrationNumber, setKcRegistrationNumber] = useState('');
+  const [kcRegisteredName, setKcRegisteredName] = useState('');
+  const [kcPapers, setKcPapers] = useState<File | null>(null);
+  const [kcPapersPreview, setKcPapersPreview] = useState<string>('');
+  const [existingKcPapersURL, setExistingKcPapersURL] = useState<string>('');
 
   // Health info
   const [vetVerified, setVetVerified] = useState(false);
@@ -88,6 +93,13 @@ export default function EditDog() {
         setVetVerified(dogData.healthInfo?.vetVerified || false);
         setBrucellosisTest(dogData.healthInfo?.brucellosisTest || false);
 
+        if (dogData.kennelClubInfo) {
+          setKcRegistrationNumber(dogData.kennelClubInfo.registrationNumber || '');
+          setKcRegisteredName(dogData.kennelClubInfo.registeredName || '');
+          setExistingKcPapersURL(dogData.kennelClubInfo.registrationDocumentUrl || '');
+          setKcPapersPreview(dogData.kennelClubInfo.registrationDocumentUrl || '');
+        }
+
         if (dogData.location) {
           setLocation({
             lat: dogData.location.lat || 0,
@@ -121,6 +133,28 @@ export default function EditDog() {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleKcPapersChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setKcPapers(file);
+      if (file.type === 'application/pdf') {
+        setKcPapersPreview(file.name);
+      } else {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setKcPapersPreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+
+  const validateKCNumber = (number: string): boolean => {
+    if (!number) return true;
+    const kcPattern = /^[A-Z]{2}\d{8}$/;
+    return kcPattern.test(number);
   };
 
   // Reverse geocoding using Nominatim (free, no API key)
@@ -208,6 +242,14 @@ export default function EditDog() {
         photoURL = await getDownloadURL(photoRef);
       }
 
+      // Upload new KC papers if one was selected
+      let kcPapersURL = existingKcPapersURL;
+      if (kcPapers) {
+        const kcPapersRef = ref(storage, `kc_papers/${user.uid}/${Date.now()}_${kcPapers.name}`);
+        await uploadBytes(kcPapersRef, kcPapers);
+        kcPapersURL = await getDownloadURL(kcPapersRef);
+      }
+
       // Update dog document
       const dogData = {
         name,
@@ -238,6 +280,16 @@ export default function EditDog() {
             county: location.county,
             postcode: location.postcode,
             country: location.country,
+          },
+        }),
+        // Kennel Club Info (if provided)
+        ...(kcRegistrationNumber && {
+          kennelClubInfo: {
+            registrationNumber: kcRegistrationNumber,
+            registeredName: kcRegisteredName || name,
+            breedRegistered: breed,
+            registrationVerified: false, // Reset verification on edit
+            ...(kcPapersURL && { registrationDocumentUrl: kcPapersURL }),
           },
         }),
         updatedAt: Timestamp.now(),
@@ -404,6 +456,124 @@ export default function EditDog() {
             )}
           </div>
         </div>
+
+        {/* Kennel Club Information */}
+        <div className="space-y-4">
+          <h3 className="font-semibold text-lg text-gray-900 dark:text-white border-b pb-2">
+            Kennel Club Registration (Optional)
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Providing KC registration increases trust and credibility
+          </p>
+
+          {/* Info Notice */}
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+            <p className="text-xs text-blue-700 dark:text-blue-300 flex items-start gap-2">
+              <svg className="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>
+                <strong className="font-semibold">Note:</strong> Updating KC information will reset verification status and require admin re-approval.
+              </span>
+            </p>
+          </div>
+
+          <div>
+            <label htmlFor="kcNumber" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              KC Registration Number
+            </label>
+            <input
+              id="kcNumber"
+              type="text"
+              placeholder="e.g., AB12345678"
+              value={kcRegistrationNumber}
+              onChange={(e) => setKcRegistrationNumber(e.target.value.toUpperCase())}
+              maxLength={10}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100"
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Format: 2 letters + 8 digits (e.g., AB12345678)
+            </p>
+            {kcRegistrationNumber && !validateKCNumber(kcRegistrationNumber) && (
+              <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                ⚠️ Invalid format. Expected: 2 letters + 8 digits
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="kcName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              KC Registered Name
+            </label>
+            <input
+              id="kcName"
+              type="text"
+              placeholder="e.g., Champion Oakwood's Golden Star"
+              value={kcRegisteredName}
+              onChange={(e) => setKcRegisteredName(e.target.value)}
+              maxLength={100}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100"
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Official name as it appears on KC papers (if different from pet name)
+            </p>
+          </div>
+
+          <div>
+            <label htmlFor="kcPapers" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              KC Registration Papers {existingKcPapersURL && '(Leave empty to keep current)'}
+            </label>
+            <input
+              id="kcPapers"
+              type="file"
+              accept="application/pdf,image/*"
+              onChange={handleKcPapersChange}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100"
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Upload a scan or photo of your KC registration certificate (PDF or image)
+            </p>
+            {kcPapersPreview && (
+              <div className="mt-3">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                  {kcPapers ? 'New document:' : 'Current document:'}
+                </p>
+                {kcPapers?.type === 'application/pdf' || kcPapersPreview.endsWith('.pdf') ? (
+                  <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
+                    <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    <span className="font-medium">{kcPapers?.name || 'Current KC Papers'}</span>
+                  </div>
+                ) : (
+                  <img
+                    src={kcPapersPreview}
+                    alt="KC Papers Preview"
+                    className="w-32 h-32 object-cover rounded-lg"
+                  />
+                )}
+              </div>
+            )}
+          </div>
+
+  {/* Quick Link to KC */}
+  <div className="bg-gray-50 dark:bg-zinc-700/50 p-4 rounded-lg border border-gray-200 dark:border-zinc-600">
+    <p className="text-sm text-gray-700 dark:text-gray-300 mb-2 font-medium">
+      Need to register your dog?
+    </p>
+    <a
+      href="https://www.thekennelclub.org.uk/registration/"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline text-sm"
+    >
+      Visit The Kennel Club Website
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+      </svg>
+    </a>
+  </div>
+</div>
 
         {/* Location Information */}
         <div className="space-y-4">

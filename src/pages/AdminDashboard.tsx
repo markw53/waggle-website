@@ -213,6 +213,27 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  // In AdminDashboard.tsx, add this function with the other handlers
+
+const handleVerifyKCNumber = async (dogId: string) => {
+  if (!user) return;
+  
+  try {
+    const dogRef = doc(db, 'dogs', dogId);
+    await updateDoc(dogRef, {
+      'kennelClubInfo.registrationVerified': true,
+      'kennelClubInfo.verifiedBy': user.uid,
+      'kennelClubInfo.verifiedAt': Timestamp.fromDate(new Date()),
+    });
+    
+    toast.success('KC registration verified!');
+    fetchAllData(); // Refresh the data
+  } catch (error) {
+    console.error('Error verifying KC number:', error);
+    toast.error('Failed to verify KC registration');
+  }
+};
+
   if (adminLoading || loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -501,6 +522,7 @@ const AdminDashboard: React.FC = () => {
           onReject={handleReject}
           onSuspend={handleSuspend}
           onUnsuspend={handleUnsuspend}
+          onVerifyKC={handleVerifyKCNumber}
           onClose={() => {
             setSelectedDog(null);
             setVerificationNotes('');
@@ -798,6 +820,7 @@ const ReviewModal: React.FC<{
   onReject: (dogId: string) => void;
   onSuspend: (dogId: string) => void;
   onUnsuspend: (dogId: string) => void;
+  onVerifyKC: (dogId: string) => void; // ✅ ADD THIS
   onClose: () => void;
 }> = ({
   dog,
@@ -811,8 +834,10 @@ const ReviewModal: React.FC<{
   onReject,
   onSuspend,
   onUnsuspend,
+  onVerifyKC, // ✅ ADD THIS
   onClose,
 }) => {
+
   const isPending = dog.status === 'pending' || !dog.status;
   const isSuspended = dog.status === 'suspended';
 
@@ -847,6 +872,71 @@ const ReviewModal: React.FC<{
             </div>
           </div>
         </div>
+
+        {/* ✅ KC Verification Section in ReviewModal */}
+        {dog.kennelClubInfo?.registrationNumber && (
+          <div className="mb-6 p-5 bg-blue-50 dark:bg-blue-900/30 rounded-lg border-2 border-blue-200 dark:border-blue-800">
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+              <span>🏆</span> Kennel Club Registration
+            </h3>
+            
+            <div className="space-y-3">
+              <div className="bg-white dark:bg-blue-950 p-3 rounded-lg border border-blue-300 dark:border-blue-700">
+                <p className="text-sm text-gray-700 dark:text-gray-300 mb-1 font-medium">
+                  Registration Number
+                </p>
+                <p className="text-lg font-bold text-blue-900 dark:text-blue-200">
+                  {dog.kennelClubInfo.registrationNumber}
+                </p>
+              </div>
+
+              {dog.kennelClubInfo.registeredName && (
+                <div className="bg-white dark:bg-blue-950 p-3 rounded-lg border border-blue-300 dark:border-blue-700">
+                  <p className="text-sm text-gray-700 dark:text-gray-300 mb-1 font-medium">
+                    Registered Name
+                  </p>
+                  <p className="text-base font-semibold text-gray-900 dark:text-gray-100">
+                    {dog.kennelClubInfo.registeredName}
+                  </p>
+                </div>
+              )}
+
+              {dog.kennelClubInfo.registrationDocumentUrl && (
+                <a
+                  href={dog.kennelClubInfo.registrationDocumentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  View Registration Certificate
+                </a>
+              )}
+
+              {/* Verification Status */}
+              <div className="pt-3 border-t border-blue-200 dark:border-blue-700">
+                {dog.kennelClubInfo.registrationVerified ? (
+                  <div className="flex items-center gap-2 text-green-700 dark:text-green-300">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="font-semibold">KC Registration Verified</span>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => onVerifyKC(dog.id)} // ✅ Use the prop
+                    className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+                  >
+                    ✅ Verify KC Registration
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}  
 
         {/* Forms based on action */}
         {isPending && (
