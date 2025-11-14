@@ -7,6 +7,8 @@ import { useAuth } from '@/context/useAuth';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { ROUTES } from '@/config/routes';
+import { BreedAutocomplete } from '@/components/BreedAutocomplete';
+import type { BreedInfo } from '@/types/breed';
 
 export default function AddDog() {
   const { user } = useAuth();
@@ -20,6 +22,7 @@ export default function AddDog() {
   const [description, setDescription] = useState('');
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string>('');
+  const [selectedBreedInfo, setSelectedBreedInfo] = useState<BreedInfo | null>(null);
 
   // Health info
   const [vetVerified, setVetVerified] = useState(false);
@@ -311,15 +314,49 @@ export default function AddDog() {
             <label htmlFor="breed" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Breed *
             </label>
-            <input
-              id="breed"
-              type="text"
+            <BreedAutocomplete
               value={breed}
-              onChange={(e) => setBreed(e.target.value)}
-              required
-              maxLength={50}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100"
+              onChange={setBreed}
+              onBreedSelect={setSelectedBreedInfo}
             />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Start typing to search 277 recognized breeds
+            </p>
+            
+            {/* Breed Info Preview */}
+            {selectedBreedInfo && (
+              <div className="mt-3 p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-200 dark:border-indigo-800">
+                <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
+                  <span>📚</span> Breed Information
+                </h4>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <span className="text-gray-600 dark:text-gray-400">Type:</span>
+                    <span className="ml-2 font-medium text-gray-900 dark:text-gray-100">{selectedBreedInfo.type}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600 dark:text-gray-400">Lifespan:</span>
+                    <span className="ml-2 font-medium text-gray-900 dark:text-gray-100">{selectedBreedInfo.longevity}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600 dark:text-gray-400">Intelligence:</span>
+                    <span className="ml-2 font-medium text-gray-900 dark:text-gray-100">Rank #{selectedBreedInfo.intelligence}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600 dark:text-gray-400">Popularity:</span>
+                    <span className="ml-2 font-medium text-gray-900 dark:text-gray-100">#{selectedBreedInfo.popularity}</span>
+                  </div>
+                </div>
+                {selectedBreedInfo.healthProblems !== 'None reported' && (
+                  <div className="mt-2 pt-2 border-t border-indigo-200 dark:border-indigo-700">
+                    <p className="text-xs">
+                      <span className="text-yellow-700 dark:text-yellow-400 font-semibold">⚠️ Common Health Issues:</span>
+                      <span className="ml-2 text-gray-700 dark:text-gray-300">{selectedBreedInfo.healthProblems}</span>
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">

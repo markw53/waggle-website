@@ -1,7 +1,6 @@
 // src/pages/DogProfile.tsx
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useAuth } from '@/context';
 import { useMessaging } from '@/hooks/useMessaging';
@@ -9,6 +8,8 @@ import { useIsAdmin } from '@/hooks/useIsAdmin';
 import type { Dog } from '@/types/dog';
 import { ROUTES, getConversationRoute, getUserProfileRoute, getEditDogRoute } from '@/config/routes'; // ✅ Added getUserProfileRoute and getEditDogRoute
 import toast from 'react-hot-toast';
+import { doc, doc as firestoreDoc, getDoc } from 'firebase/firestore';
+import type { BreedInfo } from '@/types/breed';
 
 const DogProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,6 +21,7 @@ const DogProfile: React.FC = () => {
   const [dog, setDog] = useState<Dog | null>(null);
   const [loading, setLoading] = useState(true);
   const [contactingOwner, setContactingOwner] = useState(false);
+  const [breedInfo, setBreedInfo] = useState<BreedInfo | null>(null);
 
   useEffect(() => {
     const fetchDog = async () => {
@@ -61,6 +63,29 @@ const DogProfile: React.FC = () => {
 
     fetchDog();
   }, [id, navigate, user, isAdmin]);
+
+  // Add useEffect to fetch breed info
+  useEffect(() => {
+    const fetchBreedInfo = async () => {
+      if (!dog?.breed) return;
+      
+      try {
+        const breedId = dog.breed.toLowerCase()
+          .replace(/\s+/g, '-')
+          .replace(/[^a-z0-9-]/g, '');
+        
+        const breedDoc = await getDoc(firestoreDoc(db, 'breeds', breedId));
+        
+        if (breedDoc.exists()) {
+          setBreedInfo(breedDoc.data() as BreedInfo);
+        }
+      } catch (error) {
+        console.error('Error fetching breed info:', error);
+      }
+    };
+    
+    fetchBreedInfo();
+  }, [dog]);
 
   const handleContactOwner = async () => {
     if (!user) {
@@ -266,6 +291,85 @@ const DogProfile: React.FC = () => {
             <span>ℹ️</span> About {dog.name}
           </h2>
           <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{dog.bio}</p>
+        </div>
+      )}
+
+      {/* Breed Information Section */}
+      {breedInfo && (
+        <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 p-6 rounded-lg mb-8">
+          <h2 className="font-semibold text-xl text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+            <span>📚</span> About the {breedInfo.name} Breed
+          </h2>
+          
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            <div className="bg-white dark:bg-indigo-950 p-3 rounded-lg border border-indigo-200 dark:border-indigo-800">
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Type</p>
+              <p className="font-semibold text-gray-900 dark:text-gray-100">{breedInfo.type}</p>
+            </div>
+            <div className="bg-white dark:bg-indigo-950 p-3 rounded-lg border border-indigo-200 dark:border-indigo-800">
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Popularity</p>
+              <p className="font-semibold text-gray-900 dark:text-gray-100">Rank #{breedInfo.popularity}</p>
+            </div>
+            <div className="bg-white dark:bg-indigo-950 p-3 rounded-lg border border-indigo-200 dark:border-indigo-800">
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Intelligence</p>
+              <p className="font-semibold text-gray-900 dark:text-gray-100">Rank #{breedInfo.intelligence}</p>
+            </div>
+            <div className="bg-white dark:bg-indigo-950 p-3 rounded-lg border border-indigo-200 dark:border-indigo-800">
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Lifespan</p>
+              <p className="font-semibold text-gray-900 dark:text-gray-100">{breedInfo.longevity}</p>
+            </div>
+          </div>
+
+          {/* Physical Traits */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+            <div className="bg-white dark:bg-indigo-950 p-3 rounded-lg border border-indigo-200 dark:border-indigo-800">
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Height</p>
+              <p className="font-semibold text-gray-900 dark:text-gray-100">{breedInfo.height}</p>
+            </div>
+            <div className="bg-white dark:bg-indigo-950 p-3 rounded-lg border border-indigo-200 dark:border-indigo-800">
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Weight</p>
+              <p className="font-semibold text-gray-900 dark:text-gray-100">{breedInfo.weight}</p>
+            </div>
+            <div className="bg-white dark:bg-indigo-950 p-3 rounded-lg border border-indigo-200 dark:border-indigo-800">
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Colors</p>
+              <p className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{breedInfo.color}</p>
+            </div>
+          </div>
+          
+          {/* Health Issues Warning */}
+          {breedInfo.healthProblems !== 'None reported' && (
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800 mb-4">
+              <p className="text-sm font-semibold text-yellow-900 dark:text-yellow-200 mb-2 flex items-center gap-2">
+                <span>🏥</span> Common Health Issues for {breedInfo.name}
+              </p>
+              <p className="text-sm text-yellow-800 dark:text-yellow-300">
+                {breedInfo.healthProblems}
+              </p>
+            </div>
+          )}
+          
+          {/* Cost Information */}
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-white dark:bg-indigo-950 p-3 rounded-lg border border-indigo-200 dark:border-indigo-800 text-center">
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Yearly Cost</p>
+              <p className="font-bold text-green-600 dark:text-green-400">
+                ${breedInfo.yearlyExpenses.toLocaleString()}
+              </p>
+            </div>
+            <div className="bg-white dark:bg-indigo-950 p-3 rounded-lg border border-indigo-200 dark:border-indigo-800 text-center">
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Meals/Day</p>
+              <p className="font-bold text-gray-900 dark:text-gray-100">
+                {breedInfo.mealsPerDay}
+              </p>
+            </div>
+            <div className="bg-white dark:bg-indigo-950 p-3 rounded-lg border border-indigo-200 dark:border-indigo-800 text-center">
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Avg Puppy Price</p>
+              <p className="font-bold text-blue-600 dark:text-blue-400">
+                ${breedInfo.avgPuppyPrice.toLocaleString()}
+              </p>
+            </div>
+          </div>
         </div>
       )}
 

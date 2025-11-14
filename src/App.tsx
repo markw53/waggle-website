@@ -30,7 +30,7 @@ import NotFound from './pages/NotFound';
 import BreedingCalendarPage from '@/pages/BreedingCalendarPage';
 
 // Dog Pages
-import DogSearch from '@components/DogSearch';
+import DogSearch from '@/pages/DogSearch';
 import DogProfile from '@/pages/DogProfile';
 import AddDog from '@pages/AddDog';
 import MyDogs from './pages/MyDogs';
