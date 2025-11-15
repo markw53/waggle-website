@@ -137,9 +137,21 @@ export class BreedMatcher {
     }
     
     // Female should be larger for extreme size differences
-    // REMOVED: unused female and male variables
-    const femaleBreed = dog1.gender === 'Female' ? dog1BreedInfo : dog2BreedInfo;
-    const maleBreed = dog1.gender === 'Male' ? dog1BreedInfo : dog2BreedInfo;
+    // Explicitly determine which dog is female based on both dogs
+    let femaleBreed: BreedInfo | null;
+    let maleBreed: BreedInfo | null;
+    
+    if (dog1.gender === 'Female' && dog2.gender === 'Male') {
+      femaleBreed = dog1BreedInfo;
+      maleBreed = dog2BreedInfo;
+    } else if (dog1.gender === 'Male' && dog2.gender === 'Female') {
+      femaleBreed = dog2BreedInfo;
+      maleBreed = dog1BreedInfo;
+    } else {
+      // Both same gender (shouldn't happen in breeding context)
+      reasons.push('⚠️ Both dogs are same gender');
+      return { score: 0, reasons };
+    }
     
     const femaleSize = this.getSizeCategory(femaleBreed);
     const maleSize = this.getSizeCategory(maleBreed);

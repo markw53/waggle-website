@@ -7,7 +7,7 @@ import { breedMatcher } from '@/services/BreedMatcher';
 import type { Dog } from '@/types/dog';
 import type { BreedInfo } from '@/types/breed';
 import { Link } from 'react-router-dom';
-import { getDogProfileRoute } from '@/config/routes';
+import { getDogProfileRoute, getBreedIdFromName, getBreedProfileRoute } from '@/config/routes';
 import toast from 'react-hot-toast';
 
 const DogSearch: React.FC = () => {
@@ -46,7 +46,7 @@ const DogSearch: React.FC = () => {
         const snapshot = await getDocs(collection(db, 'breeds'));
         const breedData = snapshot.docs.map(doc => doc.data() as BreedInfo);
         setBreeds(breedData);
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error fetching breeds:', error);
       }
     };
@@ -70,7 +70,7 @@ const DogSearch: React.FC = () => {
 
         setAllDogs(dogsData);
         setFilteredDogs(dogsData);
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error fetching dogs:', error);
         toast.error('Failed to load dogs');
       } finally {
@@ -98,7 +98,7 @@ const DogSearch: React.FC = () => {
         })) as Dog[];
 
         setMyDogs(dogsData);
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error fetching my dogs:', error);
       }
     };
@@ -145,7 +145,7 @@ const DogSearch: React.FC = () => {
         );
         return breedInfo?.type === filterType;
       });
-        }
+    }
 
     // Intelligence filter
     if (filterMinIntelligence > 0) {
@@ -220,7 +220,7 @@ const DogSearch: React.FC = () => {
       
       setFilteredDogs([...sorted]);
       toast.success('Compatibility scores calculated!');
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error calculating compatibility:', error);
       toast.error('Failed to calculate compatibility');
     } finally {
@@ -284,44 +284,44 @@ const DogSearch: React.FC = () => {
           
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-                <label 
+              <label 
                 htmlFor="my-dog-select"
                 className="sr-only"
-                >
+              >
                 Select Your Dog
-                </label>
-                <select
+              </label>
+              <select
                 id="my-dog-select"
                 value={myDogId}
                 onChange={(e) => setMyDogId(e.target.value)}
                 className="w-full px-4 py-2 border border-purple-300 dark:border-purple-700 rounded-lg bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100"
-                >
+              >
                 <option value="">Select your dog...</option>
                 {myDogs.map(dog => (
-                    <option key={dog.id} value={dog.id}>
+                  <option key={dog.id} value={dog.id}>
                     {dog.name} ({dog.breed}) - {dog.gender}
-                    </option>
+                  </option>
                 ))}
-                </select>
+              </select>
             </div>
             
             <button
-                onClick={calculateCompatibility}
-                disabled={!myDogId || calculatingMatches}
-                className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-semibold flex items-center justify-center gap-2 md:self-end"
+              onClick={calculateCompatibility}
+              disabled={!myDogId || calculatingMatches}
+              className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-semibold flex items-center justify-center gap-2 md:self-end"
             >
-                {calculatingMatches ? (
+              {calculatingMatches ? (
                 <>
-                    <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
-                    Calculating...
+                  <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+                  Calculating...
                 </>
-                ) : (
+              ) : (
                 <>
-                    🧬 Calculate Matches
+                  🧬 Calculate Matches
                 </>
-                )}
+              )}
             </button>
-            </div>
+          </div>
           
           {showCompatibility && (
             <div className="mt-4 p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg border border-purple-300 dark:border-purple-700">
@@ -350,10 +350,11 @@ const DogSearch: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Search */}
           <div className="lg:col-span-3">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="search-dogs" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Search by Name or Breed
             </label>
             <input
+              id="search-dogs"
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -365,8 +366,9 @@ const DogSearch: React.FC = () => {
           {/* Breed Type */}
           <div>
             <label 
-                htmlFor='breed-type-filter'
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              htmlFor="breed-type-filter"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Breed Type
             </label>
             <select
@@ -389,8 +391,9 @@ const DogSearch: React.FC = () => {
           {/* Gender */}
           <div>
             <label 
-              htmlFor='gender-filter'
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              htmlFor="gender-filter"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Gender
             </label>
             <select
@@ -407,10 +410,11 @@ const DogSearch: React.FC = () => {
 
           {/* Breed Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="specific-breed" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Specific Breed
             </label>
             <input
+              id="specific-breed"
               type="text"
               value={filterBreed}
               onChange={(e) => setFilterBreed(e.target.value)}
@@ -421,29 +425,29 @@ const DogSearch: React.FC = () => {
 
           {/* Age Range */}
           <div>
-            <label 
-              htmlFor='agerange-filter'
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="age-range-min" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Age Range: {filterMinAge} - {filterMaxAge} years
             </label>
             <div className="flex gap-2 items-center">
               <input
-                id="agerange-filter"
+                id="age-range-min"
                 type="range"
                 min="2"
                 max="15"
                 value={filterMinAge}
                 onChange={(e) => setFilterMinAge(Math.min(Number(e.target.value), filterMaxAge))}
                 className="flex-1"
+                aria-label="Minimum age"
               />
               <input
-                id="agerange-filter"
+                id="age-range-max"
                 type="range"
                 min="2"
                 max="15"
                 value={filterMaxAge}
                 onChange={(e) => setFilterMaxAge(Math.max(Number(e.target.value), filterMinAge))}
                 className="flex-1"
+                aria-label="Maximum age"
               />
             </div>
           </div>
@@ -451,8 +455,9 @@ const DogSearch: React.FC = () => {
           {/* Max Puppy Price */}
           <div>
             <label 
-              htmlFor='max-puppy-price'
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              htmlFor="max-puppy-price"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Max Puppy Price: ${filterMaxPrice.toLocaleString()}
             </label>
             <input
@@ -470,8 +475,9 @@ const DogSearch: React.FC = () => {
           {/* Min Intelligence */}
           <div>
             <label 
-              htmlFor='min-intelligence'
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              htmlFor="min-intelligence"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Min Intelligence Rank: {filterMinIntelligence || 'Any'}
             </label>
             <input
@@ -489,8 +495,9 @@ const DogSearch: React.FC = () => {
           {/* Max Yearly Cost */}
           <div>
             <label 
-              htmlFor='max-yearly-cost'
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              htmlFor="max-yearly-cost"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Max Yearly Cost: ${filterMaxYearlyCost.toLocaleString()}
             </label>
             <input
@@ -546,9 +553,8 @@ const DogSearch: React.FC = () => {
               const badge = compatScore ? getCompatibilityBadge(compatScore) : null;
 
               return (
-                <Link
+                                <div
                   key={dog.id}
-                  to={getDogProfileRoute(dog.id)}
                   className="bg-zinc-50 dark:bg-zinc-700 rounded-lg border-2 border-zinc-200 dark:border-zinc-600 hover:border-amber-500 dark:hover:border-amber-600 transition-all hover:shadow-lg overflow-hidden"
                 >
                   {/* Compatibility Badge */}
@@ -558,42 +564,55 @@ const DogSearch: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Dog Image */}
-                  <div className="aspect-square relative">
-                    {dog.imageUrl ? (
-                      <img
-                        src={dog.imageUrl}
-                        alt={dog.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-600 dark:to-zinc-700 flex items-center justify-center text-8xl">
-                        🐕
+                  {/* Dog Image - Clickable */}
+                  <Link to={getDogProfileRoute(dog.id)} className="block">
+                    <div className="aspect-square relative">
+                      {dog.imageUrl ? (
+                        <img
+                          src={dog.imageUrl}
+                          alt={dog.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-linear-to-br from-zinc-200 to-zinc-300 dark:from-zinc-600 dark:to-zinc-700 flex items-center justify-center text-8xl">
+                          🐕
+                        </div>
+                      )}
+                      
+                      {/* Gender Badge */}
+                      <div className={`absolute top-3 right-3 px-3 py-1 rounded-full font-semibold text-sm ${
+                        dog.gender === 'Male' 
+                          ? 'bg-blue-500 text-white' 
+                          : 'bg-pink-500 text-white'
+                      }`}>
+                        {dog.gender === 'Male' ? '♂️' : '♀️'} {dog.gender}
                       </div>
-                    )}
-                    
-                    {/* Gender Badge */}
-                    <div className={`absolute top-3 right-3 px-3 py-1 rounded-full font-semibold text-sm ${
-                      dog.gender === 'Male' 
-                        ? 'bg-blue-500 text-white' 
-                        : 'bg-pink-500 text-white'
-                    }`}>
-                      {dog.gender === 'Male' ? '♂️' : '♀️'} {dog.gender}
                     </div>
-                  </div>
+                  </Link>
 
                   {/* Dog Info */}
                   <div className="p-4">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                      {dog.name}
-                    </h3>
+                    <Link to={getDogProfileRoute(dog.id)}>
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 hover:text-amber-700 dark:hover:text-amber-400 transition-colors">
+                        {dog.name}
+                      </h3>
+                    </Link>
+                    
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                      {dog.breed} • {dog.age} {dog.age === 1 ? 'year' : 'years'}
+                      <Link 
+                        to={getBreedProfileRoute(getBreedIdFromName(dog.breed))}
+                        className="text-amber-700 dark:text-amber-400 hover:underline font-semibold"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {dog.breed}
+                      </Link>
+                      {' • '}
+                      {dog.age} {dog.age === 1 ? 'year' : 'years'}
                     </p>
 
                     {/* Breed Info */}
                     {breedInfo && (
-                      <div className="space-y-2 text-xs">
+                      <div className="space-y-2 text-xs mb-4">
                         <div className="flex items-center justify-between">
                           <span className="text-gray-600 dark:text-gray-400">Type:</span>
                           <span className="font-semibold text-gray-900 dark:text-gray-100">{breedInfo.type}</span>
@@ -612,14 +631,16 @@ const DogSearch: React.FC = () => {
                     )}
 
                     {/* View Profile Button */}
-                    <button
-                      type="button"
-                      className="w-full mt-4 px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-600 transition-colors font-semibold text-sm"
-                    >
-                      View Full Profile →
-                    </button>
+                    <Link to={getDogProfileRoute(dog.id)}>
+                      <button
+                        type="button"
+                        className="w-full px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-600 transition-colors font-semibold text-sm"
+                      >
+                        View Full Profile →
+                      </button>
+                    </Link>
                   </div>
-                </Link>
+                </div>
               );
             })}
           </div>

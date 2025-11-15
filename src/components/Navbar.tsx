@@ -14,7 +14,7 @@ import {
 import { useAuth } from '@/context';
 import { useTheme } from '@/hooks/useTheme';
 import { useMessaging } from '@/hooks/useMessaging';
-import { useBreedingCalendar } from '@/hooks/useBreedingCalendar'; // 👈 NEW
+import { useBreedingCalendar } from '@/hooks/useBreedingCalendar';
 import { useEffect, useState, useMemo } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
@@ -25,7 +25,7 @@ export default function Navbar() {
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const { conversations } = useMessaging();
-  const { upcomingCyclesCount } = useBreedingCalendar(); // 👈 NEW
+  const { upcomingCyclesCount } = useBreedingCalendar();
   const [userPhotoURL, setUserPhotoURL] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAdmin, loading: adminLoading } = useIsAdmin();
@@ -40,7 +40,7 @@ export default function Navbar() {
   useEffect(() => {
     const fetchUserProfile = async () => {
       if (!user) {
-        setUserPhotoURL(null); // ✅ Clear the photo URL when user logs out
+        setUserPhotoURL(null);
         return;
       }
 
@@ -183,6 +183,15 @@ export default function Navbar() {
               </DropdownMenuItem>
 
               <DropdownMenuItem asChild>
+                <Link to={ROUTES.BREEDS} className="cursor-pointer flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                  Browse Breeds
+                </Link>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem asChild>
                 <Link to={ROUTES.ADD_DOG} className="cursor-pointer flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -191,7 +200,6 @@ export default function Navbar() {
                 </Link>
               </DropdownMenuItem>
 
-              {/* 👇 NEW: Breeding Calendar */}
               <DropdownMenuItem asChild>
                 <Link to={ROUTES.BREEDING_CALENDAR} className="cursor-pointer flex items-center gap-2 justify-between">
                   <div className="flex items-center gap-2">
@@ -306,7 +314,7 @@ export default function Navbar() {
 
               <DropdownMenuSeparator className="bg-zinc-200 dark:bg-zinc-700" />
 
-                            <DropdownMenuItem 
+              <DropdownMenuItem 
                 onClick={logout} 
                 className="cursor-pointer text-red-600 dark:text-red-400 flex items-center gap-2"
               >
@@ -320,7 +328,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+            {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="sm:hidden mt-4 pb-4 border-t border-zinc-200 dark:border-zinc-700 pt-4">
           <div className="flex flex-col space-y-2">
@@ -369,6 +377,17 @@ export default function Navbar() {
             </Link>
 
             <Link
+              to={ROUTES.BREEDS}
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+              Browse Breeds
+            </Link>
+
+            <Link
               to={ROUTES.ADD_DOG}
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center gap-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition"
@@ -379,7 +398,6 @@ export default function Navbar() {
               Add Dog
             </Link>
 
-            {/* 👇 NEW: Breeding Calendar (Mobile) */}
             <Link
               to={ROUTES.BREEDING_CALENDAR}
               onClick={() => setMobileMenuOpen(false)}
@@ -528,3 +546,4 @@ export default function Navbar() {
     </nav>
   );
 }
+

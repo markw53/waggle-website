@@ -18,6 +18,7 @@ export const ROUTES = {
   
   // Dogs
   DOGS: '/dogs',
+  DOG_SEARCH: '/dogs',
   DOGS_MAP: '/dogs/map',
   DOG_PROFILE: '/dogs/:id',
   ADD_DOG: '/add-dog',
@@ -25,6 +26,10 @@ export const ROUTES = {
   EDIT_DOG: '/edit-dog/:id',
   BREEDING_CALENDAR: '/breeding-calendar',
   BREEDING_CALENDAR_DOG: '/breeding-calendar/:dogId',
+  
+  // Breeds
+  BREEDS: '/breeds',
+  BREED_PROFILE: '/breeds/:breedId',
   
   // Matches
   ADD_MATCH: '/add-match',
@@ -53,3 +58,11 @@ export const getEditDogRoute = (id: string) => `/edit-dog/${id}`;
 export const getConversationRoute = (id: string) => `/messages/${id}`;
 export const getUserProfileRoute = (id: string) => `/users/${id}`;
 export const getBreedingCalendarDogRoute = (dogId: string) => `/breeding-calendar/${dogId}`;
+export const getBreedProfileRoute = (breedId: string) => `/breeds/${breedId}`;
+
+// Helper to convert breed name to URL-safe ID
+export const getBreedIdFromName = (breedName: string): string => {
+  return breedName.toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '');
+};

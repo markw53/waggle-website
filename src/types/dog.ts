@@ -28,6 +28,7 @@ export interface Dog {
   breed: string;
   age: number;
   gender: 'Male' | 'Female';
+  color?: string;
   ownerId: string;
   imageUrl?: string;
   bio?: string;

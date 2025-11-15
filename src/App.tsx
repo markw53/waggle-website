@@ -37,6 +37,10 @@ import MyDogs from './pages/MyDogs';
 import DogsMapPage from './pages/DogsMapPage';
 import EditDog from '@/pages/EditDog';
 
+// Breed Pages
+import BreedDirectory from './pages/BreedDirectory';
+import BreedProfile from './pages/BreedProfile';
+
 // Match Pages
 import AddMatch from '@pages/AddMatch';
 import MatchesList from '@pages/MatchesList';
@@ -85,6 +89,10 @@ const App: React.FC = () => (
           <Route path={ROUTES.MY_DOGS} element={<RequireAuth><MyDogs /></RequireAuth>} />
           <Route path={ROUTES.DOGS_MAP} element={<RequireAuth><DogsMapPage /></RequireAuth>} />
           <Route path={ROUTES.EDIT_DOG} element={<RequireAuth><EditDog /></RequireAuth>} />
+
+          {/* Breed Information */}
+          <Route path={ROUTES.BREEDS} element={<RequireAuth><BreedDirectory /></RequireAuth>} />
+          <Route path={ROUTES.BREED_PROFILE} element={<RequireAuth><BreedProfile /></RequireAuth>} />
 
           {/* Breeding Calendar */}
           <Route path={ROUTES.BREEDING_CALENDAR} element={<RequireAuth><BreedingCalendarPage /></RequireAuth>} />
