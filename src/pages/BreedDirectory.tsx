@@ -89,7 +89,8 @@ const BreedDirectory: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       {/* Header */}
-      <div className="bg-linear-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg shadow-lg p-8 mb-6 border-2 border-amber-200 dark:border-amber-800">
+      <div className="bg-linear
+      -to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg shadow-lg p-8 mb-6 border-2 border-amber-200 dark:border-amber-800">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-3">
           <span>🐕</span> Dog Breed Encyclopedia
         </h1>
@@ -235,83 +236,122 @@ const BreedDirectory: React.FC = () => {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredBreeds.map(breed => {
-            const breedId = getBreedIdFromName(breed.name);
-            
-            return (
-              <Link
-                key={breedId}
-                to={getBreedProfileRoute(breedId)}
-                className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-amber-500 dark:hover:border-amber-600 overflow-hidden group"
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredBreeds.map(breed => {
+              const breedId = getBreedIdFromName(breed.name);
+              
+              return (
+                <Link
+                  key={breedId}
+                  to={getBreedProfileRoute(breedId)}
+                  className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-amber-500 dark:hover:border-amber-600 overflow-hidden group"
+                >
+                  {/* Breed Image/Header */}
+                  <div className="bg-linear
+                  -to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 p-6 text-center h-48 flex items-center justify-center">
+                    {breed.imageUrl ? (
+                      <img 
+                        src={breed.imageUrl} 
+                        alt={breed.name}
+                        className="h-32 w-32 object-cover rounded-full border-4 border-amber-500 shadow-lg group-hover:scale-110 transition-transform"
+                        onError={(e) => {
+                          // Fallback to emoji if image fails
+                          const img = e.currentTarget;
+                          img.style.display = 'none';
+                          const fallback = img.nextElementSibling as HTMLElement;
+                          if (fallback) fallback.style.display = 'block';
+                        }}
+                      />
+                    ) : null}
+                    <div 
+                      className="text-6xl group-hover:scale-110 transition-transform" 
+                      style={{ display: breed.imageUrl ? 'none' : 'block' }}
+                    >
+                      🐕
+                    </div>
+                  </div>
+
+                  <div className="p-4">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 text-center">
+                      {breed.name}
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 text-center mb-4">
+                      {breed.kennelClubCategory || breed.type}
+                    </p>
+
+                    {/* Stats */}
+                    <div className="space-y-2 text-sm">
+                      {breed.size && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                            <span>📏</span> Size
+                          </span>
+                          <span className="font-semibold text-gray-900 dark:text-white">
+                            {breed.size}
+                          </span>
+                        </div>
+                      )}
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                          <span>🧠</span> Intelligence
+                        </span>
+                        <span className="font-semibold text-gray-900 dark:text-white">
+                          #{breed.intelligence}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                          <span>💰</span> Avg Price
+                        </span>
+                        <span className="font-semibold text-green-600 dark:text-green-400">
+                          ${breed.avgPuppyPrice.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                          <span>⏳</span> Lifespan
+                        </span>
+                        <span className="font-semibold text-purple-600 dark:text-purple-400">
+                          {breed.longevity}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* View Button */}
+                    <button
+                      type="button"
+                      className="w-full mt-4 px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-600 transition-colors font-semibold text-sm group-hover:bg-amber-600"
+                    >
+                      View Details →
+                    </button>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Attribution - MOVED OUTSIDE THE MAP */}
+          <div className="mt-12 text-center text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-zinc-800 rounded-lg p-4">
+            <p>
+              Breed images and information courtesy of{' '}
+              <a 
+                href="https://www.thekennelclub.org.uk/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-amber-700 dark:text-amber-400 hover:underline font-medium"
               >
-                {/* Breed Icon/Header */}
-                <div className="bg-linear-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 p-6 text-center">
-                  <div className="text-6xl mb-2 group-hover:scale-110 transition-transform">🐕</div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
-                    {breed.name}
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {breed.type}
-                  </p>
-                </div>
-
-                {/* Stats */}
-                <div className="p-4 space-y-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
-                      <span>🧠</span> Intelligence
-                    </span>
-                    <span className="font-semibold text-gray-900 dark:text-white">
-                      #{breed.intelligence}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
-                      <span>💰</span> Avg Price
-                    </span>
-                    <span className="font-semibold text-green-600 dark:text-green-400">
-                      ${breed.avgPuppyPrice.toLocaleString()}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
-                      <span>📅</span> Yearly Cost
-                    </span>
-                    <span className="font-semibold text-blue-600 dark:text-blue-400">
-                      ${breed.yearlyExpenses.toLocaleString()}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
-                      <span>⏳</span> Lifespan
-                    </span>
-                    <span className="font-semibold text-purple-600 dark:text-purple-400">
-                      {breed.longevity}
-                    </span>
-                  </div>
-                </div>
-
-                {/* View Button */}
-                <div className="px-4 pb-4">
-                  <button
-                    type="button"
-                    className="w-full px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-600 transition-colors font-semibold text-sm group-hover:bg-amber-600"
-                  >
-                    View Details →
-                  </button>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+                The Kennel Club
+              </a>
+              {' '}• Educational use only
+            </p>
+          </div>
+        </>
       )}
 
       {/* Info Section */}
-      <div className="mt-12 bg-linear-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-lg p-8 border-2 border-blue-200 dark:border-blue-800">
+      <div className="mt-12 bg-linear
+      -to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-lg p-8 border-2 border-blue-200 dark:border-blue-800">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
           <span>📚</span> About Our Breed Database
         </h2>

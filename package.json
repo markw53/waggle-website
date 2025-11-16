@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "scrape-breeds": "python scripts/scrape_kennel_club.py",
+    "import-breeds": "ts-node scripts/importBreeds.ts",
+    "update-breeds": "npm run scrape-breeds && npm run import-breeds"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.11",
