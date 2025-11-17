@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "scrape-breeds": "python scripts/scrape_kennel_club.py",
-    "import-breeds": "ts-node --project tsconfig.scripts.json scripts/importBreeds.ts",
+    "import-breeds": "tsx scripts/importBreeds.ts",
     "update-breeds": "npm run scrape-breeds && npm run import-breeds"
   },
   "dependencies": {
@@ -32,6 +32,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "firebase": "^11.7.1",
+    "firebase-admin": "^13.6.0",
     "leaflet": "^1.9.4",
     "lodash": "^4.17.21",
     "lucide-react": "^0.513.0",
@@ -67,6 +68,7 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.30.1",
     "vite": "^6.3.5",

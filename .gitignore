@@ -39,3 +39,16 @@ firestore-debug.log
 *.njsproj
 *.sln
 *.sw?
+breeds.csv
+data/DogBreeds.db
+kennel_club_breeds.json
+kennel_club_breeds.csv
+
+# service account keys
+*.json
+serviceAccountKey*.json
+
+# Keep the scripts
+!scripts/scrape_kennel_club.py
+!scripts/importBreeds.ts
+

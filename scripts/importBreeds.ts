@@ -1,33 +1,6 @@
 // scripts/importBreeds.ts
-import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
-import * as dotenv from 'dotenv';
+import { db } from './firebase-admin.ts';
 import * as fs from 'fs';
-
-// Load environment variables
-dotenv.config();
-
-console.log('🔧 Initializing Firebase...');
-
-const firebaseConfig = {
-  apiKey: process.env.VITE_FIREBASE_API_KEY,
-  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.VITE_FIREBASE_APP_ID,
-};
-
-// Validate config
-if (!firebaseConfig.projectId) {
-  console.error('❌ Firebase projectId is not set. Check your .env file.');
-  throw new Error('Firebase configuration is incomplete');
-}
-
-console.log(`✅ Connected to project: ${firebaseConfig.projectId}\n`);
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 
 interface BreedData {
   name: string;
@@ -57,11 +30,8 @@ function createValidDocId(name: string): string {
   return name
     .toLowerCase()
     .trim()
-    // Replace spaces and special characters with hyphens
     .replace(/[\s\W]+/g, '-')
-    // Remove leading/trailing hyphens
     .replace(/^-+|-+$/g, '')
-    // Ensure it's not empty
     || 'unknown-breed';
 }
 
@@ -70,7 +40,6 @@ function sanitizeString(value: string | null | undefined): string {
   if (value === null || value === undefined) {
     return '';
   }
-  // Remove any null characters or other problematic characters
   return value.replace(/\0/g, '').trim();
 }
 
@@ -104,18 +73,14 @@ async function importBreeds() {
       }
       
       try {
-        // Create URL-safe breed ID with better validation
         const breedId = createValidDocId(breed.name);
         
-        // Validate the document ID
         if (!breedId || breedId === 'unknown-breed') {
           throw new Error(`Invalid document ID generated for breed: ${breed.name}`);
         }
         
-        // Log the breed being processed
         console.log(`Processing: ${breed.name} -> ${breedId}`);
         
-        // Create search keywords with sanitization
         const searchKeywords = [
           breed.name.toLowerCase(),
           breed.type?.toLowerCase() || '',
@@ -124,9 +89,8 @@ async function importBreeds() {
         ]
           .filter(keyword => keyword && keyword.length > 0)
           .map(keyword => keyword.trim())
-          .filter((keyword, index, self) => self.indexOf(keyword) === index); // Remove duplicates
+          .filter((keyword, index, self) => self.indexOf(keyword) === index);
         
-        // Prepare breed data for Firestore with sanitization
         const breedData = {
           name: sanitizeString(breed.name),
           type: sanitizeString(breed.type) || 'Non-Sporting',
@@ -140,8 +104,6 @@ async function importBreeds() {
           yearlyExpenses: sanitizeNumber(breed.yearlyExpenses) || 1500,
           mealsPerDay: sanitizeNumber(breed.mealsPerDay) || 2,
           avgPuppyPrice: sanitizeNumber(breed.avgPuppyPrice) || 1000,
-          
-          // Kennel Club specific data
           imageUrl: sanitizeString(breed.imageUrl),
           officialLink: sanitizeString(breed.officialLink),
           kennelClubCategory: sanitizeString(breed.kennelClubCategory),
@@ -150,25 +112,23 @@ async function importBreeds() {
           grooming: sanitizeString(breed.grooming),
           temperament: sanitizeString(breed.temperament),
           goodWithChildren: sanitizeString(breed.goodWithChildren),
-          
           searchKeywords: searchKeywords
         };
         
-        // Validate that we have essential fields
         if (!breedData.name || !breedData.type) {
           throw new Error(`Missing essential fields for breed: ${breed.name}`);
         }
         
-        // Save to Firestore
-        await setDoc(doc(db, 'breeds', breedId), breedData);
+        // Use Admin SDK - this bypasses security rules
+        await db.collection('breeds').doc(breedId).set(breedData);
         
         successCount++;
         console.log(`✅ ${successCount}/${breeds.length}: ${breed.name}`);
         
-      } catch (error: unknown) {
+      } catch (err) {
         errorCount++;
         failedBreeds.push(breed.name);
-        console.error(`❌ Error importing ${breed.name}:`, error instanceof Error ? error.message : error);
+        console.error(`❌ Error importing ${breed.name}:`, err instanceof Error ? err.message : String(err));
       }
     }
     
@@ -187,11 +147,11 @@ async function importBreeds() {
     console.log('='.repeat(50) + '\n');
     
     process.exit(0);
-  } catch (error: unknown) {
-    console.error('❌ Fatal error during import:', error);
-    if (error instanceof Error) {
-      console.error('Error details:', error.message);
-      console.error('Stack trace:', error.stack);
+  } catch (err) {
+    console.error('❌ Fatal error during import:', err);
+    if (err instanceof Error) {
+      console.error('Error details:', err.message);
+      console.error('Stack trace:', err.stack);
     }
     process.exit(1);
   }
