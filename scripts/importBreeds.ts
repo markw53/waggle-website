@@ -1,7 +1,33 @@
 // scripts/importBreeds.ts
-import { doc, setDoc } from 'firebase/firestore';
-import { db } from './firebase-admin';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import * as dotenv from 'dotenv';
 import * as fs from 'fs';
+
+// Load environment variables
+dotenv.config();
+
+console.log('🔧 Initializing Firebase...');
+
+const firebaseConfig = {
+  apiKey: process.env.VITE_FIREBASE_API_KEY,
+  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.VITE_FIREBASE_APP_ID,
+};
+
+// Validate config
+if (!firebaseConfig.projectId) {
+  console.error('❌ Firebase projectId is not set. Check your .env file.');
+  throw new Error('Firebase configuration is incomplete');
+}
+
+console.log(`✅ Connected to project: ${firebaseConfig.projectId}\n`);
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 interface BreedData {
   name: string;
@@ -39,43 +65,16 @@ function createValidDocId(name: string): string {
     || 'unknown-breed';
 }
 
-// Function to validate and sanitize field values
-function sanitizeValue(value: string | number | string[] | null | undefined): string | number | string[] {
+// Helper function to sanitize string values
+function sanitizeString(value: string | null | undefined): string {
   if (value === null || value === undefined) {
     return '';
   }
-  
-  if (typeof value === 'string') {
-    // Remove any null characters or other problematic characters
-    return value.replace(/\0/g, '').trim();
-  }
-  
-  if (typeof value === 'number') {
-    // Ensure it's a valid number
-    return isNaN(value) ? 0 : value;
-  }
-  
-  if (Array.isArray(value)) {
-    // Sanitize array items and remove empty values
-    return value
-      .map(item => {
-        if (typeof item === 'string') {
-          return item.replace(/\0/g, '').trim();
-        }
-        return String(item).trim();
-      })
-      .filter(item => item !== '');
-  }
-  
-  return '';
+  // Remove any null characters or other problematic characters
+  return value.replace(/\0/g, '').trim();
 }
 
-// Overloaded functions for type safety
-function sanitizeString(value: string | null | undefined): string {
-  const result = sanitizeValue(value);
-  return typeof result === 'string' ? result : '';
-}
-
+// Helper function to sanitize number values
 function sanitizeNumber(value: number | string | null | undefined): number {
   if (typeof value === 'number') {
     return isNaN(value) ? 0 : value;
