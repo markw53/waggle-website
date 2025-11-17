@@ -230,7 +230,7 @@ const BreedProfile: React.FC = () => {
           <div className="text-3xl mb-2">💰</div>
           <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Puppy Price</div>
           <div className={`text-2xl font-bold ${priceInfo.color}`}>
-            ${breed.avgPuppyPrice.toLocaleString()}
+            £{breed.avgPuppyPrice.toLocaleString()}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
             {priceInfo.text}
@@ -241,7 +241,7 @@ const BreedProfile: React.FC = () => {
           <div className="text-3xl mb-2">📅</div>
           <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Yearly Cost</div>
           <div className={`text-2xl font-bold ${costInfo.color}`}>
-            ${breed.yearlyExpenses.toLocaleString()}
+            £{breed.yearlyExpenses.toLocaleString()}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
             {costInfo.text}

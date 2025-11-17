@@ -305,7 +305,7 @@ const BreedDirectory: React.FC = () => {
                           <span>💰</span> Avg Price
                         </span>
                         <span className="font-semibold text-green-600 dark:text-green-400">
-                          ${breed.avgPuppyPrice.toLocaleString()}
+                          £{breed.avgPuppyPrice.toLocaleString()}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
