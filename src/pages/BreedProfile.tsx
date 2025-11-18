@@ -537,7 +537,7 @@ const BreedProfile: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-4xl font-bold text-green-700 dark:text-green-400 mb-2">
-                    ${breed.avgPuppyPrice.toLocaleString()}
+                    £{breed.avgPuppyPrice.toLocaleString()}
                   </div>
                   <div className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${priceInfo.color} bg-white dark:bg-zinc-800`}>
                     {priceInfo.text} Price Range
@@ -553,7 +553,7 @@ const BreedProfile: React.FC = () => {
                     </div>
                   </div>
                   <div className="text-4xl font-bold text-blue-700 dark:text-blue-400 mb-2">
-                    ${breed.yearlyExpenses.toLocaleString()}
+                    £{breed.yearlyExpenses.toLocaleString()}
                   </div>
                   <div className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${costInfo.color} bg-white dark:bg-zinc-800`}>
                     {costInfo.text} Maintenance
@@ -612,7 +612,7 @@ const BreedProfile: React.FC = () => {
                       const lifetimeCost = breed.avgPuppyPrice + (breed.yearlyExpenses * avgLifespan);
                       return (
                         <div className="text-4xl font-bold text-purple-700 dark:text-purple-400">
-                          ${Math.round(lifetimeCost).toLocaleString()}
+                          £{Math.round(lifetimeCost).toLocaleString()}
                         </div>
                       );
                     })()}

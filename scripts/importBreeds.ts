@@ -8,13 +8,8 @@ interface BreedData {
   height: string;
   weight: string;
   color: string;
-  popularity: number;
-  intelligence: number;
   longevity: string;
   healthProblems: string;
-  yearlyExpenses: number;
-  mealsPerDay: number;
-  avgPuppyPrice: number;
   imageUrl?: string;
   officialLink?: string;
   kennelClubCategory?: string;
@@ -25,7 +20,25 @@ interface BreedData {
   goodWithChildren?: string;
 }
 
-// Function to create a valid Firestore document ID
+interface FirestoreBreedData {
+  name: string;
+  type: string;
+  height: string;
+  weight: string;
+  color: string;
+  longevity: string;
+  healthProblems: string;
+  searchKeywords: string[];
+  imageUrl?: string;
+  officialLink?: string;
+  kennelClubCategory?: string;
+  size?: string;
+  exerciseNeeds?: string;
+  grooming?: string;
+  temperament?: string;
+  goodWithChildren?: string;
+}
+
 function createValidDocId(name: string): string {
   return name
     .toLowerCase()
@@ -35,7 +48,6 @@ function createValidDocId(name: string): string {
     || 'unknown-breed';
 }
 
-// Helper function to sanitize string values
 function sanitizeString(value: string | null | undefined): string {
   if (value === null || value === undefined) {
     return '';
@@ -43,20 +55,10 @@ function sanitizeString(value: string | null | undefined): string {
   return value.replace(/\0/g, '').trim();
 }
 
-// Helper function to sanitize number values
-function sanitizeNumber(value: number | string | null | undefined): number {
-  if (typeof value === 'number') {
-    return isNaN(value) ? 0 : value;
-  }
-  const num = Number(value);
-  return isNaN(num) ? 0 : num;
-}
-
 async function importBreeds() {
   console.log('🐕 Starting breed import from Kennel Club data...\n');
   
   try {
-    // Read JSON file
     const jsonFile = fs.readFileSync('./kennel_club_breeds.json', 'utf8');
     const breeds = JSON.parse(jsonFile) as BreedData[];
     
@@ -79,8 +81,9 @@ async function importBreeds() {
           throw new Error(`Invalid document ID generated for breed: ${breed.name}`);
         }
         
-        console.log(`Processing: ${breed.name} -> ${breedId}`);
+        console.log(`Processing: ${breed.name} -> ${breedId} [${breed.type}]`);
         
+        // Create search keywords
         const searchKeywords = [
           breed.name.toLowerCase(),
           breed.type?.toLowerCase() || '',
@@ -91,35 +94,48 @@ async function importBreeds() {
           .map(keyword => keyword.trim())
           .filter((keyword, index, self) => self.indexOf(keyword) === index);
         
-        const breedData = {
+        // Build the breed data object with required fields
+        const breedData: FirestoreBreedData = {
           name: sanitizeString(breed.name),
           type: sanitizeString(breed.type) || 'Non-Sporting',
           height: sanitizeString(breed.height) || 'N/A',
           weight: sanitizeString(breed.weight) || 'N/A',
           color: sanitizeString(breed.color) || 'Various',
-          popularity: sanitizeNumber(breed.popularity),
-          intelligence: sanitizeNumber(breed.intelligence) || 50,
           longevity: sanitizeString(breed.longevity) || '10-14 years',
-          healthProblems: sanitizeString(breed.healthProblems) || 'Varies by breed - consult veterinarian',
-          yearlyExpenses: sanitizeNumber(breed.yearlyExpenses) || 1500,
-          mealsPerDay: sanitizeNumber(breed.mealsPerDay) || 2,
-          avgPuppyPrice: sanitizeNumber(breed.avgPuppyPrice) || 1000,
-          imageUrl: sanitizeString(breed.imageUrl),
-          officialLink: sanitizeString(breed.officialLink),
-          kennelClubCategory: sanitizeString(breed.kennelClubCategory),
-          size: sanitizeString(breed.size) || 'Medium',
-          exerciseNeeds: sanitizeString(breed.exerciseNeeds),
-          grooming: sanitizeString(breed.grooming),
-          temperament: sanitizeString(breed.temperament),
-          goodWithChildren: sanitizeString(breed.goodWithChildren),
+          healthProblems: sanitizeString(breed.healthProblems),
           searchKeywords: searchKeywords
         };
+        
+        // Add optional fields only if they have values
+        if (breed.imageUrl) {
+          breedData.imageUrl = sanitizeString(breed.imageUrl);
+        }
+        if (breed.officialLink) {
+          breedData.officialLink = sanitizeString(breed.officialLink);
+        }
+        if (breed.kennelClubCategory) {
+          breedData.kennelClubCategory = sanitizeString(breed.kennelClubCategory);
+        }
+        if (breed.size) {
+          breedData.size = sanitizeString(breed.size);
+        }
+        if (breed.exerciseNeeds) {
+          breedData.exerciseNeeds = sanitizeString(breed.exerciseNeeds);
+        }
+        if (breed.grooming) {
+          breedData.grooming = sanitizeString(breed.grooming);
+        }
+        if (breed.temperament) {
+          breedData.temperament = sanitizeString(breed.temperament);
+        }
+        if (breed.goodWithChildren) {
+          breedData.goodWithChildren = sanitizeString(breed.goodWithChildren);
+        }
         
         if (!breedData.name || !breedData.type) {
           throw new Error(`Missing essential fields for breed: ${breed.name}`);
         }
         
-        // Use Admin SDK - this bypasses security rules
         await db.collection('breeds').doc(breedId).set(breedData);
         
         successCount++;
@@ -157,5 +173,4 @@ async function importBreeds() {
   }
 }
 
-// Run the import
 importBreeds();

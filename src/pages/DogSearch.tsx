@@ -458,7 +458,7 @@ const DogSearch: React.FC = () => {
               htmlFor="max-puppy-price"
               className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
             >
-              Max Puppy Price: ${filterMaxPrice.toLocaleString()}
+              Max Puppy Price: £{filterMaxPrice.toLocaleString()}
             </label>
             <input
               id="max-puppy-price"
@@ -498,7 +498,7 @@ const DogSearch: React.FC = () => {
               htmlFor="max-yearly-cost"
               className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
             >
-              Max Yearly Cost: ${filterMaxYearlyCost.toLocaleString()}
+              Max Yearly Cost: £{filterMaxYearlyCost.toLocaleString()}
             </label>
             <input
               id="max-yearly-cost"
@@ -624,7 +624,7 @@ const DogSearch: React.FC = () => {
                         <div className="flex items-center justify-between">
                           <span className="text-gray-600 dark:text-gray-400">Avg Puppy Price:</span>
                           <span className="font-semibold text-green-600 dark:text-green-400">
-                            ${breedInfo.avgPuppyPrice.toLocaleString()}
+                            £{breedInfo.avgPuppyPrice.toLocaleString()}
                           </span>
                         </div>
                       </div>
