@@ -13,7 +13,7 @@ const BreedDirectory: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
-  const [sortBy, setSortBy] = useState<'name' | 'popularity' | 'intelligence' | 'price'>('name');
+  const [sortBy, setSortBy] = useState<'name' | 'type'>('name');
 
   useEffect(() => {
     const fetchBreeds = async () => {
@@ -43,7 +43,8 @@ const BreedDirectory: React.FC = () => {
     if (searchTerm) {
       filtered = filtered.filter(breed =>
         breed.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        breed.type.toLowerCase().includes(searchTerm.toLowerCase())
+        breed.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        breed.kennelClubCategory?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -57,12 +58,8 @@ const BreedDirectory: React.FC = () => {
       switch (sortBy) {
         case 'name':
           return a.name.localeCompare(b.name);
-        case 'popularity':
-          return a.popularity - b.popularity;
-        case 'intelligence':
-          return a.intelligence - b.intelligence;
-        case 'price':
-          return b.avgPuppyPrice - a.avgPuppyPrice;
+        case 'type':
+          return a.type.localeCompare(b.type);
         default:
           return 0;
       }
@@ -88,27 +85,28 @@ const BreedDirectory: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
-      {/* Header */}
-      <div className="bg-linear
-      -to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg shadow-lg p-8 mb-6 border-2 border-amber-200 dark:border-amber-800">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-3">
-          <span>🐕</span> Dog Breed Encyclopedia
-        </h1>
-        <p className="text-lg text-gray-700 dark:text-gray-300 mb-4">
-          Explore comprehensive information about {breeds.length} dog breeds
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {Object.entries(typeStats)
-            .sort(([, a], [, b]) => b - a)
-            .slice(0, 4)
-            .map(([type, count]) => (
-              <span
-                key={type}
-                className="px-3 py-1 bg-white dark:bg-zinc-800 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-zinc-600"
-              >
-                {count} {type}
-              </span>
-            ))}
+      {/* Header - IMPROVED BACKGROUND */}
+      <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-8 mb-6 border-2 border-amber-300 dark:border-amber-700">
+        <div className="bg-linear-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg p-6 border-2 border-amber-200 dark:border-amber-800">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-3">
+            <span>🐕</span> Dog Breed Encyclopedia
+          </h1>
+          <p className="text-lg text-gray-700 dark:text-gray-300 mb-4">
+            Explore comprehensive information about {breeds.length} dog breeds
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries(typeStats)
+              .sort(([, a], [, b]) => b - a)
+              .slice(0, 4)
+              .map(([type, count]) => (
+                <span
+                  key={type}
+                  className="px-3 py-1 bg-white dark:bg-zinc-700 rounded-full text-sm font-medium text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-zinc-600 shadow-sm"
+                >
+                  {count} {type}
+                </span>
+              ))}
+          </div>
         </div>
       </div>
 
@@ -164,9 +162,7 @@ const BreedDirectory: React.FC = () => {
               className="w-full px-4 py-2 border border-gray-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
             >
               <option value="name">Name (A-Z)</option>
-              <option value="popularity">Popularity</option>
-              <option value="intelligence">Intelligence</option>
-              <option value="price">Price (High to Low)</option>
+              <option value="type">Breed Group</option>
             </select>
           </div>
         </div>
@@ -176,22 +172,22 @@ const BreedDirectory: React.FC = () => {
           <div className="mt-4 flex items-center gap-2 flex-wrap">
             <span className="text-sm text-gray-600 dark:text-gray-400">Active filters:</span>
             {searchTerm && (
-              <span className="px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 rounded-full text-sm font-medium flex items-center gap-2">
+              <span className="px-3 py-1 bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 rounded-full text-sm font-medium flex items-center gap-2 border border-amber-300 dark:border-amber-700">
                 Search: "{searchTerm}"
                 <button
                   onClick={() => setSearchTerm('')}
-                  className="hover:text-amber-900 dark:hover:text-amber-200"
+                  className="hover:text-amber-900 dark:hover:text-amber-100 font-bold"
                 >
                   ×
                 </button>
               </span>
             )}
             {filterType !== 'all' && (
-              <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-sm font-medium flex items-center gap-2">
+              <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-200 rounded-full text-sm font-medium flex items-center gap-2 border border-blue-300 dark:border-blue-700">
                 Group: {filterType}
                 <button
                   onClick={() => setFilterType('all')}
-                  className="hover:text-blue-900 dark:hover:text-blue-200"
+                  className="hover:text-blue-900 dark:hover:text-blue-100 font-bold"
                 >
                   ×
                 </button>
@@ -202,7 +198,7 @@ const BreedDirectory: React.FC = () => {
                 setSearchTerm('');
                 setFilterType('all');
               }}
-              className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 underline"
+              className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 underline font-medium"
             >
               Clear all
             </button>
@@ -211,7 +207,7 @@ const BreedDirectory: React.FC = () => {
       </div>
 
       {/* Results Count */}
-      <div className="mb-4 text-gray-600 dark:text-gray-400">
+      <div className="mb-4 text-gray-600 dark:text-gray-400 font-medium">
         Showing {filteredBreeds.length} of {breeds.length} breeds
       </div>
 
@@ -248,15 +244,13 @@ const BreedDirectory: React.FC = () => {
                   className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg hover:shadow-2xl transition-all border-2 border-transparent hover:border-amber-500 dark:hover:border-amber-600 overflow-hidden group"
                 >
                   {/* Breed Image/Header */}
-                  <div className="bg-linear
-                  -to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 p-6 text-center h-48 flex items-center justify-center">
+                  <div className="bg-linear-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 p-6 text-center h-48 flex items-center justify-center">
                     {breed.imageUrl ? (
                       <img 
                         src={breed.imageUrl} 
                         alt={breed.name}
                         className="h-32 w-32 object-cover rounded-full border-4 border-amber-500 shadow-lg group-hover:scale-110 transition-transform"
                         onError={(e) => {
-                          // Fallback to emoji if image fails
                           const img = e.currentTarget;
                           img.style.display = 'none';
                           const fallback = img.nextElementSibling as HTMLElement;
@@ -283,36 +277,40 @@ const BreedDirectory: React.FC = () => {
                     {/* Stats */}
                     <div className="space-y-2 text-sm">
                       {breed.size && (
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between bg-gray-50 dark:bg-zinc-700/50 rounded px-2 py-1">
                           <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
                             <span>📏</span> Size
                           </span>
-                          <span className="font-semibold text-gray-900 dark:text-white">
+                          <span className="font-semibold text-gray-900 dark:text-white text-xs">
                             {breed.size}
                           </span>
                         </div>
                       )}
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
-                          <span>🧠</span> Intelligence
-                        </span>
-                        <span className="font-semibold text-gray-900 dark:text-white">
-                          #{breed.intelligence}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
-                          <span>💰</span> Avg Price
-                        </span>
-                        <span className="font-semibold text-green-600 dark:text-green-400">
-                          £{breed.avgPuppyPrice.toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
+                      {breed.exerciseNeeds && (
+                        <div className="flex items-center justify-between bg-gray-50 dark:bg-zinc-700/50 rounded px-2 py-1">
+                          <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                            <span>🏃</span> Exercise
+                          </span>
+                          <span className="font-semibold text-blue-600 dark:text-blue-400 text-xs">
+                            {breed.exerciseNeeds}
+                          </span>
+                        </div>
+                      )}
+                      {breed.grooming && (
+                        <div className="flex items-center justify-between bg-gray-50 dark:bg-zinc-700/50 rounded px-2 py-1">
+                          <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
+                            <span>✂️</span> Grooming
+                          </span>
+                          <span className="font-semibold text-purple-600 dark:text-purple-400 text-xs">
+                            {breed.grooming}
+                          </span>
+                        </div>
+                      )}
+                      <div className="flex items-center justify-between bg-gray-50 dark:bg-zinc-700/50 rounded px-2 py-1">
                         <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
                           <span>⏳</span> Lifespan
                         </span>
-                        <span className="font-semibold text-purple-600 dark:text-purple-400">
+                        <span className="font-semibold text-green-600 dark:text-green-400">
                           {breed.longevity}
                         </span>
                       </div>
@@ -331,7 +329,7 @@ const BreedDirectory: React.FC = () => {
             })}
           </div>
 
-          {/* Attribution - MOVED OUTSIDE THE MAP */}
+          {/* Attribution */}
           <div className="mt-12 text-center text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-zinc-800 rounded-lg p-4">
             <p>
               Breed images and information courtesy of{' '}
@@ -349,33 +347,34 @@ const BreedDirectory: React.FC = () => {
         </>
       )}
 
-      {/* Info Section */}
-      <div className="mt-12 bg-linear
-      -to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-lg p-8 border-2 border-blue-200 dark:border-blue-800">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-          <span>📚</span> About Our Breed Database
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-gray-700 dark:text-gray-300">
-          <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Comprehensive Data</h3>
-            <p className="text-sm">
-              Each breed profile includes detailed information about physical characteristics, 
-              temperament, health issues, and cost of ownership.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Updated Information</h3>
-            <p className="text-sm">
-              Our database is regularly updated with the latest breed standards, health research, 
-              and cost estimates.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Breeder Resources</h3>
-            <p className="text-sm">
-              Use this information to make informed decisions about breeding, 
-              including compatibility matching and cost planning.
-            </p>
+      {/* Info Section - IMPROVED BACKGROUND */}
+      <div className="mt-12 bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-8 border-2 border-blue-300 dark:border-blue-700">
+        <div className="bg-linear-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-lg p-6 border-2 border-blue-200 dark:border-blue-800">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <span>📚</span> About Our Breed Database
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white dark:bg-zinc-800 rounded-lg p-4 shadow-sm">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Comprehensive Data</h3>
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                Each breed profile includes detailed information about physical characteristics, 
+                temperament, exercise needs, grooming requirements, and health considerations.
+              </p>
+            </div>
+            <div className="bg-white dark:bg-zinc-800 rounded-lg p-4 shadow-sm">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Kennel Club Verified</h3>
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                Our database uses official information from The Kennel Club, 
+                ensuring accuracy and reliability for breeders and dog enthusiasts.
+              </p>
+            </div>
+            <div className="bg-white dark:bg-zinc-800 rounded-lg p-4 shadow-sm">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Breeder Resources</h3>
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                Use this information to make informed decisions about breeding, 
+                including compatibility matching and understanding breed characteristics.
+              </p>
+            </div>
           </div>
         </div>
       </div>

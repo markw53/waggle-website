@@ -16,7 +16,7 @@ const BreedProfile: React.FC = () => {
   const [dogsOfBreed, setDogsOfBreed] = useState<Dog[]>([]);
   const [relatedBreeds, setRelatedBreeds] = useState<BreedInfo[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'characteristics' | 'health' | 'costs' | 'dogs'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'characteristics' | 'health' | 'dogs'>('overview');
 
   useEffect(() => {
     const fetchBreedData = async () => {
@@ -71,28 +71,6 @@ const BreedProfile: React.FC = () => {
     fetchBreedData();
   }, [breedId, navigate]);
 
-  const getIntelligenceCategory = (rank: number): { text: string; color: string } => {
-    if (rank <= 10) return { text: 'Exceptional', color: 'text-green-600' };
-    if (rank <= 30) return { text: 'Excellent', color: 'text-blue-600' };
-    if (rank <= 50) return { text: 'Above Average', color: 'text-yellow-600' };
-    if (rank <= 70) return { text: 'Average', color: 'text-orange-600' };
-    return { text: 'Fair', color: 'text-red-600' };
-  };
-
-  const getCostCategory = (cost: number): { text: string; color: string } => {
-    if (cost < 1000) return { text: 'Low', color: 'text-green-600' };
-    if (cost < 2000) return { text: 'Moderate', color: 'text-blue-600' };
-    if (cost < 3000) return { text: 'Above Average', color: 'text-yellow-600' };
-    return { text: 'High', color: 'text-red-600' };
-  };
-
-  const getPriceCategory = (price: number): { text: string; color: string } => {
-    if (price < 500) return { text: 'Budget', color: 'text-green-600' };
-    if (price < 1500) return { text: 'Moderate', color: 'text-blue-600' };
-    if (price < 3000) return { text: 'Premium', color: 'text-yellow-600' };
-    return { text: 'Luxury', color: 'text-purple-600' };
-  };
-
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -116,10 +94,6 @@ const BreedProfile: React.FC = () => {
     );
   }
 
-  const intelligenceInfo = getIntelligenceCategory(breed.intelligence);
-  const costInfo = getCostCategory(breed.yearlyExpenses);
-  const priceInfo = getPriceCategory(breed.avgPuppyPrice);
-
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       {/* Breadcrumb */}
@@ -137,23 +111,30 @@ const BreedProfile: React.FC = () => {
         </ol>
       </nav>
 
-      {/* Header with Kennel Club Image */}
-      <div className="bg-linear-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg shadow-lg p-8 mb-6 border-2 border-amber-200 dark:border-amber-800">
+      {/* Header with Kennel Club Image - IMPROVED BACKGROUND */}
+      <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-8 mb-6 border-2 border-amber-200 dark:border-amber-700">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
           {/* Breed Image from Kennel Club */}
-          {breed.imageUrl ? (
-            <img 
-              src={breed.imageUrl} 
-              alt={breed.name}
-              className="w-32 h-32 md:w-40 md:h-40 object-cover rounded-full border-4 border-amber-500 shadow-xl"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-                const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-                if (fallback) fallback.style.display = 'block';
-              }}
-            />
-          ) : null}
-          <div className="text-8xl" style={{ display: breed.imageUrl ? 'none' : 'block' }}>🐕</div>
+          <div className="bg-linear-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 rounded-full p-2">
+            {breed.imageUrl ? (
+              <img 
+                src={breed.imageUrl} 
+                alt={breed.name}
+                className="w-32 h-32 md:w-40 md:h-40 object-cover rounded-full border-4 border-amber-500 shadow-xl"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                  if (fallback) fallback.style.display = 'flex';
+                }}
+              />
+            ) : null}
+            <div 
+              className="w-32 h-32 md:w-40 md:h-40 rounded-full flex items-center justify-center text-6xl md:text-8xl" 
+              style={{ display: breed.imageUrl ? 'none' : 'flex' }}
+            >
+              🐕
+            </div>
+          </div>
           
           <div className="flex-1">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">
@@ -169,13 +150,10 @@ const BreedProfile: React.FC = () => {
             )}
             
             <div className="flex flex-wrap gap-2 mb-4">
-              <span className="px-3 py-1 bg-white dark:bg-zinc-800 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-zinc-600">
-                Rank #{breed.popularity} Popularity
+              <span className="px-3 py-1 bg-amber-100 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 rounded-full text-sm font-medium border border-amber-300 dark:border-amber-700">
+                {breed.type}
               </span>
-              <span className={`px-3 py-1 bg-white dark:bg-zinc-800 rounded-full text-sm font-medium ${intelligenceInfo.color} border border-gray-300 dark:border-zinc-600`}>
-                {intelligenceInfo.text} Intelligence
-              </span>
-              <span className="px-3 py-1 bg-white dark:bg-zinc-800 rounded-full text-sm font-medium text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-zinc-600">
+              <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-200 rounded-full text-sm font-medium border border-blue-300 dark:border-blue-700">
                 {dogsOfBreed.length} Available
               </span>
             </div>
@@ -186,7 +164,7 @@ const BreedProfile: React.FC = () => {
                 href={breed.officialLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm text-amber-700 dark:text-amber-400 hover:underline font-medium"
+                className="inline-flex items-center gap-2 text-sm text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 hover:underline font-medium"
               >
                 <span>📖</span> View Official Kennel Club Page
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -205,7 +183,7 @@ const BreedProfile: React.FC = () => {
             </button>
             <Link
               to={ROUTES.BREEDS}
-              className="px-6 py-3 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors font-semibold text-center border-2 border-gray-300 dark:border-zinc-600"
+              className="px-6 py-3 bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-zinc-600 transition-colors font-semibold text-center border-2 border-gray-300 dark:border-zinc-600"
             >
               All Breeds
             </Link>
@@ -216,81 +194,79 @@ const BreedProfile: React.FC = () => {
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6 text-center border-2 border-transparent hover:border-amber-500 transition-colors">
-          <div className="text-3xl mb-2">🧠</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Intelligence</div>
-          <div className={`text-2xl font-bold ${intelligenceInfo.color}`}>
-            #{breed.intelligence}
-          </div>
-          <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-            {intelligenceInfo.text}
+          <div className="text-3xl mb-2">📏</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Height</div>
+          <div className="text-lg font-bold text-gray-900 dark:text-white">
+            {breed.height}
           </div>
         </div>
         
         <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6 text-center border-2 border-transparent hover:border-green-500 transition-colors">
-          <div className="text-3xl mb-2">💰</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Puppy Price</div>
-          <div className={`text-2xl font-bold ${priceInfo.color}`}>
-            £{breed.avgPuppyPrice.toLocaleString()}
-          </div>
-          <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-            {priceInfo.text}
+          <div className="text-3xl mb-2">⚖️</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Weight</div>
+          <div className="text-lg font-bold text-gray-900 dark:text-white">
+            {breed.weight}
           </div>
         </div>
         
         <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6 text-center border-2 border-transparent hover:border-blue-500 transition-colors">
-          <div className="text-3xl mb-2">📅</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Yearly Cost</div>
-          <div className={`text-2xl font-bold ${costInfo.color}`}>
-            £{breed.yearlyExpenses.toLocaleString()}
-          </div>
-          <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-            {costInfo.text}
+          <div className="text-3xl mb-2">🏃</div>
+          <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Exercise</div>
+          <div className="text-xs font-bold text-gray-900 dark:text-white">
+            {breed.exerciseNeeds || 'Varies'}
           </div>
         </div>
         
         <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6 text-center border-2 border-transparent hover:border-purple-500 transition-colors">
           <div className="text-3xl mb-2">⏳</div>
           <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Lifespan</div>
-          <div className="text-2xl font-bold text-purple-600">
+          <div className="text-lg font-bold text-purple-600 dark:text-purple-400">
             {breed.longevity}
-          </div>
-          <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-            Years
           </div>
         </div>
       </div>
 
-      {/* Kennel Club Specific Info */}
+      {/* Kennel Club Specific Info - IMPROVED BACKGROUND */}
       {(breed.temperament || breed.exerciseNeeds || breed.grooming || breed.goodWithChildren) && (
-        <div className="bg-blue-50 dark:bg-blue-900/10 rounded-lg shadow-lg p-6 mb-6 border-2 border-blue-200 dark:border-blue-800">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-            <span>🏆</span> Kennel Club Information
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {breed.temperament && (
-              <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Temperament</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{breed.temperament}</p>
-              </div>
-            )}
-            {breed.exerciseNeeds && (
-              <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Exercise Needs</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{breed.exerciseNeeds}</p>
-              </div>
-            )}
-            {breed.grooming && (
-              <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Grooming</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{breed.grooming}</p>
-              </div>
-            )}
-            {breed.goodWithChildren && (
-              <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Good with Children</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{breed.goodWithChildren}</p>
-              </div>
-            )}
+        <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6 mb-6 border-2 border-blue-300 dark:border-blue-700">
+          <div className="bg-linear-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-lg p-6 border-2 border-blue-200 dark:border-blue-800">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+              <span>🏆</span> Kennel Club Information
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {breed.temperament && (
+                <div className="bg-white dark:bg-zinc-800 rounded-lg p-4 shadow-sm">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                    <span>😊</span> Temperament
+                  </h3>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{breed.temperament}</p>
+                </div>
+              )}
+              {breed.exerciseNeeds && (
+                <div className="bg-white dark:bg-zinc-800 rounded-lg p-4 shadow-sm">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                    <span>🏃</span> Exercise Needs
+                  </h3>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{breed.exerciseNeeds}</p>
+                </div>
+              )}
+              {breed.grooming && (
+                <div className="bg-white dark:bg-zinc-800 rounded-lg p-4 shadow-sm">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                    <span>✂️</span> Grooming
+                  </h3>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{breed.grooming}</p>
+                </div>
+              )}
+              {breed.goodWithChildren && (
+                <div className="bg-white dark:bg-zinc-800 rounded-lg p-4 shadow-sm">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                    <span>👶</span> Good with Children
+                  </h3>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{breed.goodWithChildren}</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -302,7 +278,6 @@ const BreedProfile: React.FC = () => {
             { id: 'overview', label: 'Overview', icon: '📋' },
             { id: 'characteristics', label: 'Characteristics', icon: '📏' },
             { id: 'health', label: 'Health', icon: '🏥' },
-            { id: 'costs', label: 'Costs', icon: '💵' },
             { id: 'dogs', label: `Available (${dogsOfBreed.length})`, icon: '🐕' }
           ].map(tab => (
             <button
@@ -330,48 +305,50 @@ const BreedProfile: React.FC = () => {
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start gap-3 bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-4">
                       <div className="text-2xl">🏆</div>
                       <div>
                         <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Breed Group</h3>
                         <p className="text-gray-600 dark:text-gray-400">{breed.kennelClubCategory || breed.type}</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <div className="text-2xl">📊</div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Popularity Rank</h3>
-                        <p className="text-gray-600 dark:text-gray-400">#{breed.popularity} out of all breeds</p>
+                    {breed.size && (
+                      <div className="flex items-start gap-3 bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-4">
+                        <div className="text-2xl">📐</div>
+                        <div>
+                          <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Size Category</h3>
+                          <p className="text-gray-600 dark:text-gray-400">{breed.size}</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="text-2xl">🧠</div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Intelligence</h3>
-                        <p className="text-gray-600 dark:text-gray-400">
-                          Rank #{breed.intelligence} - {intelligenceInfo.text}
-                        </p>
+                    )}
+                    {breed.exerciseNeeds && (
+                      <div className="flex items-start gap-3 bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-4">
+                        <div className="text-2xl">🏃</div>
+                        <div>
+                          <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Exercise Requirements</h3>
+                          <p className="text-gray-600 dark:text-gray-400">{breed.exerciseNeeds}</p>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                   <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <div className="text-2xl">🍽️</div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Feeding</h3>
-                        <p className="text-gray-600 dark:text-gray-400">
-                          {breed.mealsPerDay} meals per day recommended
-                        </p>
+                    {breed.grooming && (
+                      <div className="flex items-start gap-3 bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-4">
+                        <div className="text-2xl">✂️</div>
+                        <div>
+                          <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Grooming</h3>
+                          <p className="text-gray-600 dark:text-gray-400">{breed.grooming}</p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-start gap-3">
+                    )}
+                    <div className="flex items-start gap-3 bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-4">
                       <div className="text-2xl">⏳</div>
                       <div>
                         <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Lifespan</h3>
                         <p className="text-gray-600 dark:text-gray-400">{breed.longevity}</p>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start gap-3 bg-gray-50 dark:bg-zinc-700/50 rounded-lg p-4">
                       <div className="text-2xl">🎨</div>
                       <div>
                         <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Common Colors</h3>
@@ -406,7 +383,7 @@ const BreedProfile: React.FC = () => {
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white">Weight</h3>
                   </div>
                   <p className="text-2xl font-bold text-green-700 dark:text-green-400">{breed.weight}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Adult weight range</p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Adult weight range</p>
                 </div>
 
                 <div className="bg-linear-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg p-6 border-2 border-purple-200 dark:border-purple-800">
@@ -418,14 +395,16 @@ const BreedProfile: React.FC = () => {
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Common coat colors</p>
                 </div>
 
-                <div className="bg-linear-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-lg p-6 border-2 border-orange-200 dark:border-orange-800">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="text-3xl">📐</div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Size</h3>
+                {breed.size && (
+                  <div className="bg-linear-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-lg p-6 border-2 border-orange-200 dark:border-orange-800">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="text-3xl">📐</div>
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">Size</h3>
+                    </div>
+                    <p className="text-lg font-bold text-orange-700 dark:text-orange-400">{breed.size}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Size category</p>
                   </div>
-                  <p className="text-2xl font-bold text-orange-700 dark:text-orange-400">{breed.size || 'Medium'}</p>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Size category</p>
-                </div>
+                )}
               </div>
             </div>
           )}
@@ -442,7 +421,7 @@ const BreedProfile: React.FC = () => {
                   <div className="text-3xl">🏥</div>
                   <div>
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                      Common Health Issues
+                      Health Considerations
                     </h3>
                     <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                       {breed.healthProblems}
@@ -479,27 +458,15 @@ const BreedProfile: React.FC = () => {
 
                 <div className="bg-green-50 dark:bg-green-900/10 rounded-lg p-6 border-2 border-green-200 dark:border-green-800">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="text-3xl">🥗</div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Nutrition</h3>
+                    <div className="text-3xl">⏳</div>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Lifespan</h3>
                   </div>
-                  <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-                    <li className="flex items-start gap-2">
-                      <span className="text-green-600 dark:text-green-400 mt-1">✓</span>
-                      <span>{breed.mealsPerDay} meals per day recommended</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-green-600 dark:text-green-400 mt-1">✓</span>
-                      <span>High-quality breed-appropriate food</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-green-600 dark:text-green-400 mt-1">✓</span>
-                      <span>Portion control to maintain healthy weight</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-green-600 dark:text-green-400 mt-1">✓</span>
-                      <span>Fresh water always available</span>
-                    </li>
-                  </ul>
+                  <p className="text-3xl font-bold text-green-700 dark:text-green-400 mb-2">
+                    {breed.longevity}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Expected lifespan with proper care
+                  </p>
                 </div>
               </div>
 
@@ -514,108 +481,6 @@ const BreedProfile: React.FC = () => {
                       This information is general guidance. Always consult with a licensed veterinarian 
                       for specific health concerns and to develop a personalized care plan for your dog.
                     </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Costs Tab */}
-          {activeTab === 'costs' && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Cost of Ownership
-              </h2>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-linear-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg p-6 border-2 border-green-200 dark:border-green-800">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="text-4xl">💰</div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">Initial Cost</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Average puppy price</p>
-                    </div>
-                  </div>
-                  <div className="text-4xl font-bold text-green-700 dark:text-green-400 mb-2">
-                    £{breed.avgPuppyPrice.toLocaleString()}
-                  </div>
-                  <div className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${priceInfo.color} bg-white dark:bg-zinc-800`}>
-                    {priceInfo.text} Price Range
-                  </div>
-                </div>
-
-                <div className="bg-linear-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-lg p-6 border-2 border-blue-200 dark:border-blue-800">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="text-4xl">📅</div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">Annual Cost</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Yearly expenses</p>
-                    </div>
-                  </div>
-                  <div className="text-4xl font-bold text-blue-700 dark:text-blue-400 mb-2">
-                    £{breed.yearlyExpenses.toLocaleString()}
-                  </div>
-                  <div className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${costInfo.color} bg-white dark:bg-zinc-800`}>
-                    {costInfo.text} Maintenance
-                  </div>
-                </div>
-              </div>
-
-              {/* Cost Breakdown */}
-              <div className="bg-white dark:bg-zinc-800 rounded-lg p-6 border-2 border-gray-200 dark:border-zinc-600">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                  Estimated Cost Breakdown (Annual)
-                </h3>
-                <div className="space-y-4">
-                  {[
-                    { label: 'Food', percentage: 35, amount: breed.yearlyExpenses * 0.35 },
-                    { label: 'Veterinary Care', percentage: 30, amount: breed.yearlyExpenses * 0.30 },
-                    { label: 'Grooming', percentage: 15, amount: breed.yearlyExpenses * 0.15 },
-                    { label: 'Supplies & Toys', percentage: 10, amount: breed.yearlyExpenses * 0.10 },
-                    { label: 'Training & Other', percentage: 10, amount: breed.yearlyExpenses * 0.10 }
-                  ].map(item => (
-                    <div key={item.label}>
-                      <div className="flex justify-between mb-2">
-                        <span className="font-medium text-gray-900 dark:text-white">{item.label}</span>
-                        <span className="text-gray-600 dark:text-gray-400">
-                          ${Math.round(item.amount).toLocaleString()} ({item.percentage}%)
-                        </span>
-                      </div>
-                      <div className="w-full bg-gray-200 dark:bg-zinc-700 rounded-full h-2">
-                        <div 
-                          className="bg-amber-600 h-2 rounded-full transition-all"
-                          style={{ width: `${item.percentage}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Lifetime Cost */}
-              <div className="bg-purple-50 dark:bg-purple-900/10 rounded-lg p-6 border-2 border-purple-200 dark:border-purple-800">
-                <div className="flex items-start gap-3">
-                  <div className="text-4xl">🏦</div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                      Estimated Lifetime Cost
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      Based on average lifespan of {breed.longevity}
-                    </p>
-                    {(() => {
-                      const lifespanMatch = breed.longevity.match(/(\d+)-(\d+)/);
-                      let avgLifespan = 12;
-                      if (lifespanMatch) {
-                        avgLifespan = (parseInt(lifespanMatch[1]) + parseInt(lifespanMatch[2])) / 2;
-                      }
-                      const lifetimeCost = breed.avgPuppyPrice + (breed.yearlyExpenses * avgLifespan);
-                      return (
-                        <div className="text-4xl font-bold text-purple-700 dark:text-purple-400">
-                          £{Math.round(lifetimeCost).toLocaleString()}
-                        </div>
-                      );
-                    })()}
                   </div>
                 </div>
               </div>
