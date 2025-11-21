@@ -8,6 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "deploy": "npm run build && firebase deploy --only hosting",
+    "deploy:preview": "npm run build && firebase hosting:channel:deploy preview",
     "scrape-breeds": "python scripts/scrape_kennel_club.py",
     "delete-breeds": "tsx scripts/deleteBreeds.ts",
     "import-breeds": "tsx scripts/importBreeds.ts",

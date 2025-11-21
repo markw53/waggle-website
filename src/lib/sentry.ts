@@ -1,7 +1,6 @@
 // src/lib/sentry.ts
 import * as Sentry from "@sentry/react";
-import { browserTracingIntegration,
-         replayIntegration } from "@sentry/react";
+import { browserTracingIntegration, replayIntegration } from "@sentry/react";
 
 export const initSentry = () => {
   const dsn = import.meta.env.VITE_SENTRY_DSN;
@@ -17,14 +16,18 @@ export const initSentry = () => {
     dsn,
     environment,
     integrations: [
-      browserTracingIntegration({
-        // Update this to match your domain(s)
-        tracingOrigins: ["localhost", /^https:\/\/yourapp\.com/],
-      }),
+      browserTracingIntegration(),
       replayIntegration({
         maskAllText: true,
         blockAllMedia: true,
       }),
+    ],
+
+    // Move tracePropagationTargets to the root level
+    tracePropagationTargets: [
+      "localhost",
+      /^https:\/\/.*\.web\.app$/,
+      /^https:\/\/.*\.firebaseapp\.com$/,
     ],
 
     // Performance Monitoring
