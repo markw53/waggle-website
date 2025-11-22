@@ -103,15 +103,18 @@ Before you begin, ensure you have:
 ```bash
 git clone https://github.com/yourusername/waggle.git
 cd waggle
+```
 
 2. Install Dependencies
 
-bash
+```bash
 npm install
+```
 
 3. Firebase Setup
 
-Create a Firebase Project
+### Create a Firebase Project
+
 Go to Firebase Console
 Click "Add project"
 Follow the setup wizard
@@ -123,20 +126,24 @@ Hosting
 Configure Authentication Providers
 Email/Password:
 
-Go to Authentication → Sign-in method
+### Go to Authentication → Sign-in method
+
 Enable Email/Password
 Enable email verification
 Google:
 
-Enable Google provider
+### Enable Google provider
+
 Configure OAuth consent screen in Google Cloud Console
 Facebook:
 
-Create a Facebook App
+### Create a Facebook App
+
 Add Facebook Login product
 Copy App ID and App Secret to Firebase
 Add OAuth redirect URI from Firebase to Facebook App
-Microsoft:
+
+### Microsoft
 
 Create an Azure App Registration
 Copy Application (client) ID and create client secret
@@ -145,8 +152,11 @@ Add OAuth redirect URI from Firebase to Azure
 Set Up Firestore
 Create database in production mode
 Deploy security rules:
-bash
+
+```bash
 firebase deploy --only firestore:rules
+```
+
 Or manually add these rules in Firebase Console:
 
 javascript
@@ -209,12 +219,15 @@ service cloud.firestore {
   }
 }
 
-Set Up Storage
+### Set Up Storage
 
 Deploy storage rules:
 
-bash
+```bash
+
 firebase deploy --only storage
+```
+
 Storage Rules:
 
 javascript
@@ -249,12 +262,14 @@ service firebase.storage {
   }
 }
 
-4. Environment Configuration
+### 4. Environment Configuration
 
 Create a .env file in the root directory:
 
 env
-# Firebase Configuration
+
+### Firebase Configuration
+
 VITE_FIREBASE_API_KEY=your_api_key
 VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=your-project-id
@@ -262,26 +277,27 @@ VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
 
-# Sentry (Optional - for error tracking)
+### Sentry (Optional - for error tracking)
+
 VITE_SENTRY_DSN=your_sentry_dsn
 VITE_ENVIRONMENT=development
 
-# Admin Email (for making yourself admin)
-ADMIN_EMAIL=your@email.com
-
-5. Import Breed Data
+### Admin Email (for making yourself admin)
 
 The project includes breed data from The Kennel Club. To import:
 
-bash
+```bash
 # Run the Python scraper (optional - data already included)
 python scripts/scrape_kennel_club.py
 
+
 # Import breeds to Firestore
 npm run import-breeds
+```
+
 This will populate your database with 200+ dog breeds with official information.
 
-6. Create Admin User
+## 6. Create Admin User
 
 After registering your first account:
 
@@ -296,22 +312,36 @@ Fields:
   - createdAt: [Current timestamp]
 💻 Development
 Run Development Server
-bash
+
+```bash
 npm run dev
+```
+
 Visit http://localhost:5173
 
-Build for Production
-bash
+## Build for Production
+
+```bash
 npm run build
+```
+
 Preview Production Build
-bash
+
+```bash
 npm run preview
+```
+
 Lint Code
-bash
+
+```bash
 npm run lint
-🚢 Deployment
+```
+
+## 🚢 Deployment
+
 Deploy to Firebase Hosting
-bash
+
+```bash
 # Login to Firebase
 firebase login
 
@@ -320,11 +350,15 @@ firebase init hosting
 
 # Build and deploy
 npm run deploy
+```
+
 Your site will be live at:
 
-https://your-project.web.app
-https://your-project.firebaseapp.com
-Custom Domain Setup
+- [https://your-project.web.app](https://your-project.web.app)
+- [https://your-project.firebaseapp.com](https://your-project.firebaseapp.com)
+
+## Custom Domain Setup
+
 Go to Firebase Console → Hosting
 Click "Add custom domain"
 Follow DNS configuration instructions
@@ -344,7 +378,7 @@ Post-Deployment Checklist
  Test dark mode
  Monitor Firebase usage quotas
 
-📁 Project Structure
+## 📁 Project Structure
 
 text
 waggle/
@@ -403,9 +437,10 @@ waggle/
 ├── vite.config.ts       # Vite configuration
 └── tailwind.config.js   # Tailwind CSS configuration
 
-🔑 Key Features Explained
+### 🔑 Key Features Explained
 
-Authentication Flow
+## Authentication Flow
+
 User registers with email/password or OAuth provider
 Email verification required for email/password signup
 User profile automatically created in Firestore
@@ -429,7 +464,8 @@ Admin dashboard shows pending dogs
 Approve/reject functionality with feedback
 View all users and system stats
 
-🔒 Security
+## 🔒 Security
+
 Authentication Security
 Email verification required
 Secure password requirements
@@ -446,46 +482,54 @@ Privacy policy included
 User data deletion functionality
 Minimal data collection
 
-🐛 Troubleshooting
+## 🐛 Troubleshooting
+
 Common Issues
 Build Errors:
 
-bash
+```bash
 # Clear cache and rebuild
 rm -rf node_modules dist .vite
 npm install
 npm run build
-Firebase Authentication Issues:
+```
 
-Verify all redirect URIs are correct
+### Firebase Authentication Issues
+
+## Verify all redirect URIs are correct
+
 Check that email verification is enabled
 Ensure authorized domains include your domain
 Image Upload Failures:
 
-Check storage rules
+## Check storage rules
+
 Verify file size limits (5MB max)
 Check storage quota in Firebase Console
 Messaging Not Working:
 
-Verify Firestore rules for conversations
+## Verify Firestore rules for conversations
+
 Check that indexes are deployed
 Look for errors in browser console
 Breed Data Missing:
 
-Run import script: npm run import-breeds
+## Run import script: npm run import-breeds
+
 Check Firestore for breeds collection
 Verify admin permissions for import
 
-📊 Firebase Usage Limits
+### 📊 Firebase Usage Limits
 
-Free Tier (Spark Plan)
+## Free Tier (Spark Plan)
+
 Authentication: 50,000 phone/month
 Firestore: 50K reads, 20K writes, 20K deletes per day
 Storage: 5GB storage, 1GB/day downloads
 Hosting: 10GB storage, 360MB/day bandwidth
 Monitor usage in Firebase Console to avoid overages.
 
-🤝 Contributing
+### 🤝 Contributing
 
 Contributions are welcome! Please follow these steps:
 
@@ -495,7 +539,7 @@ Contributions are welcome! Please follow these steps:
 4. Push to the branch (git push origin feature/AmazingFeature)
 5. Open a Pull Request
 
-Code Style
+### Code Style
 
 Use TypeScript for all new files
 Follow existing naming conventions
