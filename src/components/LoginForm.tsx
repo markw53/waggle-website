@@ -6,7 +6,7 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   GoogleAuthProvider,
-  FacebookAuthProvider,
+  // FacebookAuthProvider,
   signInWithPopup,
   PhoneAuthProvider,
   PhoneMultiFactorGenerator,
@@ -122,6 +122,7 @@ export default function LoginForm() {
     }
   };
 
+  {/*
   const handleFacebook = async () => {
     try {
       const provider = new FacebookAuthProvider();
@@ -141,6 +142,7 @@ export default function LoginForm() {
       }
     }
   };
+  */}
 
   const handleForgot = async () => {
     if (!email) {
@@ -246,6 +248,7 @@ export default function LoginForm() {
             Sign in with Google
           </button>
 
+        {/*}
           <button
             type="button"
             onClick={handleFacebook}
@@ -256,6 +259,8 @@ export default function LoginForm() {
             </svg>
             Sign in with Facebook
           </button>
+        */}
+          
         </div>
 
         <button
