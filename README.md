@@ -380,7 +380,7 @@ Post-Deployment Checklist
 
 ## 📁 Project Structure
 
-text
+```bash
 waggle/
 ├── public/                 # Static assets
 ├── scripts/               # Utility scripts
@@ -436,6 +436,7 @@ waggle/
 ├── tsconfig.json        # TypeScript configuration
 ├── vite.config.ts       # Vite configuration
 └── tailwind.config.js   # Tailwind CSS configuration
+```
 
 ### 🔑 Key Features Explained
 
