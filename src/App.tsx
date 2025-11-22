@@ -56,6 +56,7 @@ import AdminDashboard from '@/pages/AdminDashboard';
 // Legal
 import PrivacyPolicy from '@/pages/PrivacyPolicy';
 import TermsOfService from '@/pages/TermsOfService';
+import { ThemeDebug } from './components/ThemeDebug';
 
 const App: React.FC = () => (
   <div className="min-h-screen w-full bg-cover bg-center bg-fixed bg-[url('/waggle-background.png')] dark:bg-zinc-900 flex flex-col">
@@ -114,6 +115,7 @@ const App: React.FC = () => (
           {/* ==================== 404 FALLBACK ==================== */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <ThemeDebug />
       </main>
 
       <Footer />
