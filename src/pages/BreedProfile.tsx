@@ -166,7 +166,7 @@ const BreedProfile: React.FC = () => {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-sm text-amber-700 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 hover:underline font-medium"
               >
-                <span>📖</span> View Official Kennel Club Page
+                <span>📖</span> View Official Royal Kennel Club Page
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
@@ -231,7 +231,7 @@ const BreedProfile: React.FC = () => {
         <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6 mb-6 border-2 border-blue-300 dark:border-blue-700">
           <div className="bg-linear-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-lg p-6 border-2 border-blue-200 dark:border-blue-800">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <span>🏆</span> Kennel Club Information
+              <span>🏆</span> Royal Kennel Club Information
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {breed.temperament && (
@@ -628,12 +628,12 @@ const BreedProfile: React.FC = () => {
         <p>
           Breed images and information courtesy of{' '}
           <a 
-            href="https://www.thekennelclub.org.uk/" 
+            href="https://www.royalkennelclub.com/" 
             target="_blank" 
             rel="noopener noreferrer"
             className="text-amber-700 dark:text-amber-400 hover:underline font-medium"
           >
-            The Kennel Club
+            The Royal Kennel Club
           </a>
           {' '}• Educational use only
         </p>

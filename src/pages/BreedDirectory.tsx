@@ -334,7 +334,7 @@ const BreedDirectory: React.FC = () => {
             <p>
               Breed images and information courtesy of{' '}
               <a 
-                href="https://www.thekennelclub.org.uk/" 
+                href="https://www.royalkennelclub.com/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-amber-700 dark:text-amber-400 hover:underline font-medium"
@@ -362,9 +362,9 @@ const BreedDirectory: React.FC = () => {
               </p>
             </div>
             <div className="bg-white dark:bg-zinc-800 rounded-lg p-4 shadow-sm">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Kennel Club Verified</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Royal Kennel Club Verified</h3>
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                Our database uses official information from The Kennel Club, 
+                Our database uses official information from The Royal Kennel Club, 
                 ensuring accuracy and reliability for breeders and dog enthusiasts.
               </p>
             </div>

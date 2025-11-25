@@ -8,9 +8,9 @@ import re
 
 def scrape_kennel_club_breeds():
     """
-    Scrapes breed data from The Kennel Club website
+    Scrapes breed data from The Royal Kennel Club website
     """
-    url = "https://www.thekennelclub.org.uk/search/breeds-a-to-z/"
+    url = "https://www.royalkennelclub.com/search/breeds-a-to-z/"
     
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -63,7 +63,7 @@ def scrape_kennel_club_breeds():
                     'name': breed_name,
                     'category': category,
                     'imageUrl': image_url,
-                    'officialLink': f"https://www.thekennelclub.org.uk{breed_link}" if breed_link else "",
+                    'officialLink': f"https://www.royalkennelclub.com{breed_link}" if breed_link else "",
                     'kennelClubGroup': kennel_club_group,
                     **breed_details
                 }
@@ -101,7 +101,7 @@ def scrape_breed_details(breed_path, headers):
         return details
     
     try:
-        full_url = f"https://www.thekennelclub.org.uk{breed_path}"
+        full_url = f"https://www.royalkennelclub.com{breed_path}"
         response = requests.get(full_url, headers=headers)
         response.raise_for_status()
         soup = BeautifulSoup(response.content, 'html.parser')

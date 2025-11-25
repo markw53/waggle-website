@@ -56,7 +56,7 @@ function sanitizeString(value: string | null | undefined): string {
 }
 
 async function importBreeds() {
-  console.log('🐕 Starting breed import from Kennel Club data...\n');
+  console.log('🐕 Starting breed import from Royal Kennel Club data...\n');
   
   try {
     const jsonFile = fs.readFileSync('./kennel_club_breeds.json', 'utf8');
