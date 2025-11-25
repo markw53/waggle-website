@@ -181,7 +181,7 @@ const Analytics: React.FC = () => {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ gender, count }) => `${gender}: ${count}`}
+                label={({ name, value }) => `${name}: ${value}`}
                 outerRadius={100}
                 fill="#8884d8"
                 dataKey="count"
