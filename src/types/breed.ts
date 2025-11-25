@@ -10,10 +10,11 @@ export interface BreedInfo {
   intelligence: number;
   longevity: string;
   healthProblems: string;
-  yearlyExpenses: number;
-  mealsPerDay: number;
-  avgPuppyPrice: number;
-  searchKeywords: string[];
+  
+  yearlyExpenses?: number;
+  mealsPerDay?: number;
+  avgPuppyPrice?: number;
+  searchKeywords?: string[];
   
   // Kennel Club Data
   imageUrl?: string;

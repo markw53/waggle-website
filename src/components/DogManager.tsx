@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import { useDogs } from '@/hooks/useDogs';
+import { BreedAutocomplete } from './BreedAutocomplete';
 import type { Dog } from '@/types/dog';
+import type { BreedInfo } from '@/types/breed';
 import toast from 'react-hot-toast';
 
 type DogForm = Omit<Dog, 'id' | 'createdAt' | 'ownerId'>;
 
 const DogManager: React.FC = () => {
   const { dogs, loading, updateDog, deleteDog } = useDogs();
+  
+  // ✅ ADD: State for available breeds
   
   const initialFormState: DogForm = {
     name: '',
@@ -15,7 +19,6 @@ const DogManager: React.FC = () => {
     gender: 'Male' as const,
     bio: '',
     imageUrl: undefined,
-    // ✅ Add all required fields from Dog type:
     healthInfo: {
       vetVerified: false,
       hipsDysplasiaCleared: false,
@@ -47,6 +50,7 @@ const DogManager: React.FC = () => {
 
   const [form, setForm] = useState<DogForm>(initialFormState);
   const [editId, setEditId] = useState<string | null>(null);
+  const [selectedBreedInfo, setSelectedBreedInfo] = useState<BreedInfo | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,7 +93,6 @@ const DogManager: React.FC = () => {
       gender: dog.gender,
       bio: dog.bio || '',
       imageUrl: dog.imageUrl,
-      // ✅ Include all nested objects:
       healthInfo: dog.healthInfo,
       breedingEligibility: dog.breedingEligibility,
       temperament: dog.temperament,
@@ -150,15 +153,43 @@ const DogManager: React.FC = () => {
               <label htmlFor="edit-breed" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-1">
                 Breed *
               </label>
-              <input
-                id="edit-breed"
-                type="text"
-                placeholder="Breed"
-                required
+              <BreedAutocomplete
                 value={form.breed}
-                onChange={e => setForm(f => ({ ...f, breed: e.target.value }))}
-                className="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8c5628] dark:focus:ring-amber-500"
+                onChange={(value) => setForm(f => ({ ...f, breed: value }))}
+                onBreedSelect={setSelectedBreedInfo}
               />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Start typing to search 277 recognized breeds
+              </p>
+              
+              {/* Show warning if current breed doesn't match database */}
+              {editId && form.breed && !selectedBreedInfo && (
+                <div className="mt-2 p-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg">
+                  <p className="text-xs text-amber-700 dark:text-amber-300 flex items-start gap-2">
+                    <span>⚠️</span>
+                    <span>
+                      Current breed "{form.breed}" might not match our database. 
+                      Please select from the dropdown to ensure proper matching.
+                    </span>
+                  </p>
+                </div>
+              )}
+  
+              {/* Breed Info Preview (optional) */}
+              {selectedBreedInfo && (
+                <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">Type:</span>
+                      <span className="ml-2 font-medium text-gray-900 dark:text-gray-100">{selectedBreedInfo.type}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-400">Lifespan:</span>
+                      <span className="ml-2 font-medium text-gray-900 dark:text-gray-100">{selectedBreedInfo.longevity}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Age */}
@@ -248,7 +279,7 @@ const DogManager: React.FC = () => {
         </form>
       )}
 
-      {/* Dogs List */}
+      {/* Dogs List - Rest of the component remains the same */}
       <div className="space-y-4">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-12" role="status">

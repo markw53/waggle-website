@@ -38,14 +38,21 @@ const BreedProfile: React.FC = () => {
         // Fetch dogs of this breed
         const dogsQuery = query(
           collection(db, 'dogs'),
-          where('breed', '==', breedData.name),
           where('status', '==', 'approved')
         );
         const dogsSnapshot = await getDocs(dogsQuery);
-        const dogs = dogsSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as Dog[];
+
+        // Filter in memory for exact match
+        const dogs = dogsSnapshot.docs
+          .map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          } as Dog))
+          .filter(dog => 
+            dog.breed.toLowerCase().trim() === breedData.name.toLowerCase().trim()
+          ); // Exact match now possible
+
+        console.log(`Found ${dogs.length} dogs for breed ${breedData.name}`);
         setDogsOfBreed(dogs);
 
         // Fetch related breeds (same type)

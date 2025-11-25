@@ -163,7 +163,8 @@ const DogSearch: React.FC = () => {
         const breedInfo = breeds.find(b => 
           b.name.toLowerCase() === dog.breed.toLowerCase()
         );
-        return breedInfo ? breedInfo.avgPuppyPrice <= filterMaxPrice : true;
+        // Ensure avgPuppyPrice is defined and a number before comparing; if missing, include the dog
+        return breedInfo ? (typeof breedInfo.avgPuppyPrice === 'number' ? breedInfo.avgPuppyPrice <= filterMaxPrice : true) : true;
       });
     }
 
@@ -173,7 +174,8 @@ const DogSearch: React.FC = () => {
         const breedInfo = breeds.find(b => 
           b.name.toLowerCase() === dog.breed.toLowerCase()
         );
-        return breedInfo ? breedInfo.yearlyExpenses <= filterMaxYearlyCost : true;
+        // Ensure yearlyExpenses is defined and a number before comparing; if missing, include the dog
+        return breedInfo ? (typeof breedInfo.yearlyExpenses === 'number' ? breedInfo.yearlyExpenses <= filterMaxYearlyCost : true) : true;
       });
     }
 
@@ -624,7 +626,7 @@ const DogSearch: React.FC = () => {
                         <div className="flex items-center justify-between">
                           <span className="text-gray-600 dark:text-gray-400">Avg Puppy Price:</span>
                           <span className="font-semibold text-green-600 dark:text-green-400">
-                            £{breedInfo.avgPuppyPrice.toLocaleString()}
+                            £{(breedInfo.avgPuppyPrice ?? 0).toLocaleString()}
                           </span>
                         </div>
                       </div>
