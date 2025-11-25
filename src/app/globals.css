@@ -1,6 +1,5 @@
 /* src/app/globals.css */
 @import "tailwindcss";
-@tailwind utilities;
 
 /* Light mode - ShadCN theme tokens */
 :root {
@@ -52,15 +51,14 @@
 html {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
   margin: 0;
   min-height: 100vh;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: hsl(var(--background)); /* ✅ Add this */
-  color: hsl(var(--foreground)); /* ✅ Add this */
 }
 
 /* Smooth transitions for theme changes */
@@ -77,26 +75,24 @@ body {
 }
 
 /* Improved touch targets for mobile */
-@layer base {
-  button, a, input, select, textarea {
-    @apply touch-manipulation;
-  }
-  
-  /* Better mobile scrolling */
-  * {
-    -webkit-tap-highlight-color: transparent;
-  }
-  
-  /* Prevent zoom on input focus (iOS) */
-  @media screen and (max-width: 768px) {
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"],
-    input[type="password"],
-    textarea,
-    select {
-      font-size: 16px !important;
-    }
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}
+
+/* Better mobile scrolling */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent zoom on input focus (iOS) */
+@media screen and (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="password"],
+  textarea,
+  select {
+    font-size: 16px !important;
   }
 }
 
