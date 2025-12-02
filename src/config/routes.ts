@@ -42,6 +42,14 @@ export const ROUTES = {
   // Analytics
   ANALYTICS: '/analytics',
   
+  // ⭐ ADD: Subscription & Billing
+  PRICING: '/pricing',
+  CHECKOUT: '/checkout/:tier/:interval',
+  SUBSCRIPTION: '/subscription',
+  SUBSCRIPTION_SUCCESS: '/subscription/success',
+  SUBSCRIPTION_CANCELLED: '/subscription/cancelled',
+  ADMIN_SUBSCRIPTIONS: '/admin/subscriptions',
+  
   // Admin
   ADMIN_DASHBOARD: '/admin',
   ADMIN_VERIFICATIONS: '/admin/verifications',
@@ -59,6 +67,10 @@ export const getConversationRoute = (id: string) => `/messages/${id}`;
 export const getUserProfileRoute = (id: string) => `/users/${id}`;
 export const getBreedingCalendarDogRoute = (dogId: string) => `/breeding-calendar/${dogId}`;
 export const getBreedProfileRoute = (breedId: string) => `/breeds/${breedId}`;
+
+// ⭐ ADD: Helper for checkout route
+export const getCheckoutRoute = (tier: 'standard' | 'premium', interval: 'monthly' | 'yearly') => 
+  `/checkout/${tier}/${interval}`;
 
 // Helper to convert breed name to URL-safe ID
 export const getBreedIdFromName = (breedName: string): string => {

@@ -1,10 +1,12 @@
-// src/components/DogSearch.tsx
+// src/pages/DogSearch.tsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { db } from '@/firebase';
 import { useAuth } from '@/context';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
+import { useSubscription } from '@/hooks/useSubscription'; // ⭐ ADD THIS
+import { Paywall } from '@/components/Paywall'; // ⭐ ADD THIS
 import type { Dog } from '@/types/dog';
 import toast from 'react-hot-toast';
 import { ROUTES, getDogProfileRoute } from '@/config/routes';
@@ -13,6 +15,7 @@ const DogSearch: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isAdmin } = useIsAdmin();
+  const { tier } = useSubscription();
   
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [filteredDogs, setFilteredDogs] = useState<Dog[]>([]);
@@ -20,6 +23,10 @@ const DogSearch: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [genderFilter, setGenderFilter] = useState<'all' | 'Male' | 'Female'>('all');
   const [ageFilter, setAgeFilter] = useState<'all' | 'young' | 'adult' | 'senior'>('all');
+  
+  // ⭐ ADD: Track daily views for free tier
+  const [viewedToday, setViewedToday] = useState(0);
+  const FREE_DAILY_LIMIT = 10;
 
   useEffect(() => {
     const fetchDogs = async () => {
@@ -34,10 +41,8 @@ const DogSearch: React.FC = () => {
         let q;
         
         if (isAdmin) {
-          // Admins can see all dogs
           q = query(collection(db, 'dogs'), orderBy('createdAt', 'desc'));
         } else {
-          // Regular users only see approved dogs
           q = query(
             collection(db, 'dogs'),
             where('status', '==', 'approved'),
@@ -62,13 +67,23 @@ const DogSearch: React.FC = () => {
     };
 
     fetchDogs();
+    
+    // ⭐ ADD: Load view count from localStorage
+    const today = new Date().toDateString();
+    const stored = localStorage.getItem('dogViews');
+    if (stored) {
+      const data = JSON.parse(stored);
+      if (data.date === today) {
+        setViewedToday(data.count);
+      } else {
+        localStorage.setItem('dogViews', JSON.stringify({ date: today, count: 0 }));
+      }
+    }
   }, [user, navigate, isAdmin]);
 
-  // Filter dogs based on search term and filters
   useEffect(() => {
     let filtered = [...dogs];
 
-    // Search filter
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(dog =>
@@ -77,12 +92,10 @@ const DogSearch: React.FC = () => {
       );
     }
 
-    // Gender filter
     if (genderFilter !== 'all') {
       filtered = filtered.filter(dog => dog.gender === genderFilter);
     }
 
-    // Age filter
     if (ageFilter !== 'all') {
       filtered = filtered.filter(dog => {
         if (ageFilter === 'young') return dog.age >= 2 && dog.age <= 3;
@@ -99,6 +112,30 @@ const DogSearch: React.FC = () => {
     setSearchTerm('');
     setGenderFilter('all');
     setAgeFilter('all');
+  };
+
+  // ⭐ ADD: Handle dog click with view limit check
+  const handleDogClick = (dogId: string) => {
+    // Admins and paid users bypass limits
+    if (isAdmin || tier !== 'free') {
+      navigate(getDogProfileRoute(dogId));
+      return;
+    }
+
+    // Free users have daily limit
+    if (viewedToday >= FREE_DAILY_LIMIT) {
+      toast.error('Daily limit reached! Upgrade to view unlimited profiles.');
+      navigate('/pricing');
+      return;
+    }
+
+    // Increment view count
+    const today = new Date().toDateString();
+    const newCount = viewedToday + 1;
+    localStorage.setItem('dogViews', JSON.stringify({ date: today, count: newCount }));
+    setViewedToday(newCount);
+    
+    navigate(getDogProfileRoute(dogId));
   };
 
   const getStatusBadge = (status?: string) => {
@@ -127,6 +164,11 @@ const DogSearch: React.FC = () => {
     );
   }
 
+  // ⭐ ADD: Calculate remaining views
+  const remainingViews = tier === 'free' && !isAdmin 
+    ? Math.max(0, FREE_DAILY_LIMIT - viewedToday)
+    : null;
+
   return (
     <div className="max-w-7xl mx-auto my-10 p-6">
       {/* Header */}
@@ -138,11 +180,34 @@ const DogSearch: React.FC = () => {
           <p className="text-gray-600 dark:text-gray-400">
             {isAdmin ? 'Viewing all dogs (Admin Mode)' : 'Find your perfect breeding match'}
           </p>
+          
+          {/* ⭐ ADD: Free tier view limit indicator */}
+          {remainingViews !== null && (
+            <div className="mt-4">
+              {remainingViews > 0 ? (
+                <p className="inline-block text-sm text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-4 py-2 rounded-full border border-amber-200 dark:border-amber-800">
+                  👁️ {remainingViews} profile views remaining today
+                </p>
+              ) : (
+                <div className="inline-block bg-red-50 dark:bg-red-900/20 px-6 py-3 rounded-lg border-2 border-red-200 dark:border-red-800">
+                  <p className="text-sm text-red-700 dark:text-red-400 mb-2 font-semibold">
+                    ⚠️ Daily view limit reached
+                  </p>
+                  <button
+                    onClick={() => navigate('/pricing')}
+                    className="text-sm bg-red-600 text-white px-4 py-1.5 rounded-md hover:bg-red-700 font-semibold"
+                  >
+                    Upgrade for Unlimited Views →
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Search and Filters */}
         <div className="space-y-4">
-          {/* Search Bar */}
+          {/* Search Bar - Keep Free */}
           <div>
             <label htmlFor="search" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
               Search by name or breed
@@ -157,54 +222,60 @@ const DogSearch: React.FC = () => {
             />
           </div>
 
-          {/* Filter Options */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Gender Filter */}
-            <div>
-              <label htmlFor="gender-filter" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
-                Gender
-              </label>
-              <select
-                id="gender-filter"
-                value={genderFilter}
-                onChange={(e) => setGenderFilter(e.target.value as 'all' | 'Male' | 'Female')}
-                className="w-full px-4 py-3 border-2 border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-[#8c5628] dark:focus:ring-amber-500 font-medium"
-              >
-                <option value="all">All Genders</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-            </div>
+          {/* ⭐ WRAP FILTERS IN PAYWALL */}
+          <Paywall
+            feature="advanced_search"
+            featureName="Advanced Filters (Gender & Age)"
+            requiredTier="standard"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Gender Filter */}
+              <div>
+                <label htmlFor="gender-filter" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
+                  Gender
+                </label>
+                <select
+                  id="gender-filter"
+                  value={genderFilter}
+                  onChange={(e) => setGenderFilter(e.target.value as 'all' | 'Male' | 'Female')}
+                  className="w-full px-4 py-3 border-2 border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-[#8c5628] dark:focus:ring-amber-500 font-medium"
+                >
+                  <option value="all">All Genders</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
 
-            {/* Age Filter */}
-            <div>
-              <label htmlFor="age-filter" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
-                Age Range
-              </label>
-              <select
-                id="age-filter"
-                value={ageFilter}
-                onChange={(e) => setAgeFilter(e.target.value as 'all' | 'young' | 'adult' | 'senior')}
-                className="w-full px-4 py-3 border-2 border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-[#8c5628] dark:focus:ring-amber-500 font-medium"
-              >
-                <option value="all">All Ages</option>
-                <option value="young">Young (2-3 years)</option>
-                <option value="adult">Adult (4-7 years)</option>
-                <option value="senior">Senior (8+ years)</option>
-              </select>
-            </div>
+              {/* Age Filter */}
+              <div>
+                <label htmlFor="age-filter" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
+                  Age Range
+                </label>
+                <select
+                  id="age-filter"
+                  value={ageFilter}
+                  onChange={(e) => setAgeFilter(e.target.value as 'all' | 'young' | 'adult' | 'senior')}
+                  className="w-full px-4 py-3 border-2 border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-[#8c5628] dark:focus:ring-amber-500 font-medium"
+                >
+                  <option value="all">All Ages</option>
+                  <option value="young">Young (2-3 years)</option>
+                  <option value="adult">Adult (4-7 years)</option>
+                  <option value="senior">Senior (8+ years)</option>
+                </select>
+              </div>
 
-            {/* Clear Filters Button */}
-            <div className="flex items-end">
-              <button
-                type="button"
-                onClick={handleClearFilters}
-                className="w-full px-4 py-3 bg-gray-200 dark:bg-zinc-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-zinc-600 transition-colors font-semibold"
-              >
-                Clear Filters
-              </button>
+              {/* Clear Filters Button */}
+              <div className="flex items-end">
+                <button
+                  type="button"
+                  onClick={handleClearFilters}
+                  className="w-full px-4 py-3 bg-gray-200 dark:bg-zinc-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-zinc-600 transition-colors font-semibold"
+                >
+                  Clear Filters
+                </button>
+              </div>
             </div>
-          </div>
+          </Paywall>
         </div>
 
         {/* Results Count */}
@@ -242,7 +313,7 @@ const DogSearch: React.FC = () => {
           {filteredDogs.map((dog) => (
             <div
               key={dog.id}
-              onClick={() => navigate(getDogProfileRoute(dog.id))}
+              onClick={() => handleDogClick(dog.id)}
               className="bg-white dark:bg-zinc-800 rounded-xl overflow-hidden border-2 border-zinc-200 dark:border-zinc-700 shadow-md hover:shadow-xl transition-all cursor-pointer group hover:scale-105 duration-200"
             >
               {/* Dog Image */}
@@ -259,7 +330,6 @@ const DogSearch: React.FC = () => {
                   </div>
                 )}
                 
-                {/* Admin Status Badge */}
                 {isAdmin && getStatusBadge(dog.status) && (
                   <div className="absolute top-2 right-2">
                     {getStatusBadge(dog.status)}
@@ -287,14 +357,12 @@ const DogSearch: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Bio Preview */}
                 {dog.bio && (
                   <p className="mt-3 text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
                     {dog.bio}
                   </p>
                 )}
 
-                {/* View Profile Button */}
                 <button
                   type="button"
                   className="w-full mt-4 px-4 py-2 bg-[#8c5628] dark:bg-amber-700 text-white rounded-lg hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-semibold text-sm group-hover:bg-[#6d4320] dark:group-hover:bg-amber-600"

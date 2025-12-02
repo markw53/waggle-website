@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import { ROUTES } from '@/config/routes';
 import 'leaflet/dist/leaflet.css';
 import CookieConsentBanner from '@components/CookieConsentBanner';
+import SubscriptionBanner from '@components/SubscriptionBanner';
 
 // Layout Components
 import Navbar from '@components/Navbar';
@@ -57,11 +58,17 @@ import AdminDashboard from '@pages/AdminDashboard';
 import PrivacyPolicy from '@pages/PrivacyPolicy';
 import TermsOfService from '@pages/TermsOfService';
 
+// ⭐ ADD: Subscription & Billing
+import Pricing from '@pages/Pricing';
+import Subscription from '@pages/Subscription';
+import AdminSubscriptions from '@/pages/AdminSubscriptions';
+
 const App: React.FC = () => (
   <div className="min-h-screen w-full bg-cover bg-center bg-fixed bg-[url('/waggle-background.png')] dark:bg-zinc-900 flex flex-col">
     <BrowserRouter>
       <Navbar />
       <EmailVerificationBanner />
+      <SubscriptionBanner />
       
       <main className="flex-1 flex justify-center items-center w-full px-4">
         <Routes>
@@ -71,6 +78,7 @@ const App: React.FC = () => (
           <Route path={ROUTES.PRIVACY} element={<PrivacyPolicy />} />
           <Route path={ROUTES.TERMS} element={<TermsOfService />} />
           <Route path={ROUTES.USER_PROFILE} element={<UserProfilePage />} />
+          <Route path={ROUTES.PRICING} element={<Pricing />} /> {/* ⭐ ADD THIS */}
 
           {/* ==================== AUTH ROUTES (Redirect if logged in) ==================== */}
           <Route path={ROUTES.HOME} element={<RedirectIfAuth><LoginForm /></RedirectIfAuth>} />
@@ -104,6 +112,10 @@ const App: React.FC = () => (
           {/* Messaging */}
           <Route path={ROUTES.MESSAGES} element={<RequireAuth><Messages /></RequireAuth>} />
           <Route path={ROUTES.CONVERSATION} element={<RequireAuth><ConversationPage /></RequireAuth>} />
+
+          {/* ⭐ ADD: Subscription Management */}
+          <Route path={ROUTES.SUBSCRIPTION} element={<RequireAuth><Subscription /></RequireAuth>} />
+          <Route path={ROUTES.ADMIN_SUBSCRIPTIONS} element={<RequireAuth><AdminSubscriptions /></RequireAuth>} />
 
           {/* Analytics */}
           <Route path={ROUTES.ANALYTICS} element={<RequireAuth><Analytics /></RequireAuth>} />

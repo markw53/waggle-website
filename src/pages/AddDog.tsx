@@ -1,6 +1,6 @@
 // src/pages/AddDog.tsx
-import { useState } from 'react';
-import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import { useState, useEffect } from 'react';
+import { collection, addDoc, Timestamp, query, where, getDocs } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/firebase';
 import { useAuth } from '@/context/useAuth';
@@ -8,11 +8,17 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { ROUTES } from '@/config/routes';
 import { BreedAutocomplete } from '@/components/BreedAutocomplete';
+import { useSubscription } from '@/hooks/useSubscription'; // ⭐ ADD THIS
 import type { BreedInfo } from '@/types/breed';
 
 export default function AddDog() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { tier, canAddDog, getRemainingDogs, subscription } = useSubscription(); // ⭐ ADD THIS
+
+  // ⭐ ADD: Track user's current dog count
+  const [currentDogCount, setCurrentDogCount] = useState(0);
+  const [loadingDogCount, setLoadingDogCount] = useState(true);
 
   // Basic dog info
   const [name, setName] = useState('');
@@ -48,6 +54,29 @@ export default function AddDog() {
   // Form state
   const [loading, setLoading] = useState(false);
 
+  // ⭐ ADD: Check user's current dog count
+  useEffect(() => {
+    const fetchDogCount = async () => {
+      if (!user) return;
+      
+      setLoadingDogCount(true);
+      try {
+        const q = query(
+          collection(db, 'dogs'),
+          where('ownerId', '==', user.uid)
+        );
+        const snapshot = await getDocs(q);
+        setCurrentDogCount(snapshot.size);
+      } catch (error) {
+        console.error('Error fetching dog count:', error);
+      } finally {
+        setLoadingDogCount(false);
+      }
+    };
+
+    fetchDogCount();
+  }, [user]);
+
   // Handle photo selection
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -66,11 +95,9 @@ export default function AddDog() {
     const file = e.target.files?.[0];
     if (file) {
       setKcPapers(file);
-      // Show filename preview for PDFs
       if (file.type === 'application/pdf') {
         setKcPapersPreview(file.name);
       } else {
-        // Show image preview
         const reader = new FileReader();
         reader.onloadend = () => {
           setKcPapersPreview(reader.result as string);
@@ -80,21 +107,19 @@ export default function AddDog() {
     }
   };
 
-  // Validate KC registration number format (2 letters + 8 digits)
   const validateKCNumber = (number: string): boolean => {
-    if (!number) return true; // Optional field
+    if (!number) return true;
     const kcPattern = /^[A-Z]{2}\d{8}$/;
     return kcPattern.test(number);
   };
 
-  // Reverse geocoding using Nominatim (free, no API key)
   const reverseGeocode = async (lat: number, lng: number) => {
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`,
         {
           headers: {
-            'User-Agent': 'Waggle Dog Breeding App', // Required by Nominatim
+            'User-Agent': 'Waggle Dog Breeding App',
           },
         }
       );
@@ -115,7 +140,6 @@ export default function AddDog() {
       if (error instanceof Error) {
         console.error('Geocoding error:', error.message);
       }
-      // Still save coordinates even if geocoding fails
       setLocation(prev => ({ ...prev, lat, lng }));
       toast('Location detected (manual entry needed for address)', {
         icon: 'ℹ️',
@@ -123,7 +147,6 @@ export default function AddDog() {
     }
   };
 
-  // Get user's location
   const handleGetLocation = () => {
     if (!navigator.geolocation) {
       toast.error('Geolocation not supported by your browser');
@@ -135,7 +158,6 @@ export default function AddDog() {
       async (position) => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
-
         await reverseGeocode(lat, lng);
         setGettingLocation(false);
       },
@@ -147,12 +169,18 @@ export default function AddDog() {
     );
   };
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!user) {
       toast.error('You must be logged in to add a dog');
+      return;
+    }
+
+    // ⭐ ADD: Check subscription limits
+    if (!canAddDog(currentDogCount)) {
+      toast.error('You have reached your dog limit for your current plan');
+      navigate('/pricing');
       return;
     }
 
@@ -166,7 +194,6 @@ export default function AddDog() {
       return;
     }
 
-    // Validate KC registration number if provided
     if (kcRegistrationNumber && !validateKCNumber(kcRegistrationNumber)) {
       toast.error('Invalid KC registration number format. Expected format: AB12345678 (2 letters + 8 digits)');
       return;
@@ -175,12 +202,10 @@ export default function AddDog() {
     setLoading(true);
 
     try {
-      // Upload photo to Firebase Storage
       const photoRef = ref(storage, `dogs/${user.uid}/${Date.now()}_${photo.name}`);
       await uploadBytes(photoRef, photo);
       const photoURL = await getDownloadURL(photoRef);
 
-      // Upload KC papers if provided
       let kcPapersURL = '';
       if (kcPapers) {
         const kcPapersRef = ref(storage, `kc_papers/${user.uid}/${Date.now()}_${kcPapers.name}`);
@@ -188,7 +213,6 @@ export default function AddDog() {
         kcPapersURL = await getDownloadURL(kcPapersRef);
       }
 
-      // Create dog document
       const dogData = {
         name,
         breed,
@@ -199,7 +223,6 @@ export default function AddDog() {
         ownerId: user.uid,
         status: 'pending' as const,
         
-        // Health Info
         healthInfo: {
           vetVerified,
           brucellosisTest,
@@ -212,7 +235,6 @@ export default function AddDog() {
           hasHereditaryConditions: false,
         },
         
-        // Breeding Eligibility
         breedingEligibility: {
           isEligible: age >= 2 && age <= 8,
           minimumAgeMet: age >= 2,
@@ -220,7 +242,6 @@ export default function AddDog() {
           reasonIfIneligible: age < 2 ? 'Dog must be at least 2 years old' : age > 8 ? 'Dog may be too old for breeding' : undefined,
         },
         
-        // Temperament
         temperament: {
           aggressionIssues: false,
           anxietyIssues: false,
@@ -228,29 +249,25 @@ export default function AddDog() {
           goodWithOtherDogs: true,
         },
         
-        // Documents (including KC papers)
         documents: {
           ...(kcPapersURL && { registrationPapers: kcPapersURL }),
         },
         
-        // Kennel Club Info (if provided)
         ...(kcRegistrationNumber && {
           kennelClubInfo: {
             registrationNumber: kcRegistrationNumber,
             registeredName: kcRegisteredName || name,
             breedRegistered: breed,
             dateRegistered: Timestamp.now(),
-            registrationVerified: false, // Admin will verify
+            registrationVerified: false,
             ...(kcPapersURL && { registrationDocumentUrl: kcPapersURL }),
           },
         }),
         
-        // Admin Verification
         adminVerification: {
           verified: false,
         },
         
-        // Only include location if lat/lng are set
         ...(location.lat !== 0 && location.lng !== 0 && {
           location: {
             lat: location.lat,
@@ -279,8 +296,114 @@ export default function AddDog() {
     }
   };
 
+  // ⭐ ADD: Show loading state while checking subscription
+  if (loadingDogCount || !subscription) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-amber-700 mb-4"></div>
+        <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+      </div>
+    );
+  }
+
+  // ⭐ ADD: Show upgrade prompt if limit reached
+  if (!canAddDog(currentDogCount)) {
+        
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-2xl">
+        <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-8 text-center">
+          <div className="text-6xl mb-4">🔒</div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+            Dog Limit Reached
+          </h1>
+          
+          <div className="bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-200 dark:border-amber-800 rounded-lg p-6 mb-6">
+            <p className="text-gray-700 dark:text-gray-300 mb-4">
+              You currently have <strong>{currentDogCount}</strong> dog(s) registered.
+            </p>
+            <p className="text-gray-700 dark:text-gray-300">
+              Your <strong className="capitalize">{tier}</strong> plan allows up to{' '}
+              <strong>{tier === 'free' ? '1' : tier === 'standard' ? '3' : 'unlimited'}</strong> dog(s).
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <button
+              onClick={() => navigate('/pricing')}
+              className="w-full px-6 py-3 bg-amber-700 text-white rounded-lg hover:bg-amber-600 transition-colors font-semibold text-lg"
+            >
+              Upgrade to Add More Dogs
+            </button>
+            
+            <button
+              onClick={() => navigate(ROUTES.MY_DOGS)}
+              className="w-full px-6 py-3 bg-gray-200 dark:bg-zinc-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-zinc-600 transition-colors font-semibold"
+            >
+              Manage Existing Dogs
+            </button>
+          </div>
+
+          {/* Show what they get with upgrade */}
+          <div className="mt-8 pt-6 border-t border-gray-200 dark:border-zinc-700">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+              With Premium, you get:
+            </p>
+            <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-2">
+              <li>✅ Unlimited dog profiles</li>
+              <li>✅ Featured listings</li>
+              <li>✅ Advanced analytics</li>
+              <li>✅ Priority support</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ⭐ ADD: Calculate remaining slots
+  const remainingSlots = getRemainingDogs(currentDogCount);
+  const showLimitWarning = remainingSlots !== Infinity && remainingSlots <= 1;
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
+      {/* ⭐ ADD: Subscription status header */}
+      <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-4 mb-6 border-2 border-zinc-200 dark:border-zinc-700">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Current Plan: <strong className="capitalize text-gray-900 dark:text-white">{tier}</strong>
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+              Dogs: {currentDogCount} / {tier === 'free' ? '1' : tier === 'standard' ? '3' : '∞'}
+            </p>
+          </div>
+          
+          {tier !== 'premium' && (
+            <button
+              onClick={() => navigate('/pricing')}
+              className="px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-600 transition-colors text-sm font-semibold"
+            >
+              Upgrade
+            </button>
+          )}
+        </div>
+        
+        {/* ⭐ ADD: Warning if approaching limit */}
+        {showLimitWarning && (
+          <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+            <p className="text-sm text-amber-800 dark:text-amber-300">
+              ⚠️ This is your last dog slot on the {tier} plan.{' '}
+              <button
+                onClick={() => navigate('/pricing')}
+                className="underline font-semibold hover:no-underline"
+              >
+                Upgrade for more
+              </button>
+            </p>
+          </div>
+        )}
+      </div>
+
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
         Add Your Dog
       </h1>
@@ -289,7 +412,7 @@ export default function AddDog() {
       </p>
 
       <form onSubmit={handleSubmit} className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6 space-y-6">
-        {/* Basic Information */}
+        {/* Rest of the form remains the same - Basic Information */}
         <div className="space-y-4">
           <h3 className="font-semibold text-lg text-gray-900 dark:text-white border-b pb-2">
             Basic Information
@@ -323,7 +446,6 @@ export default function AddDog() {
               Start typing to search 277 recognized breeds
             </p>
             
-            {/* Breed Info Preview */}
             {selectedBreedInfo && (
               <div className="mt-3 p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-200 dark:border-indigo-800">
                 <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
@@ -338,7 +460,7 @@ export default function AddDog() {
                     <span className="text-gray-600 dark:text-gray-400">Lifespan:</span>
                     <span className="ml-2 font-medium text-gray-900 dark:text-gray-100">{selectedBreedInfo.longevity}</span>
                   </div>
-                  <div>
+                                    <div>
                     <span className="text-gray-600 dark:text-gray-400">Intelligence:</span>
                     <span className="ml-2 font-medium text-gray-900 dark:text-gray-100">Rank #{selectedBreedInfo.intelligence}</span>
                   </div>
@@ -433,7 +555,7 @@ export default function AddDog() {
           </div>
         </div>
 
-        {/* Kennel Club Information */}
+                {/* Kennel Club Information */}
         <div className="space-y-4">
           <h3 className="font-semibold text-lg text-gray-900 dark:text-white border-b pb-2">
             Kennel Club Registration (Optional)
@@ -442,7 +564,6 @@ export default function AddDog() {
             Providing KC registration increases trust and credibility
           </p>
 
-          {/* Info Notice */}
           <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
             <p className="text-xs text-blue-700 dark:text-blue-300 flex items-start gap-2">
               <svg className="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -529,7 +650,6 @@ export default function AddDog() {
             )}
           </div>
 
-          {/* Quick Link to KC */}
           <div className="bg-gray-50 dark:bg-zinc-700/50 p-4 rounded-lg border border-gray-200 dark:border-zinc-600">
             <p className="text-sm text-gray-700 dark:text-gray-300 mb-2 font-medium">
               Need to register your dog?
@@ -542,7 +662,7 @@ export default function AddDog() {
             >
               Visit The Kennel Club Website
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
             </a>
           </div>
@@ -557,7 +677,6 @@ export default function AddDog() {
             Help others find breeding partners near them
           </p>
 
-          {/* Privacy Notice */}
           <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
             <p className="text-xs text-blue-700 dark:text-blue-300 flex items-start gap-2">
               <svg className="w-4 h-4 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
