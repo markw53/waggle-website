@@ -58,9 +58,11 @@ import AdminDashboard from '@pages/AdminDashboard';
 import PrivacyPolicy from '@pages/PrivacyPolicy';
 import TermsOfService from '@pages/TermsOfService';
 
-// ⭐ ADD: Subscription & Billing
+// Subscription & Billing
 import Pricing from '@pages/Pricing';
 import Subscription from '@pages/Subscription';
+import SubscriptionSuccess from '@pages/SubscriptionSuccess';
+import SubscriptionInvoices from '@pages/SubscriptionInvoices';
 import AdminSubscriptions from '@/pages/AdminSubscriptions';
 
 const App: React.FC = () => (
@@ -78,7 +80,7 @@ const App: React.FC = () => (
           <Route path={ROUTES.PRIVACY} element={<PrivacyPolicy />} />
           <Route path={ROUTES.TERMS} element={<TermsOfService />} />
           <Route path={ROUTES.USER_PROFILE} element={<UserProfilePage />} />
-          <Route path={ROUTES.PRICING} element={<Pricing />} /> {/* ⭐ ADD THIS */}
+          <Route path={ROUTES.PRICING} element={<Pricing />} />
 
           {/* ==================== AUTH ROUTES (Redirect if logged in) ==================== */}
           <Route path={ROUTES.HOME} element={<RedirectIfAuth><LoginForm /></RedirectIfAuth>} />
@@ -113,15 +115,17 @@ const App: React.FC = () => (
           <Route path={ROUTES.MESSAGES} element={<RequireAuth><Messages /></RequireAuth>} />
           <Route path={ROUTES.CONVERSATION} element={<RequireAuth><ConversationPage /></RequireAuth>} />
 
-          {/* ⭐ ADD: Subscription Management */}
+          {/* Subscription Management */}
           <Route path={ROUTES.SUBSCRIPTION} element={<RequireAuth><Subscription /></RequireAuth>} />
-          <Route path={ROUTES.ADMIN_SUBSCRIPTIONS} element={<RequireAuth><AdminSubscriptions /></RequireAuth>} />
+          <Route path={ROUTES.SUBSCRIPTION_SUCCESS} element={<RequireAuth><SubscriptionSuccess /></RequireAuth>} />
+          <Route path="/subscription/invoices" element={<RequireAuth><SubscriptionInvoices /></RequireAuth>} />
 
           {/* Analytics */}
           <Route path={ROUTES.ANALYTICS} element={<RequireAuth><Analytics /></RequireAuth>} />
 
           {/* ==================== ADMIN ROUTES ==================== */}
           <Route path={ROUTES.ADMIN_DASHBOARD} element={<RequireAuth><AdminDashboard /></RequireAuth>} />
+          <Route path={ROUTES.ADMIN_SUBSCRIPTIONS} element={<RequireAuth><AdminSubscriptions /></RequireAuth>} />
 
           {/* ==================== 404 FALLBACK ==================== */}
           <Route path="*" element={<NotFound />} />

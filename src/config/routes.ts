@@ -48,6 +48,7 @@ export const ROUTES = {
   SUBSCRIPTION: '/subscription',
   SUBSCRIPTION_SUCCESS: '/subscription/success',
   SUBSCRIPTION_CANCELLED: '/subscription/cancelled',
+  SUBSCRIPTION_INVOICES: '/subscription/invoices',
   ADMIN_SUBSCRIPTIONS: '/admin/subscriptions',
   
   // Admin
@@ -68,7 +69,7 @@ export const getUserProfileRoute = (id: string) => `/users/${id}`;
 export const getBreedingCalendarDogRoute = (dogId: string) => `/breeding-calendar/${dogId}`;
 export const getBreedProfileRoute = (breedId: string) => `/breeds/${breedId}`;
 
-// ⭐ ADD: Helper for checkout route
+// Helper for checkout route
 export const getCheckoutRoute = (tier: 'standard' | 'premium', interval: 'monthly' | 'yearly') => 
   `/checkout/${tier}/${interval}`;
 
