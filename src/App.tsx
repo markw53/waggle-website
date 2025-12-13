@@ -61,7 +61,7 @@ import TermsOfService from '@pages/TermsOfService';
 // Subscription & Billing
 import Pricing from '@pages/Pricing';
 import Subscription from '@pages/Subscription';
-import SubscriptionSuccess from '@pages/SubscriptionSuccess';
+// import SubscriptionSuccess from '@pages/SubscriptionSuccess';
 import SubscriptionInvoices from '@pages/SubscriptionInvoices';
 import AdminSubscriptions from '@/pages/AdminSubscriptions';
 
@@ -117,7 +117,7 @@ const App: React.FC = () => (
 
           {/* Subscription Management */}
           <Route path={ROUTES.SUBSCRIPTION} element={<RequireAuth><Subscription /></RequireAuth>} />
-          <Route path={ROUTES.SUBSCRIPTION_SUCCESS} element={<RequireAuth><SubscriptionSuccess /></RequireAuth>} />
+          {/* <Route path={ROUTES.SUBSCRIPTION_SUCCESS} element={<RequireAuth><SubscriptionSuccess /></RequireAuth>} /> */}
           <Route path="/subscription/invoices" element={<RequireAuth><SubscriptionInvoices /></RequireAuth>} />
 
           {/* Analytics */}
