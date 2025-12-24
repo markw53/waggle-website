@@ -1,15 +1,19 @@
 import { initializeApp } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
+import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import { onDocumentCreated, FirestoreEvent, QueryDocumentSnapshot } 
   from 'firebase-functions/v2/firestore';
 import { defineSecret } from 'firebase-functions/params';
 import * as logger from 'firebase-functions/logger';
 import sgMail from '@sendgrid/mail';
+// Import v1 functions for auth trigger
+import * as functions from 'firebase-functions/v1';
 
 initializeApp();
 const db = getFirestore();
 
 const SENDGRID_API_KEY = defineSecret('SENDGRID_API_KEY');
+
+// ==================== EMAIL NOTIFICATIONS ====================
 
 export const sendMatchNotification = onDocumentCreated(
   {
@@ -55,3 +59,57 @@ export const sendMatchNotification = onDocumentCreated(
     }
   }
 );
+
+// ==================== USER CREATION TRIGGER ====================
+
+/**
+ * Create default subscription after user is created
+ */
+export const createDefaultSubscription = functions.auth.user().onCreate(async (user) => {
+  try {
+    logger.info(`Creating default subscription for user ${user.uid}`);
+    
+    // Create user document
+    await db.collection('users').doc(user.uid).set({
+      email: user.email || null,
+      displayName: user.displayName || null,
+      photoURL: user.photoURL || null,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    }, { merge: true });
+
+    // Create default free subscription
+    await db
+      .collection('users')
+      .doc(user.uid)
+      .collection('subscription')
+      .doc('current')
+      .set({
+        userId: user.uid,
+        tier: 'free',
+        status: 'active',
+        currentPeriodStart: Timestamp.now(),
+        currentPeriodEnd: Timestamp.fromDate(
+          new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+        ),
+        cancelAtPeriodEnd: false,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      });
+    
+    logger.info(`Successfully created default subscription for user ${user.uid}`);
+  } catch (error) {
+    logger.error('Error creating default subscription:', error);
+  }
+});
+
+// ==================== STRIPE FUNCTIONS ====================
+
+// Export Stripe functions
+export {
+  stripeWebhook,
+  createCheckoutSession,
+  createPortalSession,
+  getSubscriptionStatus,
+  getUserInvoices,
+} from './stripe';
