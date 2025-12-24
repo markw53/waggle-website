@@ -354,7 +354,9 @@ const DogProfile: React.FC = () => {
             <div className="bg-white dark:bg-indigo-950 p-3 rounded-lg border border-indigo-200 dark:border-indigo-800 text-center">
               <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Yearly Cost</p>
               <p className="font-bold text-green-600 dark:text-green-400">
-                £{breedInfo.yearlyExpenses.toLocaleString()}
+                {breedInfo.yearlyExpenses
+                  ? `£${breedInfo.yearlyExpenses.toLocaleString()}`
+                  : 'N/A'}
               </p>
             </div>
             <div className="bg-white dark:bg-indigo-950 p-3 rounded-lg border border-indigo-200 dark:border-indigo-800 text-center">
@@ -366,12 +368,13 @@ const DogProfile: React.FC = () => {
             <div className="bg-white dark:bg-indigo-950 p-3 rounded-lg border border-indigo-200 dark:border-indigo-800 text-center">
               <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Avg Puppy Price</p>
               <p className="font-bold text-blue-600 dark:text-blue-400">
-                £{breedInfo.avgPuppyPrice.toLocaleString()}
+                {breedInfo.avgPuppyPrice
+                  ? `£${breedInfo.avgPuppyPrice.toLocaleString()}`
+                  : 'N/A'}
               </p>
             </div>
           </div>
-        </div>
-      )}
+        </div>      )}
 
       {/* ✅ NEW: Kennel Club Information Section */}
       {dog.kennelClubInfo?.registrationNumber && (

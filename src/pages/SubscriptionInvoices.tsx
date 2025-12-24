@@ -17,11 +17,12 @@ export default function SubscriptionInvoices() {
     }
   }, [user]);
 
-    const fetchInvoices = async () => {
+  const fetchInvoices = async () => {
     try {
       setLoading(true);
       const functions = getFunctions();
       const getUserInvoices = httpsCallable(functions, 'getUserInvoices');
+      const result = await getUserInvoices({ limit: 20 }); // Added await and call
       const data = result.data as { invoices: Invoice[] };
       
       setInvoices(data.invoices || []);

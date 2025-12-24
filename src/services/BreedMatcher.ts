@@ -13,8 +13,6 @@ interface BreedMatch {
   benefits: string[];
 }
 
-// REMOVED: MatchCriteria interface (it was never used)
-
 export class BreedMatcher {
   // Get breed info from database
   private async getBreedInfo(breedName: string): Promise<BreedInfo | null> {
@@ -137,7 +135,6 @@ export class BreedMatcher {
     }
     
     // Female should be larger for extreme size differences
-    // Explicitly determine which dog is female based on both dogs
     let femaleBreed: BreedInfo | null;
     let maleBreed: BreedInfo | null;
     
@@ -148,7 +145,6 @@ export class BreedMatcher {
       femaleBreed = dog2BreedInfo;
       maleBreed = dog1BreedInfo;
     } else {
-      // Both same gender (shouldn't happen in breeding context)
       reasons.push('⚠️ Both dogs are same gender');
       return { score: 0, reasons };
     }
@@ -227,16 +223,23 @@ export class BreedMatcher {
     breed1Info: BreedInfo | null,
     breed2Info: BreedInfo | null
   ): { score: number; reasons: string[] } {
-    if (!breed1Info || !breed2Info) {
-      return { score: 50, reasons: [] };
+    const reasons: string[] = [];
+    
+    // Check if required data is available
+    if (!breed1Info || !breed2Info || 
+        breed1Info.yearlyExpenses === undefined || 
+        breed2Info.yearlyExpenses === undefined ||
+        breed1Info.avgPuppyPrice === undefined ||
+        breed2Info.avgPuppyPrice === undefined) {
+      reasons.push('Cost data incomplete for comparison');
+      return { score: 50, reasons };
     }
 
     const avgCost = (breed1Info.yearlyExpenses + breed2Info.yearlyExpenses) / 2;
     const avgPuppyPrice = (breed1Info.avgPuppyPrice + breed2Info.avgPuppyPrice) / 2;
-    const reasons: string[] = [];
     
-    reasons.push(`Expected yearly cost per puppy: $${Math.round(avgCost).toLocaleString()}`);
-    reasons.push(`Expected puppy value: $${Math.round(avgPuppyPrice).toLocaleString()}`);
+    reasons.push(`Expected yearly cost per puppy: £${Math.round(avgCost).toLocaleString()}`);
+    reasons.push(`Expected puppy value: £${Math.round(avgPuppyPrice).toLocaleString()}`);
     
     // Higher puppy value vs cost = better score
     const ratio = avgPuppyPrice / avgCost;

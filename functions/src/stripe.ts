@@ -14,6 +14,30 @@ const stripePremiumYearlyPriceId = defineString('STRIPE_PREMIUM_YEARLY_PRICE_ID'
 
 const db = getFirestore();
 
+// Type for subscription status
+type SubscriptionStatus = 
+  | 'active' 
+  | 'canceled' 
+  | 'incomplete' 
+  | 'incomplete_expired' 
+  | 'past_due' 
+  | 'trialing' 
+  | 'unpaid'
+  | 'cancelled';
+
+// Extended Stripe types to include missing properties
+interface ExtendedStripeInvoice extends Stripe.Invoice {
+  subscription?: string | Stripe.Subscription;
+  payment_intent?: string | Stripe.PaymentIntent;
+}
+
+// Helper type for subscription with guaranteed period properties
+type SubscriptionWithPeriods = Stripe.Subscription & {
+  current_period_start: number;
+  current_period_end: number;
+  trial_end?: number | null;
+};
+
 // Initialize Stripe lazily
 const getStripe = () => {
   return new Stripe(stripeSecretKey.value());
@@ -32,16 +56,61 @@ const getPriceIdToTierMap = (): Record<string, 'standard' | 'premium'> => {
 };
 
 /**
+ * Get customer ID from Stripe customer object
+ */
+const getCustomerId = (customer: string | Stripe.Customer | Stripe.DeletedCustomer | null): string => {
+  if (typeof customer === 'string') {
+    return customer;
+  }
+  if (customer && 'id' in customer) {
+    return customer.id;
+  }
+  return '';
+};
+
+/**
+ * Get subscription ID from invoice
+ */
+const getSubscriptionIdFromInvoice = (invoice: Stripe.Invoice): string | null => {
+  const extendedInvoice = invoice as ExtendedStripeInvoice;
+  if (typeof extendedInvoice.subscription === 'string') {
+    return extendedInvoice.subscription;
+  }
+  return null;
+};
+
+/**
+ * Safely get period start from subscription
+ */
+const getPeriodStart = (subscription: Stripe.Subscription): number => {
+  return (subscription as SubscriptionWithPeriods).current_period_start;
+};
+
+/**
+ * Safely get period end from subscription
+ */
+const getPeriodEnd = (subscription: Stripe.Subscription): number => {
+  return (subscription as SubscriptionWithPeriods).current_period_end;
+};
+
+/**
+ * Safely get trial end from subscription
+ */
+const getTrialEnd = (subscription: Stripe.Subscription): number | null => {
+  return (subscription as SubscriptionWithPeriods).trial_end || null;
+};
+
+/**
  * Save invoice to Firestore
  */
 async function saveInvoiceToFirestore(userId: string, invoice: Stripe.Invoice) {
-  const invoiceWithExtras = invoice as any;
+  const extendedInvoice = invoice as ExtendedStripeInvoice;
   
   const invoiceData = {
     userId,
     stripeInvoiceId: invoice.id,
-    stripeCustomerId: typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id || '',
-    subscriptionId: typeof invoiceWithExtras.subscription === 'string' ? invoiceWithExtras.subscription : null,
+    stripeCustomerId: getCustomerId(invoice.customer),
+    subscriptionId: typeof extendedInvoice.subscription === 'string' ? extendedInvoice.subscription : null,
     status: invoice.status || 'draft',
     amountDue: invoice.amount_due,
     amountPaid: invoice.amount_paid,
@@ -51,7 +120,7 @@ async function saveInvoiceToFirestore(userId: string, invoice: Stripe.Invoice) {
     invoiceUrl: invoice.invoice_pdf || null,
     invoicePdf: invoice.invoice_pdf || null,
     hostedInvoiceUrl: invoice.hosted_invoice_url || null,
-    paymentIntentId: typeof invoiceWithExtras.payment_intent === 'string' ? invoiceWithExtras.payment_intent : null,
+    paymentIntentId: typeof extendedInvoice.payment_intent === 'string' ? extendedInvoice.payment_intent : null,
     dueDate: invoice.due_date 
       ? Timestamp.fromDate(new Date(invoice.due_date * 1000))
       : null,
@@ -80,15 +149,15 @@ async function updateUserSubscription(userId: string, subscription: Stripe.Subsc
   const subscriptionData = {
     userId,
     tier,
-    status: subscription.status as any,
-    currentPeriodStart: Timestamp.fromDate(new Date((subscription as any).current_period_start * 1000)),
-    currentPeriodEnd: Timestamp.fromDate(new Date((subscription as any).current_period_end * 1000)),
+    status: subscription.status as SubscriptionStatus,
+    currentPeriodStart: Timestamp.fromDate(new Date(getPeriodStart(subscription) * 1000)),
+    currentPeriodEnd: Timestamp.fromDate(new Date(getPeriodEnd(subscription) * 1000)),
     cancelAtPeriodEnd: subscription.cancel_at_period_end,
-    stripeCustomerId: subscription.customer as string,
+    stripeCustomerId: typeof subscription.customer === 'string' ? subscription.customer : subscription.customer.id,
     stripeSubscriptionId: subscription.id,
     stripePriceId: priceId,
-    trialEnd: (subscription as any).trial_end 
-      ? Timestamp.fromDate(new Date((subscription as any).trial_end * 1000))
+    trialEnd: getTrialEnd(subscription)
+      ? Timestamp.fromDate(new Date(getTrialEnd(subscription)! * 1000))
       : null,
     updatedAt: Timestamp.now(),
   };
@@ -109,11 +178,13 @@ async function handleInvoiceCreated(invoice: Stripe.Invoice) {
 
   let userId = invoice.metadata?.userId;
 
-  const invoiceWithSub = invoice as any;
-  if (!userId && invoiceWithSub.subscription && typeof invoiceWithSub.subscription === 'string') {
-    const stripe = getStripe();
-    const subscription = await stripe.subscriptions.retrieve(invoiceWithSub.subscription);
-    userId = subscription.metadata?.userId;
+  if (!userId) {
+    const subscriptionId = getSubscriptionIdFromInvoice(invoice);
+    if (subscriptionId) {
+      const stripe = getStripe();
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      userId = subscription.metadata?.userId;
+    }
   }
 
   if (!userId) {
@@ -132,11 +203,13 @@ async function handleInvoiceFinalized(invoice: Stripe.Invoice) {
 
   let userId = invoice.metadata?.userId;
 
-  const invoiceWithSub = invoice as any;
-  if (!userId && invoiceWithSub.subscription && typeof invoiceWithSub.subscription === 'string') {
-    const stripe = getStripe();
-    const subscription = await stripe.subscriptions.retrieve(invoiceWithSub.subscription);
-    userId = subscription.metadata?.userId;
+  if (!userId) {
+    const subscriptionId = getSubscriptionIdFromInvoice(invoice);
+    if (subscriptionId) {
+      const stripe = getStripe();
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      userId = subscription.metadata?.userId;
+    }
   }
 
   if (!userId) {
@@ -153,10 +226,9 @@ async function handleInvoiceFinalized(invoice: Stripe.Invoice) {
 async function handleInvoicePaid(invoice: Stripe.Invoice) {
   console.log('Invoice paid:', invoice.id);
 
-  const invoiceWithSub = invoice as any;
-  const subscriptionId = invoiceWithSub.subscription;
+  const subscriptionId = getSubscriptionIdFromInvoice(invoice);
   
-  if (!subscriptionId || typeof subscriptionId !== 'string') {
+  if (!subscriptionId) {
     console.log('No subscription associated with this invoice');
     return;
   }
@@ -176,7 +248,7 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
     userId,
     invoiceId: invoice.id,
     subscriptionId: subscription.id,
-    customerId: typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id || '',
+    customerId: getCustomerId(invoice.customer),
     amount: invoice.amount_paid,
     currency: invoice.currency,
     status: 'succeeded',
@@ -197,10 +269,9 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   console.log('Invoice payment failed:', invoice.id);
 
-  const invoiceWithSub = invoice as any;
-  const subscriptionId = invoiceWithSub.subscription;
+  const subscriptionId = getSubscriptionIdFromInvoice(invoice);
   
-  if (!subscriptionId || typeof subscriptionId !== 'string') {
+  if (!subscriptionId) {
     console.log('No subscription associated with this invoice');
     return;
   }
@@ -220,7 +291,7 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
     userId,
     invoiceId: invoice.id,
     subscriptionId: subscription.id,
-    customerId: typeof invoice.customer === 'string' ? invoice.customer : invoice.customer?.id || '',
+    customerId: getCustomerId(invoice.customer),
     amount: invoice.amount_due,
     currency: invoice.currency,
     status: 'failed',
@@ -245,9 +316,10 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 
   if (session.mode === 'subscription' && session.subscription) {
     const stripe = getStripe();
-    const subscription = await stripe.subscriptions.retrieve(
-      session.subscription as string
-    );
+    const subscriptionId = typeof session.subscription === 'string' 
+      ? session.subscription 
+      : session.subscription.id;
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
     await updateUserSubscription(userId, subscription);
   }
 
@@ -307,12 +379,12 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   await db.collection('users').doc(userId).collection('subscription').doc('current').set({
     userId,
     tier: 'free',
-    status: 'cancelled',
+    status: 'cancelled' as SubscriptionStatus,
     cancelAtPeriodEnd: false,
-    stripeCustomerId: subscription.customer,
+    stripeCustomerId: typeof subscription.customer === 'string' ? subscription.customer : subscription.customer.id,
     stripeSubscriptionId: subscription.id,
-    currentPeriodStart: Timestamp.fromDate(new Date((subscription as any).current_period_start * 1000)),
-    currentPeriodEnd: Timestamp.fromDate(new Date((subscription as any).current_period_end * 1000)),
+    currentPeriodStart: Timestamp.fromDate(new Date(getPeriodStart(subscription) * 1000)),
+    currentPeriodEnd: Timestamp.fromDate(new Date(getPeriodEnd(subscription) * 1000)),
     canceledAt: Timestamp.now(),
     updatedAt: Timestamp.now(),
   }, { merge: true });
@@ -480,11 +552,11 @@ export const createCheckoutSession = functions.https.onCall(async (request: Call
     const userDoc = await db.collection('users').doc(userId).get();
     const userData = userDoc.data();
 
-    let customerId = userData?.stripeCustomerId;
+    let customerId = userData?.stripeCustomerId as string | undefined;
 
     if (!customerId) {
       const customer = await stripe.customers.create({
-        email: userData?.email,
+        email: userData?.email as string,
         metadata: { userId },
       });
       customerId = customer.id;
@@ -545,7 +617,7 @@ export const createPortalSession = functions.https.onCall(async (request: Callab
   try {
     const stripe = getStripe();
     const userDoc = await db.collection('users').doc(userId).get();
-    const customerId = userDoc.data()?.stripeCustomerId;
+    const customerId = userDoc.data()?.stripeCustomerId as string | undefined;
 
     if (!customerId) {
       throw new functions.https.HttpsError(
@@ -590,10 +662,10 @@ export const getSubscriptionStatus = functions.https.onCall(async (request: Call
       .doc('current')
       .get();
 
-    const subscription = subscriptionDoc.data();
+    const subscription = subscriptionDoc.data() || null;
 
     return {
-      subscription: subscription || null,
+      subscription,
       hasActiveSubscription: 
         subscription?.status === 'active' || 
         subscription?.status === 'trialing',

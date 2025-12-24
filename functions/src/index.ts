@@ -1,31 +1,31 @@
-import { initializeApp } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import { initializeApp } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
 import { onDocumentCreated, FirestoreEvent, QueryDocumentSnapshot } 
-  from "firebase-functions/v2/firestore";
-import { defineSecret } from "firebase-functions/params";
-import * as logger from "firebase-functions/logger";
-import sgMail from "@sendgrid/mail";
+  from 'firebase-functions/v2/firestore';
+import { defineSecret } from 'firebase-functions/params';
+import * as logger from 'firebase-functions/logger';
+import sgMail from '@sendgrid/mail';
 
 initializeApp();
 const db = getFirestore();
 
-const SENDGRID_API_KEY = defineSecret("SENDGRID_API_KEY");
+const SENDGRID_API_KEY = defineSecret('SENDGRID_API_KEY');
 
 export const sendMatchNotification = onDocumentCreated(
   {
-    document: "matches/{matchId}",
+    document: 'matches/{matchId}',
     secrets: [SENDGRID_API_KEY],
   },
   async (event: FirestoreEvent<QueryDocumentSnapshot | undefined>) => {
     const snap = event.data;
     if (!snap) {
-      logger.warn("No snapshot data found.");
+      logger.warn('No snapshot data found.');
       return;
     }
 
     const match = snap.data();
     if (!match?.createdBy) {
-      logger.warn("Invalid match data");
+      logger.warn('Invalid match data');
       return;
     }
 
@@ -40,10 +40,10 @@ export const sendMatchNotification = onDocumentCreated(
     const owner = ownerSnap.data()!;
     const msg = {
       to: owner.email,
-      from: "noreply@waggle-app.com",
-      subject: "🎉 You Have a New Match on Waggle!",
+      from: 'noreply@waggle-app.com',
+      subject: '🎉 You Have a New Match on Waggle!',
       text: `Your dogs ${match.dog1} and ${match.dog2} have a new match!`,
-      html: `<p>Hi ${owner.displayName || "Dog Lover"},</p>
+      html: `<p>Hi ${owner.displayName || 'Dog Lover'},</p>
              <p>A new match has been created between <b>${match.dog1}</b> and <b>${match.dog2}</b>.</p>`,
     };
 
@@ -51,7 +51,7 @@ export const sendMatchNotification = onDocumentCreated(
       await sgMail.send(msg);
       logger.info(`Notification email sent to ${owner.email}`);
     } catch (err) {
-      logger.error("Error sending email:", err);
+      logger.error('Error sending email:', err);
     }
   }
 );
