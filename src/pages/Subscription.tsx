@@ -13,9 +13,10 @@ export default function Subscription() {
   const navigate = useNavigate();
   const [actionLoading, setActionLoading] = useState(false);
 
-   const handleManageBilling = async () => {
+  const handleManageBilling = async () => {
     if (!stripeCustomerId) {
-      toast.error('No billing information found');
+      toast.error('No billing information found. Please subscribe to a plan first.');
+      navigate(ROUTES.PRICING);
       return;
     }
 
@@ -31,6 +32,8 @@ export default function Subscription() {
       
       if (data.url) {
         window.location.href = data.url;
+      } else {
+        throw new Error('No portal URL returned');
       }
     } catch (error) {
       console.error('Error opening billing portal:', error);
@@ -84,6 +87,9 @@ export default function Subscription() {
     ? SUBSCRIPTION_PRICES.premium.monthly 
     : 0;
 
+  // Check if user has a paid subscription
+  const hasPaidSubscription = tier !== 'free' && stripeCustomerId;
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
@@ -94,7 +100,7 @@ export default function Subscription() {
       <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold">Current Plan</h2>
-          {tier !== 'free' && (
+          {hasPaidSubscription && (
             <button
               onClick={handleManageBilling}
               disabled={actionLoading}
@@ -129,7 +135,7 @@ export default function Subscription() {
           </div>
         </div>
 
-        {periodEnd && (
+        {periodEnd && tier !== 'free' && (
           <div className="space-y-2">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {willCancel ? 'Access ends' : 'Renews'} on: {periodEnd.toLocaleDateString()}
@@ -155,7 +161,7 @@ export default function Subscription() {
         )}
       </div>
 
-      {/* Plan Features */}
+      {/* Plan Features - same as before */}
       <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6 mb-6">
         <h2 className="text-xl font-semibold mb-4">Your Features</h2>
         <ul className="space-y-3">
@@ -243,7 +249,7 @@ export default function Subscription() {
             </button>
           )}
           
-          {tier !== 'free' && (
+          {hasPaidSubscription && (
             <>
               <button
                 onClick={handleManageBilling}
@@ -265,7 +271,7 @@ export default function Subscription() {
           )}
         </div>
 
-        {tier !== 'free' && (
+        {hasPaidSubscription && (
           <div className="mt-6 pt-6 border-t border-gray-200 dark:border-zinc-700">
             <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
               To cancel or modify your subscription, use the "Manage Billing" button above.
