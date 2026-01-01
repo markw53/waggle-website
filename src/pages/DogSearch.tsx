@@ -1,4 +1,3 @@
-// src/pages/DogSearch.tsx
 import { useState, useEffect } from 'react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '@/firebase';

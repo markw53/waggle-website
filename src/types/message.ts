@@ -1,4 +1,3 @@
-// src/types/message.ts
 import { Timestamp } from 'firebase/firestore';
 
 export interface Message {
@@ -13,7 +12,7 @@ export interface Message {
 
 export interface Conversation {
   id: string;
-  participants: string[]; // Array of user IDs
+  participants: string[]; 
   participantDetails: {
     [userId: string]: {
       displayName: string;

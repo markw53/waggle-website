@@ -108,14 +108,14 @@ export const SUBSCRIPTION_PRICES = {
   standard: { 
     monthly: 9.99, 
     yearly: 99,
-    stripePriceIdMonthly: 'price_standard_monthly', // Replace with actual Stripe price ID
-    stripePriceIdYearly: 'price_standard_yearly'    // Replace with actual Stripe price ID
+    stripePriceIdMonthly: 'price_1SguMOBpP14Y9dShzzt5WjXw', 
+    stripePriceIdYearly: 'price_1SguNABpP14Y9dShuYKv6hq4'    
   },
   premium: { 
     monthly: 24.99, 
     yearly: 249,
-    stripePriceIdMonthly: 'price_premium_monthly', // Replace with actual Stripe price ID
-    stripePriceIdYearly: 'price_premium_yearly'    // Replace with actual Stripe price ID
+    stripePriceIdMonthly: 'price_1SguP1BpP14Y9dShVwdBZGwN', 
+    stripePriceIdYearly: 'price_1SguP1BpP14Y9dShQjDGJqll'    
   }
 };
 
@@ -176,7 +176,7 @@ export const canAddMoreDogs = (
 };
 
 /**
- * Format currency amount from cents to display
+ * Format currency amount from pence to display
  */
 export const formatCurrency = (
   amountInCents: number,

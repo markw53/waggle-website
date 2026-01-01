@@ -1,4 +1,3 @@
-// src/utils/imageOptimization.ts
 export const optimiseImage = async (file: File): Promise<File> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -12,7 +11,6 @@ export const optimiseImage = async (file: File): Promise<File> => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d')!;
         
-        // Max dimensions
         const MAX_WIDTH = 1200;
         const MAX_HEIGHT = 1200;
         

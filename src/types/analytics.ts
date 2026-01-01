@@ -1,4 +1,3 @@
-// src/types/analytics.ts
 import { Timestamp } from 'firebase/firestore';
 
 export interface AnalyticsData {

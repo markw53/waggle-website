@@ -1,4 +1,3 @@
-// src/pages/DogProfile.tsx
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '@/firebase';
@@ -6,7 +5,7 @@ import { useAuth } from '@/context';
 import { useMessaging } from '@/hooks/useMessaging';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import type { Dog } from '@/types/dog';
-import { ROUTES, getConversationRoute, getUserProfileRoute, getEditDogRoute } from '@/config/routes'; // ✅ Added getUserProfileRoute and getEditDogRoute
+import { ROUTES, getConversationRoute, getUserProfileRoute, getEditDogRoute } from '@/config/routes'; 
 import toast from 'react-hot-toast';
 import { doc, doc as firestoreDoc, getDoc } from 'firebase/firestore';
 import type { BreedInfo } from '@/types/breed';

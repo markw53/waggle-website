@@ -1,4 +1,3 @@
-// src/services/breedMatcher.ts
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 import type { Dog } from '@/types/dog';

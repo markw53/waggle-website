@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { doc, getDoc, setDoc, updateDoc, Timestamp } from 'firebase/firestore';
 import { updateProfile } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '@/firebase'; // ✅ Removed 'auth' from here
+import { db, storage } from '@/firebase'; 
 import { useAuth } from '@/context';
 import type { UserProfile } from '@/types/user';
 import toast from 'react-hot-toast';

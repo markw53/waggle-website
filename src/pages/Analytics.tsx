@@ -1,9 +1,8 @@
-// src/pages/Analytics.tsx
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context';
 import { useAnalytics } from '@/hooks/useAnalytics';
-import { ROUTES } from '@/config/routes'; // ✅ Added
+import { ROUTES } from '@/config/routes'; 
 import {
   BarChart,
   Bar,
@@ -29,7 +28,7 @@ const Analytics: React.FC = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate(ROUTES.HOME); // ✅ Updated
+      navigate(ROUTES.HOME); 
     }
   }, [user, navigate]);
 

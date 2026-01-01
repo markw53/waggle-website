@@ -1,4 +1,3 @@
-// src/pages/BreedDirectory.tsx
 import { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase';
@@ -84,8 +83,7 @@ const BreedDirectory: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
-      {/* Header - IMPROVED BACKGROUND */}
+    <div className="container mx-auto px-4 py-8 max-w-7xl">    
       <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-8 mb-6 border-2 border-amber-300 dark:border-amber-700">
         <div className="bg-linear-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg p-6 border-2 border-amber-200 dark:border-amber-800">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-3">
@@ -347,8 +345,7 @@ const BreedDirectory: React.FC = () => {
         </>
       )}
 
-      {/* Info Section - IMPROVED BACKGROUND */}
-      <div className="mt-12 bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-8 border-2 border-blue-300 dark:border-blue-700">
+       <div className="mt-12 bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-8 border-2 border-blue-300 dark:border-blue-700">
         <div className="bg-linear-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-lg p-6 border-2 border-blue-200 dark:border-blue-800">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
             <span>📚</span> About Our Breed Database

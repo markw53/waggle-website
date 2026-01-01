@@ -1,7 +1,6 @@
-// src/pages/GettingStarted.tsx
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context';
-import { ROUTES } from '@/config/routes'; // ✅ Added
+import { ROUTES } from '@/config/routes'; 
 
 const GettingStarted: React.FC = () => {
   const navigate = useNavigate();
@@ -14,7 +13,7 @@ const GettingStarted: React.FC = () => {
       title: 'Complete Your Profile',
       description: 'Add your details, location, and contact information so other breeders can connect with you.',
       action: 'Set Up Profile',
-      route: ROUTES.PROFILE, // ✅ Updated
+      route: ROUTES.PROFILE,
       completed: user?.displayName ? true : false,
     },
     {
@@ -23,8 +22,8 @@ const GettingStarted: React.FC = () => {
       title: 'Register Your Dogs',
       description: 'Add your dogs with health certifications, veterinary records, and breeding eligibility information.',
       action: 'Add Your First Dog',
-      route: ROUTES.ADD_DOG, // ✅ Updated
-      completed: false, // You could check if user has dogs
+      route: ROUTES.ADD_DOG, 
+      completed: false, 
     },
     {
       number: 3,
@@ -32,7 +31,7 @@ const GettingStarted: React.FC = () => {
       title: 'Browse Available Dogs',
       description: 'Search through our database of verified, health-tested dogs available for breeding.',
       action: 'Browse Dogs',
-      route: ROUTES.DOGS, // ✅ Updated
+      route: ROUTES.DOGS, 
       completed: false,
     },
     {
@@ -41,7 +40,7 @@ const GettingStarted: React.FC = () => {
       title: 'Connect with Breeders',
       description: 'Message dog owners directly to discuss breeding arrangements and schedule meetings.',
       action: 'View Messages',
-      route: ROUTES.MESSAGES, // ✅ Updated
+      route: ROUTES.MESSAGES, 
       completed: false,
     },
     {
@@ -50,7 +49,7 @@ const GettingStarted: React.FC = () => {
       title: 'Request Matches',
       description: 'Submit breeding match requests and manage your breeding calendar.',
       action: 'View Matches',
-      route: ROUTES.MATCHES, // ✅ Updated
+      route: ROUTES.MATCHES, 
       completed: false,
     },
   ];
@@ -182,7 +181,7 @@ const GettingStarted: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <button
             type="button"
-            onClick={() => navigate(ROUTES.PROFILE)} // ✅ Updated
+            onClick={() => navigate(ROUTES.PROFILE)} 
             className="p-6 bg-white dark:bg-zinc-800 border-2 border-[#8c5628] dark:border-amber-600 rounded-xl hover:bg-amber-50 dark:hover:bg-zinc-700 transition-colors text-center"
           >
             <div className="text-3xl mb-2">👤</div>
@@ -190,7 +189,7 @@ const GettingStarted: React.FC = () => {
           </button>
           <button
             type="button"
-            onClick={() => navigate(ROUTES.MY_DOGS)} // ✅ Updated
+            onClick={() => navigate(ROUTES.MY_DOGS)} 
             className="p-6 bg-white dark:bg-zinc-800 border-2 border-[#8c5628] dark:border-amber-600 rounded-xl hover:bg-amber-50 dark:hover:bg-zinc-700 transition-colors text-center"
           >
             <div className="text-3xl mb-2">🐕</div>
@@ -198,7 +197,7 @@ const GettingStarted: React.FC = () => {
           </button>
           <button
             type="button"
-            onClick={() => navigate(ROUTES.DOGS)} // ✅ Updated
+            onClick={() => navigate(ROUTES.DOGS)} 
             className="p-6 bg-white dark:bg-zinc-800 border-2 border-[#8c5628] dark:border-amber-600 rounded-xl hover:bg-amber-50 dark:hover:bg-zinc-700 transition-colors text-center"
           >
             <div className="text-3xl mb-2">🔍</div>
@@ -206,7 +205,7 @@ const GettingStarted: React.FC = () => {
           </button>
           <button
             type="button"
-            onClick={() => navigate(ROUTES.ANALYTICS)} // ✅ Updated
+            onClick={() => navigate(ROUTES.ANALYTICS)} 
             className="p-6 bg-white dark:bg-zinc-800 border-2 border-[#8c5628] dark:border-amber-600 rounded-xl hover:bg-amber-50 dark:hover:bg-zinc-700 transition-colors text-center"
           >
             <div className="text-3xl mb-2">📊</div>

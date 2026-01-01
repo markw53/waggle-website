@@ -1,7 +1,6 @@
-// src/pages/PrivacyPolicy.tsx
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { useAuth } from '@/context/useAuth'; // ✅ Updated import path
+import { useAuth } from '@/context/useAuth'; 
 import { deleteUser } from 'firebase/auth';
 import { doc, deleteDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase';
@@ -9,13 +8,13 @@ import toast from 'react-hot-toast';
 
 const PrivacyPolicy: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth(); // ✅ Changed from currentUser to user
+  const { user } = useAuth(); 
   const [loading, setLoading] = useState(false);
   const [confirmText, setConfirmText] = useState('');
   const [showDeleteSection, setShowDeleteSection] = useState(false);
 
   const handleDeleteAccount = async () => {
-    if (!user) { // ✅ Changed from currentUser to user
+    if (!user) { 
       toast.error('You must be logged in to delete your account');
       return;
     }
@@ -34,7 +33,7 @@ const PrivacyPolicy: React.FC = () => {
       // Delete user's dogs
       const dogsQuery = query(
         collection(db, 'dogs'),
-        where('ownerId', '==', user.uid) // ✅ Changed from currentUser to user
+        where('ownerId', '==', user.uid) 
       );
       const dogsSnapshot = await getDocs(dogsQuery);
       const deleteDogsPromises = dogsSnapshot.docs.map(doc => deleteDoc(doc.ref));
@@ -43,7 +42,7 @@ const PrivacyPolicy: React.FC = () => {
       // Delete user's conversations
       const conversationsQuery = query(
         collection(db, 'conversations'),
-        where('participants', 'array-contains', user.uid) // ✅ Changed from currentUser to user
+        where('participants', 'array-contains', user.uid) 
       );
       const conversationsSnapshot = await getDocs(conversationsQuery);
       const deleteConversationsPromises = conversationsSnapshot.docs.map(doc => deleteDoc(doc.ref));
@@ -52,17 +51,17 @@ const PrivacyPolicy: React.FC = () => {
       // Delete user's favorites
       const favoritesQuery = query(
         collection(db, 'favorites'),
-        where('userId', '==', user.uid) // ✅ Changed from currentUser to user
+        where('userId', '==', user.uid) 
       );
       const favoritesSnapshot = await getDocs(favoritesQuery);
       const deleteFavoritesPromises = favoritesSnapshot.docs.map(doc => deleteDoc(doc.ref));
       await Promise.all(deleteFavoritesPromises);
 
       // Delete user document
-      await deleteDoc(doc(db, 'users', user.uid)); // ✅ Changed from currentUser to user
+      await deleteDoc(doc(db, 'users', user.uid)); 
 
       // Delete Firebase Auth user
-      await deleteUser(user); // ✅ Changed from currentUser to user
+      await deleteUser(user); 
 
       toast.success('Your account and all data have been deleted');
       navigate('/');

@@ -1,4 +1,3 @@
-// src/types/dog.ts
 import { Timestamp } from 'firebase/firestore';
 
 export interface Location {
@@ -9,8 +8,6 @@ export interface Location {
   postcode?: string;
   country?: string;
 }
-
-// ✅ NEW: Kennel Club Info interface
 export interface KennelClubInfo {
   registrationNumber?: string;
   registeredName?: string;
@@ -18,7 +15,7 @@ export interface KennelClubInfo {
   dateRegistered?: Timestamp;
   registrationVerified?: boolean;
   registrationDocumentUrl?: string;
-  verifiedBy?: string; // Admin user ID who verified
+  verifiedBy?: string; 
   verifiedAt?: Timestamp;
 }
 
@@ -35,41 +32,33 @@ export interface Dog {
   location?: Location; 
   createdAt: Timestamp;
   
-  // ✅ ADD THIS
   kennelClubInfo?: KennelClubInfo;
   
-  // Health & Verification Fields
-  healthInfo: {
+    healthInfo: {
     vetVerified: boolean;
     vetCertificateUrl?: string;
     vetName?: string;
     vetPhone?: string;
     lastCheckupDate?: Timestamp;
     
-    // Health clearances
     hipsDysplasiaCleared: boolean;
     elbowDysplasiaCleared: boolean;
     eyesCleared: boolean;
     heartCleared: boolean;
     
-    // Genetic testing
     geneticTestingDone: boolean;
     geneticTestResults?: string[];
     
-    // Vaccination
     vaccinationUpToDate: boolean;
     vaccinationRecordUrl?: string;
     
-    // Other health checks
     brucellosisTest: boolean;
     brucellosisTestDate?: Timestamp;
     
-    // Breeding restrictions
     hasHereditaryConditions: boolean;
     hereditaryConditionsDetails?: string;
   };
   
-  // Breeding eligibility
   breedingEligibility: {
     isEligible: boolean;
     reasonIfIneligible?: string;
@@ -82,7 +71,6 @@ export interface Dog {
     kennelClubRegistration?: string;
   };
   
-  // Temperament & behavior
   temperament: {
     aggressionIssues: boolean;
     anxietyIssues: boolean;
@@ -91,7 +79,6 @@ export interface Dog {
     behaviorCertificateUrl?: string;
   };
   
-  // Documents
   documents: {
     pedigree?: string;
     ownership?: string;
@@ -99,7 +86,6 @@ export interface Dog {
     registrationPapers?: string;
   };
   
-  // Admin verification
   adminVerification: {
     verified: boolean;
     verifiedBy?: string;
@@ -108,7 +94,6 @@ export interface Dog {
     rejectionReason?: string;
   };
   
-  // Status
   status: 'pending' | 'approved' | 'rejected' | 'suspended';
   suspendedReason?: string;
 }

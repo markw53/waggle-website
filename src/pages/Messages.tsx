@@ -1,10 +1,9 @@
-// src/pages/Messages.tsx
 import { useNavigate } from 'react-router-dom';
 import { useMessaging } from '@/hooks/useMessaging';
 import { useAuth } from '@/context';
 import { useEffect } from 'react';
 import type { Conversation } from '@/types/message';
-import { ROUTES, getConversationRoute } from '@/config/routes'; // ✅ Added
+import { ROUTES, getConversationRoute } from '@/config/routes';
 
 const Messages: React.FC = () => {
   const navigate = useNavigate();
@@ -13,7 +12,7 @@ const Messages: React.FC = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate(ROUTES.HOME); // ✅ Updated
+      navigate(ROUTES.HOME); 
     }
   }, [user, navigate]);
 
@@ -61,7 +60,7 @@ const Messages: React.FC = () => {
               </p>
               <button
                 type="button"
-                onClick={() => navigate(ROUTES.DOGS)} // ✅ Updated
+                onClick={() => navigate(ROUTES.DOGS)} 
                 className="px-6 py-3 bg-[#8c5628] dark:bg-amber-700 text-white rounded-lg hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-semibold"
               >
                 Browse Dogs
@@ -79,7 +78,7 @@ const Messages: React.FC = () => {
                 <button
                   key={conversation.id}
                   type="button"
-                  onClick={() => navigate(getConversationRoute(conversation.id))} // ✅ Updated
+                  onClick={() => navigate(getConversationRoute(conversation.id))} 
                   className="w-full p-4 hover:bg-zinc-50 dark:hover:bg-zinc-700/50 transition-colors flex items-center gap-4 text-left"
                 >
                   {/* Avatar */}

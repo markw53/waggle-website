@@ -1,4 +1,3 @@
-// src/pages/MyDogs.tsx
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
@@ -6,7 +5,7 @@ import { db } from '@/firebase';
 import { useAuth } from '@/context';
 import type { Dog } from '@/types/dog';
 import DogCard from '@/components/DogCard';
-import { ROUTES, getDogProfileRoute, getEditDogRoute } from '@/config/routes'; // ✅ Added
+import { ROUTES, getDogProfileRoute, getEditDogRoute } from '@/config/routes'; 
 import toast from 'react-hot-toast';
 
 const MyDogs: React.FC = () => {
@@ -43,7 +42,7 @@ const MyDogs: React.FC = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate(ROUTES.HOME); // ✅ Updated
+      navigate(ROUTES.HOME); 
       return;
     }
 
@@ -100,7 +99,7 @@ const MyDogs: React.FC = () => {
           </div>
           <button
             type="button"
-            onClick={() => navigate(ROUTES.ADD_DOG)} // ✅ Updated
+            onClick={() => navigate(ROUTES.ADD_DOG)}
             className="px-6 py-3 bg-[#8c5628] dark:bg-amber-700 text-white rounded-lg hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-semibold shadow-md flex items-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,7 +173,7 @@ const MyDogs: React.FC = () => {
           {filter === 'all' && (
             <button
               type="button"
-              onClick={() => navigate(ROUTES.ADD_DOG)} // ✅ Updated
+              onClick={() => navigate(ROUTES.ADD_DOG)} 
               className="px-6 py-3 bg-[#8c5628] dark:bg-amber-700 text-white rounded-lg hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-semibold"
             >
               Register Your First Dog
@@ -185,9 +184,7 @@ const MyDogs: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredDogs.map(dog => (
             <div key={dog.id} className="space-y-4">
-              {/* ✅ Dog Card with Status Badge */}
               <div className="relative">
-                {/* Status Badge */}
                 <div className="absolute top-4 right-4 z-10">
                   {dog.status === 'approved' && (
                     <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 text-xs font-semibold rounded-full shadow-md">
@@ -213,7 +210,7 @@ const MyDogs: React.FC = () => {
               <div className="flex gap-2">
                 <button
                   type="button"
-                  onClick={() => navigate(getDogProfileRoute(dog.id))} // ✅ Updated
+                  onClick={() => navigate(getDogProfileRoute(dog.id))} 
                   className="flex-1 px-4 py-2 bg-[#8c5628] dark:bg-amber-700 text-white rounded-lg hover:bg-[#6d4320] dark:hover:bg-amber-600 transition-colors font-medium text-sm"
                   title="View dog profile"
                 >
@@ -221,7 +218,7 @@ const MyDogs: React.FC = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigate(getEditDogRoute(dog.id))} // ✅ Updated
+                  onClick={() => navigate(getEditDogRoute(dog.id))} 
                   className="flex-1 px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors font-medium text-sm"
                   title="Edit dog information"
                 >

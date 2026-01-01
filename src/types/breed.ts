@@ -1,4 +1,3 @@
-// src/types/breed.ts
 export interface BreedInfo {
   id: string;
   name: string;

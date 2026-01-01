@@ -1,4 +1,3 @@
-// src/pages/EditDog.tsx
 import { useState, useEffect } from 'react';
 import { doc, getDoc, updateDoc, Timestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';

@@ -5,15 +5,12 @@ import { onDocumentCreated, FirestoreEvent, QueryDocumentSnapshot }
 import { defineSecret } from 'firebase-functions/params';
 import * as logger from 'firebase-functions/logger';
 import sgMail from '@sendgrid/mail';
-// Import v1 functions for auth trigger
 import * as functions from 'firebase-functions/v1';
 
 initializeApp();
 const db = getFirestore();
 
 const SENDGRID_API_KEY = defineSecret('SENDGRID_API_KEY');
-
-// ==================== EMAIL NOTIFICATIONS ====================
 
 export const sendMatchNotification = onDocumentCreated(
   {
@@ -60,16 +57,10 @@ export const sendMatchNotification = onDocumentCreated(
   }
 );
 
-// ==================== USER CREATION TRIGGER ====================
-
-/**
- * Create default subscription after user is created
- */
 export const createDefaultSubscription = functions.auth.user().onCreate(async (user) => {
   try {
     logger.info(`Creating default subscription for user ${user.uid}`);
     
-    // Create user document
     await db.collection('users').doc(user.uid).set({
       email: user.email || null,
       displayName: user.displayName || null,
@@ -78,8 +69,7 @@ export const createDefaultSubscription = functions.auth.user().onCreate(async (u
       updatedAt: Timestamp.now(),
     }, { merge: true });
 
-    // Create default free subscription
-    await db
+      await db
       .collection('users')
       .doc(user.uid)
       .collection('subscription')
@@ -103,9 +93,6 @@ export const createDefaultSubscription = functions.auth.user().onCreate(async (u
   }
 });
 
-// ==================== STRIPE FUNCTIONS ====================
-
-// Export Stripe functions
 export {
   stripeWebhook,
   createCheckoutSession,

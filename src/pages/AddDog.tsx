@@ -1,4 +1,3 @@
-// src/pages/AddDog.tsx
 import { useState, useEffect } from 'react';
 import { collection, addDoc, Timestamp, query, where, getDocs } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -8,15 +7,14 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { ROUTES } from '@/config/routes';
 import { BreedAutocomplete } from '@/components/BreedAutocomplete';
-import { useSubscription } from '@/hooks/useSubscription'; // ⭐ ADD THIS
+import { useSubscription } from '@/hooks/useSubscription'; 
 import type { BreedInfo } from '@/types/breed';
 
 export default function AddDog() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { tier, canAddDog, getRemainingDogs, subscription } = useSubscription(); // ⭐ ADD THIS
+  const { tier, canAddDog, getRemainingDogs, subscription } = useSubscription();
 
-  // ⭐ ADD: Track user's current dog count
   const [currentDogCount, setCurrentDogCount] = useState(0);
   const [loadingDogCount, setLoadingDogCount] = useState(true);
 
@@ -54,7 +52,6 @@ export default function AddDog() {
   // Form state
   const [loading, setLoading] = useState(false);
 
-  // ⭐ ADD: Check user's current dog count
   useEffect(() => {
     const fetchDogCount = async () => {
       if (!user) return;
@@ -296,7 +293,6 @@ export default function AddDog() {
     }
   };
 
-  // ⭐ ADD: Show loading state while checking subscription
   if (loadingDogCount || !subscription) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -306,7 +302,6 @@ export default function AddDog() {
     );
   }
 
-  // ⭐ ADD: Show upgrade prompt if limit reached
   if (!canAddDog(currentDogCount)) {
         
     return (
@@ -360,13 +355,11 @@ export default function AddDog() {
     );
   }
 
-  // ⭐ ADD: Calculate remaining slots
   const remainingSlots = getRemainingDogs(currentDogCount);
   const showLimitWarning = remainingSlots !== Infinity && remainingSlots <= 1;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
-      {/* ⭐ ADD: Subscription status header */}
       <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-4 mb-6 border-2 border-zinc-200 dark:border-zinc-700">
         <div className="flex items-center justify-between">
           <div>
@@ -388,7 +381,6 @@ export default function AddDog() {
           )}
         </div>
         
-        {/* ⭐ ADD: Warning if approaching limit */}
         {showLimitWarning && (
           <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
             <p className="text-sm text-amber-800 dark:text-amber-300">
@@ -412,7 +404,6 @@ export default function AddDog() {
       </p>
 
       <form onSubmit={handleSubmit} className="bg-white dark:bg-zinc-800 rounded-lg shadow-lg p-6 space-y-6">
-        {/* Rest of the form remains the same - Basic Information */}
         <div className="space-y-4">
           <h3 className="font-semibold text-lg text-gray-900 dark:text-white border-b pb-2">
             Basic Information
@@ -555,7 +546,6 @@ export default function AddDog() {
           </div>
         </div>
 
-                {/* Kennel Club Information */}
         <div className="space-y-4">
           <h3 className="font-semibold text-lg text-gray-900 dark:text-white border-b pb-2">
             Kennel Club Registration (Optional)
@@ -668,7 +658,6 @@ export default function AddDog() {
           </div>
         </div>
 
-        {/* Location Information */}
         <div className="space-y-4">
           <h3 className="font-semibold text-lg text-gray-900 dark:text-white border-b pb-2">
             Location (Optional but Recommended)
@@ -746,7 +735,6 @@ export default function AddDog() {
           </div>
         </div>
 
-        {/* Health Information */}
         <div className="space-y-4">
           <h3 className="font-semibold text-lg text-gray-900 dark:text-white border-b pb-2">
             Health Verification *
@@ -781,7 +769,6 @@ export default function AddDog() {
           </div>
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}

@@ -1,4 +1,3 @@
-// src/pages/AdminDashboard.tsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, query, getDocs, doc, updateDoc, Timestamp, orderBy } from 'firebase/firestore';
@@ -213,8 +212,6 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // In AdminDashboard.tsx, add this function with the other handlers
-
 const handleVerifyKCNumber = async (dogId: string) => {
   if (!user) return;
   
@@ -227,7 +224,7 @@ const handleVerifyKCNumber = async (dogId: string) => {
     });
     
     toast.success('KC registration verified!');
-    fetchAllData(); // Refresh the data
+    fetchAllData(); 
   } catch (error) {
     console.error('Error verifying KC number:', error);
     toast.error('Failed to verify KC registration');
@@ -342,8 +339,6 @@ const handleVerifyKCNumber = async (dogId: string) => {
       </div>
 
       <div className="p-6">
-        {/* ... rest of your tabs content stays the same ... */}
-          {/* PENDING TAB */}
           {activeTab === 'pending' && (
             <div>
               {pendingDogs.length === 0 ? (
@@ -674,7 +669,6 @@ const DogVerificationCard: React.FC<{
   </div>
 );
 
-// Dog Management Card Component (for All Dogs tab)
 const DogManagementCard: React.FC<{
   dog: Dog;
   onReview: (dog: Dog) => void;
@@ -927,7 +921,7 @@ const ReviewModal: React.FC<{
                 ) : (
                   <button
                     type="button"
-                    onClick={() => onVerifyKC(dog.id)} // ✅ Use the prop
+                    onClick={() => onVerifyKC(dog.id)} 
                     className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
                   >
                     ✅ Verify KC Registration

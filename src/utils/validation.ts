@@ -1,4 +1,3 @@
-// src/utils/validation.ts
 export const validation = {
   dogName: (name: string): boolean => {
     return name.length >= 2 && name.length <= 50 && /^[a-zA-Z0-9\s'-]+$/.test(name);

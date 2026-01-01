@@ -1,4 +1,3 @@
-// src/pages/AdminVerification.tsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, query, where, getDocs, doc, updateDoc, Timestamp } from 'firebase/firestore';
