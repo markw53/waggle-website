@@ -99,4 +99,4 @@ export {
   createPortalSession,
   getSubscriptionStatus,
   getUserInvoices,
-} from './stripe';
+} from './stripe.js';
