@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase-admin/app';
+import { initializeApp, getApps } from 'firebase-admin/app';
 import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import { onDocumentCreated, FirestoreEvent, QueryDocumentSnapshot } 
   from 'firebase-functions/v2/firestore';
@@ -7,7 +7,10 @@ import * as logger from 'firebase-functions/logger';
 import sgMail from '@sendgrid/mail';
 import * as functions from 'firebase-functions/v1';
 
-initializeApp();
+if (getApps().length === 0) {
+  initializeApp();
+}
+
 const db = getFirestore();
 
 const SENDGRID_API_KEY = defineSecret('SENDGRID_API_KEY');

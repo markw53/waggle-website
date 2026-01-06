@@ -1,8 +1,15 @@
 import * as functions from 'firebase-functions';
 import { defineString } from 'firebase-functions/params';
 import Stripe from 'stripe';
+import { initializeApp, getApps } from 'firebase-admin/app';
 import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import { CallableRequest } from 'firebase-functions/v2/https';
+
+if (getApps().length === 0) {
+  initializeApp();
+}
+
+const db = getFirestore();
 
 // Define environment parameters
 const stripeSecretKey = defineString('STRIPE_SECRET_KEY');
@@ -11,8 +18,6 @@ const stripeStandardMonthlyPriceId = defineString('STRIPE_STANDARD_MONTHLY_PRICE
 const stripeStandardYearlyPriceId = defineString('STRIPE_STANDARD_YEARLY_PRICE_ID');
 const stripePremiumMonthlyPriceId = defineString('STRIPE_PREMIUM_MONTHLY_PRICE_ID');
 const stripePremiumYearlyPriceId = defineString('STRIPE_PREMIUM_YEARLY_PRICE_ID');
-
-const db = getFirestore();
 
 // Type for subscription status
 type SubscriptionStatus = 
