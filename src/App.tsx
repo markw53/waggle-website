@@ -64,6 +64,7 @@ import Subscription from '@pages/Subscription';
 import SubscriptionSuccess from '@pages/SubscriptionSuccess';
 import SubscriptionInvoices from '@pages/SubscriptionInvoices';
 import AdminSubscriptions from '@/pages/AdminSubscriptions';
+import SubscriptionCancelled from '@/pages/SubscriptionCancelled';
 
 const App: React.FC = () => (
   <div className="min-h-screen w-full bg-cover bg-center bg-fixed bg-[url('/waggle-background.png')] dark:bg-zinc-900 flex flex-col">
@@ -118,7 +119,8 @@ const App: React.FC = () => (
           {/* Subscription Management */}
           <Route path={ROUTES.SUBSCRIPTION} element={<RequireAuth><Subscription /></RequireAuth>} />
           <Route path={ROUTES.SUBSCRIPTION_SUCCESS} element={<RequireAuth><SubscriptionSuccess /></RequireAuth>} /> 
-          <Route path="/subscription/invoices" element={<RequireAuth><SubscriptionInvoices /></RequireAuth>} />
+          <Route path={ROUTES.SUBSCRIPTION_CANCELLED} element={<SubscriptionCancelled />} />
+          <Route path={ROUTES.SUBSCRIPTION_INVOICES} element={<RequireAuth><SubscriptionInvoices /></RequireAuth>} />
 
           {/* Analytics */}
           <Route path={ROUTES.ANALYTICS} element={<RequireAuth><Analytics /></RequireAuth>} />

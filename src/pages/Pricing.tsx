@@ -45,7 +45,7 @@ export default function Pricing() {
       const result = await createCheckoutSession({
         priceId,
         successUrl: `${window.location.origin}/subscription/success`,
-        cancelUrl: `${window.location.origin}/pricing`,
+        cancelUrl: `${window.location.origin}/subscription/cancelled`,
       });
 
       const data = result.data as { url: string };
