@@ -26,32 +26,22 @@ export const useSubscription = () => {
       (docSnapshot) => {
         if (docSnapshot.exists()) {
           setSubscription(docSnapshot.data() as Subscription);
-        } else {
-          // Check the old location for backwards compatibility
-          const oldSubRef = doc(db, 'subscriptions', user.uid);
-          const oldUnsubscribe = onSnapshot(oldSubRef, (oldDoc) => {
-            if (oldDoc.exists()) {
-              setSubscription(oldDoc.data() as Subscription);
-            } else {
-              // Free tier by default
-              setSubscription({
-                userId: user.uid,
-                tier: 'free',
-                status: 'active',
-                currentPeriodStart: Timestamp.now(),
-                currentPeriodEnd: Timestamp.fromDate(
-                  new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-                ),
-                cancelAtPeriodEnd: false,
-              });
-            }
-          });
-          
           setLoading(false);
-          return () => oldUnsubscribe();
+          setError(null);
+        } else {
+          // If no subscription document exists, create free tier default
+          setSubscription({
+            userId: user.uid,
+            tier: 'free',
+            status: 'active',
+            currentPeriodStart: Timestamp.now(),
+            currentPeriodEnd: Timestamp.fromDate(
+              new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+            ),
+            cancelAtPeriodEnd: false,
+          });
+          setLoading(false);
         }
-        setLoading(false);
-        setError(null);
       },
       (err) => {
         console.error('Error fetching subscription:', err);
