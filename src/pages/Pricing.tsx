@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { httpsCallable, getFunctions } from 'firebase/functions';
 import { useAuth } from '@/context';
@@ -60,6 +60,17 @@ export default function Pricing() {
     }
   };
 
+  // Add at the top of your Pricing component, right after the hooks
+useEffect(() => {
+  console.log('📊 Subscription State:', {
+    subscription,
+    tier: subscription?.tier,
+    loading: subscriptionLoading,
+    status: subscription?.status,
+    stripeCustomerId: subscription?.stripeCustomerId,
+  });
+}, [subscription, subscriptionLoading]);
+
   const plans: PricingPlan[] = [
     {
       tier: 'free',
@@ -120,6 +131,13 @@ export default function Pricing() {
     );
   }
 
+  // ADD THIS DEBUG CODE RIGHT BEFORE THE RETURN STATEMENT:
+console.log('🔍 Pricing Page Debug:', {
+  subscription,
+  subscriptionTier: subscription?.tier,
+  subscriptionLoading,
+});
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-zinc-900 py-12 px-4">
       <div className="max-w-7xl mx-auto">
@@ -165,6 +183,13 @@ export default function Pricing() {
             const isCurrent = subscription?.tier === plan.tier;
             const price = period === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice;
             const priceId = period === 'yearly' ? plan.priceIdYearly : plan.priceIdMonthly;
+
+
+            console.log('Plan check:', {
+    planTier: plan.tier,
+    subscriptionTier: subscription?.tier,
+    isCurrent,
+  });
 
             return (
               <div
