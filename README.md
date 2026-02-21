@@ -98,7 +98,7 @@ Before you begin, ensure you have:
 
 ## 🚀 Getting Started
 
-### 1. Clone the Repository
+1. Clone the Repository
 
 ```bash
 git clone https://github.com/yourusername/waggle.git
@@ -115,43 +115,43 @@ npm install
 
 ### Create a Firebase Project
 
-Go to Firebase Console
-Click "Add project"
-Follow the setup wizard
-Enable the following services:
-Authentication
-Cloud Firestore
-Storage
-Hosting
-Configure Authentication Providers
-Email/Password:
+- Go to Firebase Console  
+- Click "Add project"  
+- Follow the setup wizard  
+- Enable the following services:  
+- Authentication  
+- Cloud Firestore  
+- Storage  
+- Hosting  
+- Configure Authentication Providers  
+- Email/Password:  
 
 ### Go to Authentication → Sign-in method
 
-Enable Email/Password
-Enable email verification
-Google:
+- Enable Email/Password  
+- Enable email verification  
+- Google:  
 
 ### Enable Google provider
 
-Configure OAuth consent screen in Google Cloud Console
-Facebook:
+- Configure OAuth consent screen in Google Cloud Console  
+- Facebook:  
 
 ### Create a Facebook App
 
-Add Facebook Login product
-Copy App ID and App Secret to Firebase
-Add OAuth redirect URI from Firebase to Facebook App
+- Add Facebook Login product  
+- Copy App ID and App Secret to Firebase  
+- Add OAuth redirect URI from Firebase to Facebook App  
 
 ### Microsoft
 
-Create an Azure App Registration
-Copy Application (client) ID and create client secret
-Add credentials to Firebase
-Add OAuth redirect URI from Firebase to Azure
-Set Up Firestore
-Create database in production mode
-Deploy security rules:
+- Create an Azure App Registration  
+- Copy Application (client) ID and create client secret  
+- Add credentials to Firebase  
+- Add OAuth redirect URI from Firebase to Azure  
+- Set Up Firestore  
+- Create database in production mode  
+- Deploy security rules:  
 
 ```bash
 firebase deploy --only firestore:rules
@@ -159,6 +159,7 @@ firebase deploy --only firestore:rules
 
 Or manually add these rules in Firebase Console:
 
+```bash
 javascript
 rules_version = '2';
 service cloud.firestore {
@@ -218,18 +219,20 @@ service cloud.firestore {
     }
   }
 }
+```
 
 ### Set Up Storage
 
-Deploy storage rules:
+### Deploy storage rules
 
 ```bash
 
 firebase deploy --only storage
 ```
 
-Storage Rules:
+### Storage Rules
 
+```bash
 javascript
 rules_version = '2';
 service firebase.storage {
@@ -261,26 +264,33 @@ service firebase.storage {
     }
   }
 }
+```
 
 ### 4. Environment Configuration
 
 Create a .env file in the root directory:
 
+```bash
 env
+```
 
 ### Firebase Configuration
 
+```bash
 VITE_FIREBASE_API_KEY=your_api_key
 VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=your-project-id
 VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
+```
 
 ### Sentry (Optional - for error tracking)
 
+```bash
 VITE_SENTRY_DSN=your_sentry_dsn
 VITE_ENVIRONMENT=development
+```
 
 ### Admin Email (for making yourself admin)
 
@@ -299,12 +309,13 @@ This will populate your database with 200+ dog breeds with official information.
 
 ## 6. Create Admin User
 
-After registering your first account:
+### After registering your first account
 
-Go to Firestore in Firebase Console
-Create a new collection: admins
-Add a document with your user ID:
-text
+- Go to Firestore in Firebase Console
+- Create a new collection: admins
+- Add a document with your user ID:
+
+```text
 Document ID: your-user-uid
 Fields:
   - role: "admin" (string)
@@ -312,12 +323,13 @@ Fields:
   - createdAt: [Current timestamp]
 💻 Development
 Run Development Server
+```
 
 ```bash
 npm run dev
 ```
 
-Visit http://localhost:5173
+Visit <http://localhost:5173>
 
 ## Build for Production
 
@@ -325,13 +337,13 @@ Visit http://localhost:5173
 npm run build
 ```
 
-Preview Production Build
+### Preview Production Build
 
 ```bash
 npm run preview
 ```
 
-Lint Code
+### Lint Code
 
 ```bash
 npm run lint
@@ -339,7 +351,7 @@ npm run lint
 
 ## 🚢 Deployment
 
-Deploy to Firebase Hosting
+### Deploy to Firebase Hosting
 
 ```bash
 # Login to Firebase
@@ -359,28 +371,28 @@ Your site will be live at:
 
 ## Custom Domain Setup
 
-Go to Firebase Console → Hosting
-Click "Add custom domain"
-Follow DNS configuration instructions
-Update OAuth redirect URIs in:
-Firebase Console
-Facebook App Settings
-Azure App Registration
-Google Cloud Console
-Post-Deployment Checklist
- Update authorized domains in Firebase Authentication
- Update OAuth redirect URIs for all providers
- Test all authentication methods
- Test image uploads
- Test messaging system
- Verify admin functionality
- Check mobile responsiveness
- Test dark mode
- Monitor Firebase usage quotas
+- Go to Firebase Console → Hosting  
+- Click "Add custom domain"  
+- Follow DNS configuration instructions  
+- Update OAuth redirect URIs in:  
+- Firebase Console  
+- Facebook App Settings  
+- Azure App Registration  
+- Google Cloud Console  
+- Post-Deployment Checklist  
+- Update authorized domains in Firebase Authentication  
+- Update OAuth redirect URIs for all providers  
+- Test all authentication methods  
+- Test image uploads  
+- Test messaging system  
+- Verify admin functionality  
+- Check mobile responsiveness  
+- Test dark mode  
+- Monitor Firebase usage quotas  
 
 ## 📁 Project Structure
 
-```bash
+```text
 waggle/
 ├── public/                 # Static assets
 ├── scripts/               # Utility scripts
@@ -442,50 +454,51 @@ waggle/
 
 ## Authentication Flow
 
-User registers with email/password or OAuth provider
-Email verification required for email/password signup
-User profile automatically created in Firestore
-Profile synced with authentication provider data
-Dog Profile Workflow
-User creates dog profile with details and photos
-Profile status set to "pending"
-Admin reviews and approves/rejects
-Approved dogs appear in search results
-Owners can edit/delete their dogs
-Messaging System
-Users can message dog owners
-Conversations created on first message
-Real-time updates using Firestore listeners
-Read receipts tracked
-Conversation list shows unread count
-Admin System
-Admins manually added to admins collection
-Admin role checked in security rules
-Admin dashboard shows pending dogs
-Approve/reject functionality with feedback
-View all users and system stats
+- User registers with email/password or OAuth provider  
+- Email verification required for email/password signup  
+- User profile automatically created in Firestore  
+- Profile synced with authentication provider data  
+- Dog Profile Workflow  
+- User creates dog profile with details and photos  
+- Profile status set to "pending"  
+- Admin reviews and approves/rejects  
+- Approved dogs appear in search results  
+- Owners can edit/delete their dogs  
+- Messaging System  
+- Users can message dog owners  
+- Conversations created on first message  
+- Real-time updates using Firestore listeners  
+- Read receipts tracked  
+- Conversation list shows unread count  
+- Admin System  
+- Admins manually added to admins collection  
+- Admin role checked in security rules  
+- Admin dashboard shows pending dogs  
+- Approve/reject functionality with feedback  
+- View all users and system stats  
 
 ## 🔒 Security
 
-Authentication Security
-Email verification required
-Secure password requirements
-OAuth tokens handled by Firebase
-Session management
-Data Security
-Firestore security rules enforce access control
-Users can only modify their own data
-Admins have elevated permissions
-Storage rules prevent unauthorized uploads
-Privacy
-GDPR-compliant data deletion
-Privacy policy included
-User data deletion functionality
-Minimal data collection
+- Authentication Security  
+- Email verification required  
+- Secure password requirements  
+- OAuth tokens handled by Firebase  
+- Session management  
+- Data Security  
+- Firestore security rules enforce access control  
+- Users can only modify their own data  
+- Admins have elevated permissions  
+- Storage rules prevent unauthorized uploads  
+- Privacy  
+- GDPR-compliant data deletion  
+- Privacy policy included  
+- User data deletion functionality  
+- Minimal data collection  
 
 ## 🐛 Troubleshooting
 
-Common Issues
+### Common Issues
+
 Build Errors:
 
 ```bash
@@ -499,36 +512,36 @@ npm run build
 
 ## Verify all redirect URIs are correct
 
-Check that email verification is enabled
-Ensure authorized domains include your domain
-Image Upload Failures:
+- Check that email verification is enabled  
+- Ensure authorized domains include your domain  
+- Image Upload Failures:  
 
 ## Check storage rules
 
-Verify file size limits (5MB max)
-Check storage quota in Firebase Console
-Messaging Not Working:
+- Verify file size limits (5MB max)  
+- Check storage quota in Firebase Console  
+- Messaging Not Working:  
 
 ## Verify Firestore rules for conversations
 
-Check that indexes are deployed
-Look for errors in browser console
-Breed Data Missing:
+- Check that indexes are deployed  
+- Look for errors in browser console  
+- Breed Data Missing:  
 
 ## Run import script: npm run import-breeds
 
-Check Firestore for breeds collection
-Verify admin permissions for import
+- Check Firestore for breeds collection  
+- Verify admin permissions for import  
 
 ### 📊 Firebase Usage Limits
 
 ## Free Tier (Spark Plan)
 
-Authentication: 50,000 phone/month
-Firestore: 50K reads, 20K writes, 20K deletes per day
-Storage: 5GB storage, 1GB/day downloads
-Hosting: 10GB storage, 360MB/day bandwidth
-Monitor usage in Firebase Console to avoid overages.
+- Authentication: 50,000 phone/month  
+- Firestore: 50K reads, 20K writes, 20K deletes per day  
+- Storage: 5GB storage, 1GB/day downloads  
+- Hosting: 10GB storage, 360MB/day bandwidth  
+- Monitor usage in Firebase Console to avoid overages.  
 
 ### 🤝 Contributing
 
@@ -542,6 +555,6 @@ Contributions are welcome! Please follow these steps:
 
 ### Code Style
 
-Use TypeScript for all new files
-Follow existing naming conventions
-Add comments
+- Use TypeScript for all new files  
+- Follow existing naming conventions  
+- Add comments  
